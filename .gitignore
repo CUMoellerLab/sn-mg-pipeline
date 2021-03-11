@@ -1,3 +1,6 @@
+# bowtie2 indexs
+resources/db/bt2/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
