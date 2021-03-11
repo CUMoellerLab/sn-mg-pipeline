@@ -113,16 +113,6 @@ rule host_filter:
         # rename nonhost samples
         mv {wildcards.sample}_nonhost.1 output/filtered/nonhost/{wildcards.sample}.1.fastq.gz
         mv {wildcards.sample}_nonhost.2 output/filtered/nonhost/{wildcards.sample}.2.fastq.gz
-
-#        # copy the nonhost fastqs to final location
-#        cp {output.temp_dir}/{wildcards.sample}_nonhost_R1.fastq.gz \
-#          {output.nonhost_R1}
-#        cp {output.temp_dir}/{wildcards.sample}_nonhost_R2.fastq.gz \
-#          {output.nonhost_R2}
-
-        # copy the host bam to final location
-#        cp {output.temp_dir}/{wildcards.sample}_host.bam \
-#          {output.host}
         """
 
 rule metaspades_assembly:
