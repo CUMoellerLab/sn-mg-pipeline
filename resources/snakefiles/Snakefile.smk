@@ -99,9 +99,7 @@ rule host_filter:
         "output/logs/bowtie2/{sample}.bowtie.log"
     shell:
         """
-        # Make temporary and permanent output directories
-        mkdir -p "output/filtered/host/"
-        mkdir -p "output/filtered/nonhost/"
+        # Make temporary directories
         mkdir -p {output.temp_dir}
 
         # Map reads against reference genome
@@ -140,19 +138,15 @@ rule metaspades_assembly:
         # Make temporary output directory
         mkdir -p {output.temp_dir}
 
-        # Make directory for assemblies and log files
-        mkdir -p output/metaspades/
-        mkdir -p output/logs/metaspades/
-
         # run the metaspades assmebly
         metaspades.py --threads {threads} \
-          -o output/{output.temp_dir}/ \
+          -o {output.temp_dir}/ \
           --pe1-1 {input.fastq1} \
           --pe1-2 {input.fastq2} \
-          2> {log}
+          2> {log} 1>&2
 
         # move and rename the contigs file into a permanent directory
-        mv output/{output.temp_dir}/contigs.fasta output/metaspades/{wildcards.sample}.contigs.fasta
+        mv {output.temp_dir}/contigs.fasta {output.contigs}
 
         """
 
