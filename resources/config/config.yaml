@@ -1,7 +1,31 @@
-samples: resources/config/samples.txt
+samples:
+  # update your samples.txt file with the paths to R1 and R2
+  'resources/config/samples.txt'
 
 units: resources/config/units.txt
 
 reads: 
   - R1
   - R2
+
+params:
+  cutadapt:
+    adapter: 'GATCGGAAGAGC'
+    other: "--minimum-length 1 --nextseq-trim 20"
+  multiqc: ''
+  bowtie2: ''
+
+threads:
+  fastqc: 1
+  cutadapt_pe: 4
+  fastqc_post_trim: 1
+  host_filter: 4
+  assembly: 8
+
+host_reference:
+  resources/db/bt2/GRCm39/GRCm39
+  # update this with the full path to the bowtie2 indexes of your host genome.
+  # Local:
+  # bt2_path: '/Users/danielsprockett/db/bt2/GCF_000001635.27_GRCm39_genomic'
+  # cbsumoeller@biohpc.cornell.edu:
+  # bt2_path:  /workdir/dbs/bowtie2/Mm_GRCm39

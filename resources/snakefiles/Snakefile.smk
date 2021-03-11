@@ -3,6 +3,7 @@ import pandas as pd
 configfile: "config.yaml"
 
 samples_fp = config['samples']
+
 units_fp = config['units']
 
 reads = config['reads']
@@ -21,8 +22,8 @@ def get_read(sample, unit, read):
     return(units_table.loc[(sample, unit), read])
 
 include: "resources/snakefiles/qc.smk"
+include: "resources/snakefiles/assemble.smk"
 
 rule all:
     input:
-        expand("output/qc/fastqc/{units.Index[0]}.{units.Index[1]}.{read}.html",
-        	   units=units_table.itertuples(), read=reads)
+        "output/qc/multiqc/multiqc.html"
