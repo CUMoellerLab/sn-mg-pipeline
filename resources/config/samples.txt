@@ -1,3 +1,3 @@
-Sample_ID	R1	R2	Sequencing_Run
-S22205_S104	resources/test/test_reads/S22205_S104_L001_R1_001.fastq.gz	resources/test/test_reads/S22205_S104_L001_R2_001.fastq.gz	Sequencing_Run_1
-S22207_S103	resources/test/test_reads/S22207_S103_L001_R1_001.fastq.gz	resources/test/test_reads/S22207_S103_L001_R2_001.fastq.gz	Sequencing_Run_1
+Sample_ID	R1	R2
+S22205_S104	resources/test/test_reads/S22205_S104_L001_R1_001.fastq.gz	resources/test/test_reads/S22205_S104_L001_R2_001.fastq.gz
+S22207_S103	resources/test/test_reads/S22207_S103_L001_R1_001.fastq.gz	resources/test/test_reads/S22207_S103_L001_R2_001.fastq.gz

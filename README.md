@@ -7,10 +7,9 @@ Module 1: **sn-mg-QC**
 
 Inputs:
   - Directory of raw fastq files from samples
-  - `File_Paths.txt` document, with 4 columns: `Sample_ID`, `R1`, `R2`, and `Sequencing_Run`
+  - `File_Paths.txt` document, with 3 columns: `Sample_ID`, `R1`, and `R2`
     - Files will be renamed with `Sample_ID`
     - `R1` and `R2` should indicate the full path to the forward and reverse reads, respectively
-    - `Sequencing_Run` string information may be used to merge samples with the same `Sample_ID` identifier.
   - `config.yaml` file that defines all of the parameters of the pipeline
     - be sure to specify the NCBI Assembly ID for the correct host genome. If not present in `resources/db/bt2/`, the bowtie2 index of this host genome will be automatically downloaded.
 

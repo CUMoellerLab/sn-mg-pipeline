@@ -16,8 +16,7 @@ def get_read(sample, read):
 rule all:
     input:
         "output/qc/multiqc/multiqc.html",
-        "output/metaspades/S22207_S103.contigs.fasta",
-        "output/metaspades/S22205_S104.contigs.fasta",
+        ["output/metaspades/{sample}.contigs.fasta".format(sample=sample) for sample in samples]
 
 rule fastqc_pre_trim:
     input:
@@ -86,95 +85,45 @@ rule host_filter:
     output:
         nonhost_R1="output/filtered/nonhost/{sample}.1.fastq.gz",
         nonhost_R2="output/filtered/nonhost/{sample}.2.fastq.gz",
-        host_R1="output/filtered/host/{sample}.1.fastq.gz",
-        host_R2="output/filtered/host/{sample}.2.fastq.gz",
-        temp_dir=temp(directory("output/filtered/{sample}_temp"))
+        host="output/filtered/host/{sample}.bam",
+        temp_dir=temp(directory("output/{sample}_temp"))
     params:
         ref=config['host_reference']
     conda:
         "resources/envs/bowtie2.yaml"
     threads:
         config['threads']['host_filter']
+    benchmark:
+        "output/benchmarks/bowtie2/{sample}_benchmark.txt"
     log:
-        bowtie = "output/logs/bowtie2/{sample}.bowtie.log",
-        mapped = "output/logs/bowtie2/{sample}.mapped.log",
-        unmapped = "output/logs/bowtie2/{sample}.unmapped.log"
+        "output/logs/bowtie2/{sample}.bowtie.log"
     shell:
         """
-        # Make temporary output directory
+        # Make temporary and permanent output directories
+        mkdir -p "output/filtered/host/"
+        mkdir -p "output/filtered/nonhost/"
         mkdir -p {output.temp_dir}
 
         # Map reads against reference genome
-        bowtie2 -p {threads} -x {params.ref} --very-sensitive \
+        bowtie2 -p {threads} -x {params.ref} \
           -1 {input.fastq1} -2 {input.fastq2} \
-          2> {log.bowtie} > {output.temp_dir}/{wildcards.sample}.alignment.sam
+          --un-conc-gz {wildcards.sample}_nonhost \
+          2> {log} | samtools view -bS - > {output.host}
 
-        # separate all read pairs
-        # that map at least once to the reference, even discordantly.
-        cat {output.temp_dir}/{wildcards.sample}.alignment.sam | samtools view -f 12 -F 256 -b \
-          -o {output.temp_dir}/{wildcards.sample}.unsorted.unmapped.bam \
-          2> {log.unmapped}
+        # rename nonhost samples
+        mv {wildcards.sample}_nonhost.1 output/filtered/nonhost/{wildcards.sample}.1.fastq.gz
+        mv {wildcards.sample}_nonhost.2 output/filtered/nonhost/{wildcards.sample}.2.fastq.gz
 
-        # separate all read pairs that map to host genome
-        cat {output.temp_dir}/{wildcards.sample}.alignment.sam | samtools view -f 2 -F 256 -b \
-          -o {output.temp_dir}/{wildcards.sample}.unsorted.mapped.bam \
-          2> {log.mapped}
+#        # copy the nonhost fastqs to final location
+#        cp {output.temp_dir}/{wildcards.sample}_nonhost_R1.fastq.gz \
+#          {output.nonhost_R1}
+#        cp {output.temp_dir}/{wildcards.sample}_nonhost_R2.fastq.gz \
+#          {output.nonhost_R2}
 
-        # Sort the resulting unmapped alignment
-        samtools sort -T {output.temp_dir}/{wildcards.sample}.unmapped \
-          -@ {threads} -n \
-          -o {output.temp_dir}/{wildcards.sample}.unmapped.bam \
-          {output.temp_dir}/{wildcards.sample}.unsorted.unmapped.bam \
-          2>> {log.unmapped}
-
-        # Sort the resulting mapped alignment
-        samtools sort -T {output.temp_dir}/{wildcards.sample}.mapped \
-          -@ {threads} -n \
-          -o {output.temp_dir}/{wildcards.sample}.mapped.bam \
-          {output.temp_dir}/{wildcards.sample}.unsorted.mapped.bam \
-          2>> {log.mapped}
-
-        # Convert sorted unmapped alignment to fastq format
-        bedtools bamtofastq -i {output.temp_dir}/{wildcards.sample}.unmapped.bam \
-          -fq {output.temp_dir}/{wildcards.sample}.R1.trimmed.filtered.fastq \
-          -fq2 {output.temp_dir}/{wildcards.sample}.R2.trimmed.filtered.fastq \
-          2>> {log.unmapped}
-
-        # Convert sorted mapped alignment to fastq format
-        bedtools bamtofastq -i {output.temp_dir}/{wildcards.sample}.mapped.bam \
-          -fq {output.temp_dir}/{wildcards.sample}.R1.trimmed.host.fastq \
-          -fq2 {output.temp_dir}/{wildcards.sample}.R2.trimmed.host.fastq \
-          2>> {log.mapped}
-
-        # zip the filtered fastqs
-        pigz -p {threads} \
-          -c {output.temp_dir}/{wildcards.sample}.R1.trimmed.filtered.fastq > \
-          {output.temp_dir}/{wildcards.sample}.R1.trimmed.filtered.fastq.gz
-        pigz -p {threads} \
-          -c {output.temp_dir}/{wildcards.sample}.R2.trimmed.filtered.fastq > \
-          {output.temp_dir}/{wildcards.sample}.R2.trimmed.filtered.fastq.gz
-
-        # zip the host fastqs
-        pigz -p {threads} \
-          -c {output.temp_dir}/{wildcards.sample}.R1.trimmed.host.fastq > \
-          {output.temp_dir}/{wildcards.sample}.R1.trimmed.host.fastq.gz
-        pigz -p {threads} \
-          -c {output.temp_dir}/{wildcards.sample}.R2.trimmed.host.fastq > \
-          {output.temp_dir}/{wildcards.sample}.R2.trimmed.host.fastq.gz
-
-        # copy the filtered fastqs to final location
-        cp {output.temp_dir}/{wildcards.sample}.R1.trimmed.filtered.fastq.gz \
-          {output.nonhost_R1}
-        cp {output.temp_dir}/{wildcards.sample}.R2.trimmed.filtered.fastq.gz \
-          {output.nonhost_R2}
-
-        # copy the host fastqs to final location
-        cp {output.temp_dir}/{wildcards.sample}.R1.trimmed.host.fastq.gz \
-          {output.host_R1}
-        cp {output.temp_dir}/{wildcards.sample}.R2.trimmed.host.fastq.gz \
-          {output.host_R2}
+        # copy the host bam to final location
+#        cp {output.temp_dir}/{wildcards.sample}_host.bam \
+#          {output.host}
         """
-
 
 rule metaspades_assembly:
     """
@@ -194,6 +143,8 @@ rule metaspades_assembly:
         config['threads']['assembly']
     benchmark:
         "output/benchmarks/metaspades/{sample}_benchmark.txt"
+    log:
+        "output/logs/metaspades/{sample}.metaspades.log",
     shell:
         """
         # Make temporary output directory
@@ -207,16 +158,11 @@ rule metaspades_assembly:
         metaspades.py --threads {threads} \
           -o output/{output.temp_dir}/ \
           --pe1-1 {input.fastq1} \
-          --pe1-2 {input.fastq2}
+          --pe1-2 {input.fastq2} \
+          2> {log}
 
         # move and rename the contigs file into a permanent directory
         mv output/{output.temp_dir}/contigs.fasta output/metaspades/{wildcards.sample}.contigs.fasta
-
-        # move the log file
-        mv output/{output.temp_dir}/spades.log output/logs/metaspades/{wildcards.sample}_log.txt
-
-        # remove the temp directory
-        # rm -rf {output.temp_dir}
 
         """
 
@@ -230,7 +176,7 @@ rule multiqc:
                                  read=reads),
         lambda wildcards: expand(rules.cutadapt_pe.output.qc,
                                  sample=samples),
-        lambda wildcards: expand(rules.host_filter.log.bowtie,
+        lambda wildcards: expand(rules.host_filter.log,
                                  sample=samples)
     output:
         "output/qc/multiqc/multiqc.html"
