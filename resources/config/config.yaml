@@ -1,0 +1,7 @@
+samples: resources/config/samples.txt
+
+units: resources/config/units.txt
+
+reads: 
+  - R1
+  - R2
