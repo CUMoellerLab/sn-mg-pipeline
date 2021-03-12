@@ -86,7 +86,7 @@ rule host_filter:
     params:
         ref=config['host_reference']
     conda:
-        "resources/envs/bowtie2.yaml"
+        "../env/bowtie2.yaml"
     threads:
         config['threads']['host_filter']
     benchmark:

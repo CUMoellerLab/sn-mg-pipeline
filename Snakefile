@@ -1,1 +1,1 @@
-Snakefile.smk
+resources/snakefiles/Snakefile.smk
