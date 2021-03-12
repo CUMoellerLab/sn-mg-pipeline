@@ -6,3 +6,4 @@ dependencies:
   - bedtools>=2.26.0
   - samtools>=1.3.1
   - pigz
+  - tbb=2020.2
