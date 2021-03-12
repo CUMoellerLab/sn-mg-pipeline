@@ -1,0 +1,4 @@
+Sample	Unit	R1	R2
+amy	lane_1	resources/test/test_reads/S22205_S104_L001_R1_001.fastq.gz	resources/test/test_reads/S22205_S104_L001_R2_001.fastq.gz
+amy	lane_2	resources/test/test_reads/S22205_S104_L002_R1_001.fastq.gz	resources/test/test_reads/S22205_S104_L002_R2_001.fastq.gz
+bob	lane_1	resources/test/test_reads/S22207_S103_L001_R1_001.fastq.gz	resources/test/test_reads/S22207_S103_L001_R2_001.fastq.gz

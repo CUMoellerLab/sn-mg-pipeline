@@ -1,10 +1,11 @@
 rule fastqc_pre_trim:
     input:
         lambda wildcards: get_read(wildcards.sample,
+                                   wildcards.unit,
                                    wildcards.read)
     output:
-        html="output/qc/fastqc/pre_trim/{sample}.{read}.html",
-        zip="output/qc/fastqc/pre_trim/{sample}.{read}_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
+        html="output/qc/fastqc/pre_trim/{sample}.{unit}.{read}.html",
+        zip="output/qc/fastqc/pre_trim/{sample}.{unit}.{read}_fastqc.zip" #  the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
     params: ""
     threads:
         config['threads']['fastqc']
@@ -13,14 +14,16 @@ rule fastqc_pre_trim:
 
 rule cutadapt_pe:
     input:
-        lambda wildcards: sample_table.loc[wildcards.sample,
-                                      'R1'],
-        lambda wildcards: sample_table.loc[wildcards.sample,
-                                      'R2']
+        lambda wildcards: get_read(wildcards.sample,
+                                   wildcards.unit,
+                                   'R1'),
+        lambda wildcards: get_read(wildcards.sample,
+                                   wildcards.unit,
+                                   'R2')
     output:
-        fastq1="output/trimmed/{sample}.R1.fastq.gz",
-        fastq2="output/trimmed/{sample}.R2.fastq.gz",
-        qc="output/logs/cutadapt/{sample}.qc.txt"
+        fastq1="output/trimmed/{sample}.{unit}.R1.fastq.gz",
+        fastq2="output/trimmed/{sample}.{unit}.R2.fastq.gz",
+        qc="output/logs/cutadapt/{sample}.{unit}.qc.txt"
     params:
         "-a {} {}".format(config["params"]["cutadapt"]['adapter'],
                           config["params"]["cutadapt"]['other'])
@@ -31,15 +34,28 @@ rule cutadapt_pe:
 
 rule fastqc_post_trim:
     input:
-        "output/trimmed/{sample}.{read}.fastq.gz"
+        "output/trimmed/{sample}.{unit}.{read}.fastq.gz"
     output:
-        html="output/qc/fastqc/post_trim/{sample}.{read}.trimmed.html",
-        zip="output/qc/fastqc/post_trim/{sample}.{read}.trimmed_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
+        html="output/qc/fastqc/post_trim/{sample}.{unit}.{read}.trimmed.html",
+        zip="output/qc/fastqc/post_trim/{sample}.{unit}.{read}.trimmed_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
     params: ""
     threads:
         config['threads']['fastqc_post_trim']
     wrapper:
         "0.72.0/bio/fastqc"
+
+
+rule merge_units:
+    input:
+        lambda wildcards: expand("output/trimmed/{sample}.{sequnit}.{read}.fastq.gz",
+                                 sample=wildcards.sample,
+                                 sequnit=list(units_table.loc[wildcards.sample].index),
+                                 read=wildcards.read)
+    output:
+        temp("output/trimmed/{sample}.combined.{read}.fastq.gz")
+    params: ""
+    threads: 1
+    shell: "cat {input} > {output}"
 
 
 rule host_filter:
@@ -60,8 +76,8 @@ rule host_filter:
     All piped output first written to localscratch to avoid tying up filesystem.
     """
     input:
-        fastq1=rules.cutadapt_pe.output.fastq1,
-        fastq2=rules.cutadapt_pe.output.fastq2
+        fastq1="output/trimmed/{sample}.combined.R1.fastq.gz",
+        fastq2="output/trimmed/{sample}.combined.R2.fastq.gz"
     output:
         nonhost_R1="output/filtered/nonhost/{sample}.1.fastq.gz",
         nonhost_R2="output/filtered/nonhost/{sample}.2.fastq.gz",
@@ -70,7 +86,7 @@ rule host_filter:
     params:
         ref=config['host_reference']
     conda:
-        "resources/envs/bowtie2.yaml"
+        "../env/bowtie2.yaml"
     threads:
         config['threads']['host_filter']
     benchmark:
@@ -95,16 +111,15 @@ rule host_filter:
 
 rule multiqc:
     input:
-        lambda wildcards: expand(rules.fastqc_pre_trim.output.zip,
-                                 sample=samples,
-                                 read=reads),
-        lambda wildcards: expand(rules.fastqc_post_trim.output.zip,
-                                 sample=samples,
-                                 read=reads),
-        lambda wildcards: expand(rules.cutadapt_pe.output.qc,
-                                 sample=samples),
+        expand("output/qc/fastqc/pre_trim/{units.Index[0]}.{units.Index[1]}.{read}.html",
+               units=units_table.itertuples(), read=reads),
+        expand("output/logs/cutadapt/{units.Index[0]}.{units.Index[1]}.qc.txt",
+               units=units_table.itertuples()),
+        expand("output/qc/fastqc/post_trim/{units.Index[0]}.{units.Index[1]}.{read}.trimmed.html",
+               units=units_table.itertuples(), read=reads),
         lambda wildcards: expand(rules.host_filter.log,
-                                 sample=samples)
+                                 sample=samples,
+                                 read=reads)
     output:
         "output/qc/multiqc/multiqc.html"
     params:
