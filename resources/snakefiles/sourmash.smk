@@ -41,3 +41,18 @@ rule sourmash_dm:
         {input} 2> {log} 1>&2
         """
 
+rule sourmash_plot:
+    input:
+        "output/sourmash/sourmash.dm"
+    output:
+        directory("output/sourmash/plots")
+    log:
+        "output/logs/sourmash/sourmash_plot.log"
+    threads: 1
+    conda: "../env/sourmash.yaml"
+    shell:
+        """
+        sourmash plot --pdf --labels \
+        --output-dir {output} \
+        {input} 2> {log} 1>&2
+        """

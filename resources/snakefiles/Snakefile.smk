@@ -29,4 +29,4 @@ include: "resources/snakefiles/sourmash.smk"
 rule all:
     input:
         "output/qc/multiqc/multiqc.html",
-        "output/sourmash/sourmash.dm"
+        "output/sourmash/plots"
