@@ -57,6 +57,47 @@ rule merge_units:
     threads: 1
     shell: "cat {input} > {output}"
 
+rule download_NCBI_assembly:
+    """
+    Downloads a genome accession 
+    """
+    output:
+        temp(join(config['host_filter']['db_dir'],
+                  '{accn}.fa'))
+    threads: 1
+    log: "output/logs/setup/download_NCBI_assembly.{accn}.log"
+    shell: "esearch -db assembly -query GCA_006538345.1 | \
+            elink -target nucleotide -name assembly_nuccore_insdc | \
+            efetch -format fasta > {output}"
+
+
+rule host_bowtie2_build:
+    input:
+        reference=expand(rules.download_NCBI_assembly.output,
+                         accn=config['host_filter']['accn'])
+    output:
+        multiext(join(config['host_filter']['db_dir'],
+                      config['host_filter']['accn']),
+                 ".1.bt2",
+                 ".2.bt2",
+                 ".3.bt2",
+                 ".4.bt2",
+                 ".rev.1.bt2",
+                 ".rev.2.bt2")
+    log:
+        "output/logs/bowtie2/bowtie2-build.log"
+    conda:
+        "../env/bowtie2.yaml"
+    params:
+        extra="",  # optional parameters,
+        indexbase=join(config['host_filter']['db_dir'],
+                       config['host_filter']['accn'])
+    threads: 8
+    shell:
+        """
+        bowtie2-build --threads {threads} {params.extra} \
+        {input.reference} {params.indexbase} 2> {log} 1>&2
+        """
 
 rule host_filter:
     """
@@ -77,14 +118,16 @@ rule host_filter:
     """
     input:
         fastq1="output/trimmed/{sample}.combined.R1.fastq.gz",
-        fastq2="output/trimmed/{sample}.combined.R2.fastq.gz"
+        fastq2="output/trimmed/{sample}.combined.R2.fastq.gz",
+        db=rules.host_bowtie2_build.output
     output:
         nonhost_R1="output/filtered/nonhost/{sample}.1.fastq.gz",
         nonhost_R2="output/filtered/nonhost/{sample}.2.fastq.gz",
         host="output/filtered/host/{sample}.bam",
         temp_dir=temp(directory("output/{sample}_temp"))
     params:
-        ref=config['host_reference']
+        ref=join(config['host_filter']['db_dir'],
+                 config['host_filter']['accn'])
     conda:
         "../env/bowtie2.yaml"
     threads:

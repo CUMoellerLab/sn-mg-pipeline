@@ -26,9 +26,17 @@ threads:
   host_filter: 4
   assembly: 8
 
-host_reference:
-  resources/db/bt2/GRCm39/GRCm39
-  # update this with the full path to the bowtie2 indexes of your host genome.
+
+
+host_filter:
+  db_dir: resources/test/test_dbs
+  accn: GCA_000001635.9 
+  # NCBI GenBank Accession number for the host genome assembly.
+  # This will be automatically downloaded and indexed in the location
+  # {db_dir}/bt2/{host_accn}.
+
+  # To bypass this and use an existing bt2 index, 
+  # To use 
   # Local:
   # bt2_path: '/Users/danielsprockett/db/bt2/GCF_000001635.27_GRCm39_genomic'
   # cbsumoeller@biohpc.cornell.edu:
