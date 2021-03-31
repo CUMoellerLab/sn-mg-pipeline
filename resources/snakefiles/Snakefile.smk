@@ -23,7 +23,7 @@ def get_read(sample, unit, read):
 
 include: "resources/snakefiles/qc.smk"
 include: "resources/snakefiles/assemble.smk"
-include: "resources/snakefiles/profile.smk"
+include: "resources/snakefiles/sourmash.smk"
 
 rule all:
     input:

@@ -27,7 +27,8 @@ rule sourmash_dm:
         expand(rules.sourmash_sketch_reads.output,
                sample=samples)
     output:
-        "output/sourmash/sourmash.dm"
+        dm="output/sourmash/sourmash.dm",
+        csv="output/sourmash/sourmash.csv"
     log:
         "output/logs/sourmash/sourmash_dm.log"
     threads: 1
@@ -35,7 +36,8 @@ rule sourmash_dm:
     shell:
         """
         sourmash compare \
-        --output {output} \
+        --output {output.dm} \
+        --csv {output.csv} \
         {input} 2> {log} 1>&2
         """
 
