@@ -24,7 +24,9 @@ def get_read(sample, unit, read):
 
 include: "resources/snakefiles/qc.smk"
 include: "resources/snakefiles/assemble.smk"
+include: "resources/snakefiles/sourmash.smk"
 
 rule all:
     input:
-        "output/qc/multiqc/multiqc.html"
+        "output/qc/multiqc/multiqc.html",
+        "output/sourmash/plots"
