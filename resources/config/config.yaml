@@ -8,6 +8,10 @@ reads:
   - R1
   - R2
 
+assemblers:
+  - metaspades
+  - megahit
+
 params:
   cutadapt:
     adapter: 'GATCGGAAGAGC'
@@ -24,9 +28,12 @@ threads:
   cutadapt_pe: 4
   fastqc_post_trim: 1
   host_filter: 4
-  assembly: 8
+  spades: 8
+  megahit: 8
 
-
+mem_mb:
+  spades: 10000
+  megahit: 10000
 
 host_filter:
   db_dir: resources/test/test_dbs
