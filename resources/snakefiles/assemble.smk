@@ -12,6 +12,7 @@ rule metaspades_assembly:
         temp_dir=temp(directory("output/{sample}_temp"))
     conda:
         "../env/assemble.yaml"
+        
     threads:
         config['threads']['spades']
     benchmark:
