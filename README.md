@@ -1,34 +1,11 @@
 # Moeller Lab Metagenomics Processing Pipeline
 
 ## Overview
-Snakemake pipeline for basic processing of metagenomic data from the lab.
+Snakemake pipeline for basic processing of metagenomic data from the lab. It accepts raw fastq files of metagenomic data, quality filters it, removes reads that map to the host genome, then builds assemblies of each sample and generates a sourmash profile. Modules that are currently underdevelopment will handle automated binning procedures, as well as various types of taxonomic and strain-level profiling.
 
-Module 1: **sn-mg-QC**
+## Quick Start Guide
 
-Inputs:
-  - Directory of raw fastq files from samples
-  - `File_Paths.txt` document, with 3 columns: `Sample_ID`, `R1`, and `R2`
-    - Files will be renamed with `Sample_ID`
-    - `R1` and `R2` should indicate the full path to the forward and reverse reads, respectively
-  - `config.yaml` file that defines all of the parameters of the pipeline
-    - be sure to specify the NCBI Assembly ID for the correct host genome. If not present in `resources/db/bt2/`, the bowtie2 index of this host genome will be automatically downloaded.
-
-Outputs:
-  - Directory of quality filtered fastq files that have been depleted of host reads (`output/nonhost/`)
-  - Directory of .BAM alignment files containing host reads (`output/host/`)
-  - Directory of MinHash profiles of each sample (`output/sourmash/`)
-  - skbio Distance Matrix (`output/dist_mat.txt`)
-  - List of prototypical samples that best represents the full set of samples (`output/prototypes.txt`)
-
-
-General Steps:
-  1. Quality trim using [cutadapt](https://cutadapt.readthedocs.io/en/stable/guide.html).
-  2. Remove host reads using [bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml).
-  3. Create MinHash Profiles from each set of Assemblies using [sourmash](https://sourmash.readthedocs.io/en/latest/), and generate a distance matrix of all samples.
-  4. Using this distance matrix, select a set of samples that best represents the full sample set using [prototypeSelection](https://github.com/biocore/wol/tree/master/code/prototypeSelection).
-  5. Assemble contigs from your quality filtered reads using [MetaSPAdes](https://cab.spbu.ru/software/meta-spades/)
-
-## Installation
+### Install
 
 First install [Snakemake](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html) using `conda`.
 
@@ -50,4 +27,27 @@ $ git clone https://github.com/CUMoellerLab/sn-mg-pipeline.git
 cd sn-mg-pipeline
 ```
 
-Update the `config.yaml` and `resources/config/samples.txt` files
+### Update Files
+
+Now you can update three files that are located in the `./resources/config` directory.
+
+The first two files are `samples.txt` and `units.txt`. The `samples.txt` file is your basic metadata file, with each row representing a sample in your dataset and each column containing the corresponding information about that sample. The first column should named "Sample" and should contain the name for each sample. Any addition columns are not used at this step.
+
+The `units.txt` file should have only 4 columns, and each row should correspond to a sample found in the `samples.txt` file. The first column, "Sample", should be all or a subset of the "Sample" column in the `samples.txt` file. The second column, "Unit", should denote which analysis block each sample belongs to. In our case, we use sequencing run/lane, but you may use other information based on your experimental design. The third and fourth columns (named "R1" and "R2", respectively) should include the full file paths to the forward and reverse fastq files for that sample.
+
+The last file to update is the the `config.yaml` file. This is where you can select the parameters for each step in the analysis pipeline. Refer to the documentation for each tool individually for more information. Also, be sure to change the NCBI GenBank Accession number to your host of interest.
+
+NOTE: You can select which metagenomic assembler you want to use under the the "assemblers:" header. Simply delete the assembler you don't want to use. Otherwise both will run.
+
+### Run the Pipeline
+
+After you have updated the files described above, you can start the pipeline. First run:
+```
+conda install -n base -c conda-forge mamba
+```
+
+Then begin the run using:
+```
+snakemake --cores 8 --use-conda
+```
+The first time you run this, it may take longer to set up your conda environment. Be sure to select the appropriate number of cores for your analysis.
