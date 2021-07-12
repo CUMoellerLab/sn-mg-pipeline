@@ -12,7 +12,7 @@ rule metaspades_assembly:
         temp_dir=temp(directory("output/{sample}_temp"))
     conda:
         "../env/assemble.yaml"
-        
+
     threads:
         config['threads']['spades']
     benchmark:
@@ -42,7 +42,7 @@ rule metaspades_assembly:
 rule megahit_assembly:
     """
 
-    Performs a metagenomic assembly on a sample using MetaSPAdes.
+    Performs a metagenomic assembly on a sample using MEGAHIT.
 
     """
     input:
