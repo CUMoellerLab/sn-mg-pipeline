@@ -103,7 +103,6 @@ rule quast:
           {input}
         """
 
-
 rule multiqc_assemble:
     input:
         lambda wildcards: expand("output/assemble/quast/{sample}/report.txt",

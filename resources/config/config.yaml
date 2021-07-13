@@ -12,6 +12,9 @@ assemblers:
   - metaspades
   - megahit
 
+biobakery:
+  - metaphlan
+
 params:
   cutadapt:
     adapter: 'GATCGGAAGAGC'
@@ -22,6 +25,10 @@ params:
     k: 31
     scaled: 1000
     extra: ''
+  metaphlan:
+    db_path: "resources/db/metaphlan"
+    db_name: "mpa_v30_CHOCOPhlAn_201901"
+    other: "--add_viruses --unknown_estimation"
 
 threads:
   fastqc: 1
@@ -30,6 +37,7 @@ threads:
   host_filter: 4
   spades: 8
   megahit: 8
+  metaphlan: 4
 
 mem_mb:
   spades: 256000
