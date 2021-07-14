@@ -59,17 +59,20 @@ rule merge_units:
 
 rule download_NCBI_assembly:
     """
-    Downloads a genome accession 
+    Downloads a genome by its GenBank assembly accession number.
     """
     output:
         temp(join(config['host_filter']['db_dir'],
                   '{accn}.fa'))
+    params:
+        accn=config['host_filter']['accn']
     threads: 1
     log: "output/logs/setup/download_NCBI_assembly.{accn}.log"
-    shell: "esearch -db assembly -query GCA_006538345.1 | \
+    conda:
+        "../env/bowtie2.yaml"
+    shell: "esearch -db assembly -query {params.accn} | \
             elink -target nucleotide -name assembly_nuccore_insdc | \
             efetch -format fasta > {output}"
-
 
 rule host_bowtie2_build:
     input:
@@ -92,7 +95,8 @@ rule host_bowtie2_build:
         extra="",  # optional parameters,
         indexbase=join(config['host_filter']['db_dir'],
                        config['host_filter']['accn'])
-    threads: 8
+    threads:
+        config['threads']['host_filter']
     shell:
         """
         bowtie2-build --threads {threads} {params.extra} \
