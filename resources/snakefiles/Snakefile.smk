@@ -31,5 +31,6 @@ rule all:
     input:
         "output/qc/multiqc/multiqc.html",
         "output/sourmash/plots",
+        "output/sourmash/selected_prototypes.txt",
         "output/assemble/multiqc/multiqc.html",
         "output/metaphlan/merged_abundance_table.txt"

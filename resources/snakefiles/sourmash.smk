@@ -1,3 +1,4 @@
+
 rule sourmash_sketch_reads:
     input:
         R1="output/trimmed/{sample}.combined.R1.fastq.gz",
@@ -28,7 +29,8 @@ rule sourmash_dm:
                sample=samples)
     output:
         dm="output/sourmash/sourmash.dm",
-        csv="output/sourmash/sourmash.csv"
+        csv="output/sourmash/sourmash.csv",
+        labels="output/sourmash/sourmash.dm.labels.txt"
     log:
         "output/logs/sourmash/sourmash_dm.log"
     threads: 1
@@ -56,3 +58,16 @@ rule sourmash_plot:
         --output-dir {output} \
         {input} 2> {log} 1>&2
         """
+
+rule run_prototypeSelection:
+    input:
+        dm=rules.sourmash_dm.output.dm,
+        labels=rules.sourmash_dm.output.labels
+    output:
+        file="output/sourmash/selected_prototypes.txt"
+    log:
+        "output/logs/sourmash/prototypeSelection.log"
+    threads: 1
+    conda: "../env/sourmash.yaml"
+    script:
+        "../../resources/scripts/run_prototypeSelection.py"
