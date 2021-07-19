@@ -1,7 +1,7 @@
 # Moeller Lab Metagenomics Processing Pipeline
 
 ## Overview
-Snakemake pipeline for basic processing of metagenomic data from the lab. It accepts raw fastq files of metagenomic data, quality filters it, removes reads that map to the host genome, then builds assemblies of each sample and generates a sourmash profile. Modules that are currently underdevelopment will handle automated binning procedures, as well as various types of taxonomic and strain-level profiling.
+Snakemake pipeline for basic processing of metagenomic data from the lab. It accepts raw fastq files of metagenomic data, quality filters it, removes reads that map to the host genome, then builds assemblies of each sample and generates a [sourmash](https://sourmash.readthedocs.io/en/latest/) profile. The current version also generates a taxonomic profile of each sample using [MetaPhlAn3](https://huttenhower.sph.harvard.edu/metaphlan/). Modules that are currently underdevelopment will handle automated binning procedures, as well as strain-level profiling.
 
 ## Quick Start Guide
 
@@ -37,7 +37,7 @@ The `units.txt` file should have only 4 columns, and each row should correspond 
 
 The last file to update is the the `config.yaml` file. This is where you can select the parameters for each step in the analysis pipeline. Refer to the documentation for each tool individually for more information. Also, be sure to change the NCBI GenBank Accession number to your host of interest.
 
-NOTE: You can select which metagenomic assembler you want to use under the the "assemblers:" header. Simply delete the assembler you don't want to use. Otherwise both will run.
+NOTE: You can select which metagenomic assembler you want to use under the the "assemblers:" header. The current options are [metaSPAdes](https://cab.spbu.ru/software/meta-spades/) and [MEGAHIT](https://github.com/voutcn/megahit) Simply delete the assembler you don't want to use. Otherwise both will run.
 
 ### Run the Pipeline
 
