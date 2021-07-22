@@ -26,6 +26,9 @@ binning_df = pd.read_csv(binning_fp,
                          sep='\t',
                          na_filter=False)
 
+def get_read(sample, unit, read):
+    return(units_table.loc[(sample, unit), read])
+
 def parse_groups(group_series):
     groups = {}
     for sample, grps in group_series.iteritems():
@@ -82,9 +85,9 @@ rule map_all:
 rule map_pair:
     input: 
         contigs = lambda wildcards: get_contigs(wildcards.to_sample, binning_df),
-        # reads = lambda wildcards: expand(rules.merge_units,
-        #                                  sample=wildcards.from_sample,
-        #                                  read=['R1','R2'])
+        reads = lambda wildcards: expand(rules.merge_units.output,
+                                         sample=wildcards.from_sample,
+                                         read=['R1','R2'])
     output:
         "output/binning/mapped_reads/{from_sample}.{to_sample}.bam"
     run:
