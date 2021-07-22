@@ -1,0 +1,5 @@
+Sample	Contigs	To_Groups	From_Groups
+amy	output/metaspades/amy.contigs.fasta	A	A
+bob	output/metaspades/bob.contigs.fasta	A	A
+carl	output/metaspades/carl.contigs.fasta	A	
+diane	output/metaspades/diane.contigs.fasta	A	

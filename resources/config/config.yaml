@@ -4,6 +4,8 @@ samples:
 
 units: resources/config/units.txt
 
+binning: resources/config/binning.txt
+
 reads:
   - R1
   - R2
