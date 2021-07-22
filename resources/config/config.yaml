@@ -22,7 +22,10 @@ params:
     adapter: 'GATCGGAAGAGC'
     other: "--minimum-length 1 --nextseq-trim 20"
   multiqc: ''
-  bowtie2: ''
+  bowtie2: 
+    bt2_command: 'bowtie2'
+    bt2b_command: 'bowtie2-build'
+    extra: ''
   sourmash:
     k: 31
     scaled: 1000
@@ -40,6 +43,7 @@ threads:
   spades: 8
   megahit: 8
   metaphlan: 4
+  bowtie2_build: 8
 
 mem_mb:
   spades: 256000

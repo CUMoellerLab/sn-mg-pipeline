@@ -70,11 +70,14 @@ print(from_groups)
 print(from_samples)
 print(to_samples)
 
+
+
 def get_contigs(sample, binning_df):
     return(binning_df.loc[sample, 'Contigs'])
 
 
 include: "resources/snakefiles/qc.smk"
+include: "resources/snakefiles/mapping.smk"
 
 rule map_all:
     input:
@@ -82,16 +85,16 @@ rule map_all:
                from_sample=from_samples,
                to_sample=to_samples)
 
-rule map_pair:
-    input: 
-        contigs = lambda wildcards: get_contigs(wildcards.to_sample, binning_df),
-        reads = lambda wildcards: expand(rules.merge_units.output,
-                                         sample=wildcards.from_sample,
-                                         read=['R1','R2'])
-    output:
-        "output/binning/mapped_reads/{from_sample}.{to_sample}.bam"
-    run:
-        contig_fp = get_contigs(wildcards.to_sample, binning_df)
-        print("binning_df: \n%s" % binning_df)
-        print("wildcard: %s" % wildcards.to_sample)
-        print("contigs: %s" % contig_fp)
+# rule map_pair:
+#     input: 
+#         contigs = lambda wildcards: get_contigs(wildcards.to_sample, binning_df),
+#         reads = lambda wildcards: expand(rules.merge_units.output,
+#                                          sample=wildcards.from_sample,
+#                                          read=['R1','R2'])
+#     output:
+#         "output/binning/mapped_reads/{from_sample}.{to_sample}.bam"
+#     run:
+#         contig_fp = get_contigs(wildcards.to_sample, binning_df)
+#         print("binning_df: \n%s" % binning_df)
+#         print("wildcard: %s" % wildcards.to_sample)
+#         print("contigs: %s" % contig_fp)
