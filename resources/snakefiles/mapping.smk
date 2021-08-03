@@ -91,7 +91,7 @@ rule sort_bam:
         "output/logs/binning/{from_sample}.{to_sample}.sort.log"
     shell:
         """
-        samtools sort -o {output.bam} {input.aln} 2> {log}
+        samtools sort -o {output.bam} {input.aln} 2> {log}  
         """
 
 
