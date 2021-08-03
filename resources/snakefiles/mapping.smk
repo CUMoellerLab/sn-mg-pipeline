@@ -51,7 +51,7 @@ rule map_reads:
                                          read=['R1','R2']),
         db=rules.index_contigs.output
     output:
-        aln="output/binning/mapped_reads/{from_sample}.{to_sample}.bam"
+        aln=temp("output/binning/mapped_reads/{from_sample}.{to_sample}.bam")
     params:
         ref="output/binning/indexed/{to_sample}",
         bt2_command = config['params']['bowtie2']['bt2_command'],
@@ -72,3 +72,27 @@ rule map_reads:
           2> {log} | samtools view -bS - > {output.aln}
 
         """
+
+rule sort_bam:
+    """
+    Sorts a bam file.
+    """
+    input:
+        aln="output/binning/mapped_reads/{from_sample}.{to_sample}.bam"
+    output:
+        bam="output/binning/mapped_reads/{from_sample}.{to_sample}.sorted.bam"
+    conda:
+        "../env/bowtie2.yaml"
+    threads:
+        config['threads']['sort_bam']
+    benchmark:
+        "output/benchmarks/samtools/{from_sample}.{to_sample}.sorted.txt"
+    log:
+        "output/logs/binning/{from_sample}.{to_sample}.sort.log"
+    shell:
+        """
+        samtools sort -o {output.bam} {input.aln} 2> {log}
+        """
+
+
+
