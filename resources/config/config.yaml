@@ -49,6 +49,8 @@ threads:
   bowtie2_build: 8
   map_reads: 1
   sort_bam: 1
+  minimap2_index: 4
+  minimap2_map_reads: 4
 
 mem_mb:
   spades: 256000

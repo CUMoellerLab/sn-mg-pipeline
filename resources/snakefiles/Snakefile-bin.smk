@@ -82,7 +82,10 @@ include: "resources/snakefiles/mapping.smk"
 
 rule map_all:
     input:
-        expand("output/binning/mapped_reads/{from_sample}.{to_sample}.sorted.bam",
+        expand("output/binning/bt2/mapped_reads/{from_sample}.{to_sample}.sorted.bam",
+               from_sample=from_samples,
+               to_sample=to_samples),
+        expand("output/binning/minimap2/mapped_reads/{from_sample}.{to_sample}.sorted.bam",
                from_sample=from_samples,
                to_sample=to_samples),
 
