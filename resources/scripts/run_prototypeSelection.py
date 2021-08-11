@@ -2,6 +2,8 @@
 
 import numpy as np
 import sys
+from skbio.stats.distance import DistanceMatrix
+from prototypeSelection import prototype_selection_destructive_maxdist
 
 print("Running the run_prototypeSelection.py script.")
 
@@ -16,14 +18,12 @@ pt_max = len(labels) - 1
 print("Selecting " + str(pt_min) + " to " + str(pt_max) + " prototypes.")
 
 # convert numpy array to type distance matrix
-from skbio.stats.distance import DistanceMatrix
 dm = DistanceMatrix(df2)
 
 with open(snakemake.output[0], 'w') as f:
     for k in range(pt_min, pt_max + 1):
 
         # run prototypeSelection function
-        from prototypeSelection import prototype_selection_destructive_maxdist
         prototypes=prototype_selection_destructive_maxdist(dm, k)
         prototype_labels=", ".join(labels[int(x)] for x in prototypes)
 

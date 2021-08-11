@@ -20,7 +20,7 @@ units = units_table.index
 
 binning_fp = config['binning']
 
-binning_df = pd.read_csv(binning_fp, 
+binning_df = pd.read_csv(binning_fp,
                          header=0,
                          index_col=0,
                          sep='\t',
@@ -45,18 +45,18 @@ def parse_groups(group_series):
 def make_pairings(from_grp, to_grp):
     if from_grp.keys() != to_grp.keys():
         raise ValueError('Not all keys in both from and to groups!')
-    
+
     to_samples = []
     from_samples = []
     for grp in from_grp.keys():
         f = from_grp[grp]
         t = to_grp[grp]
-        
+
         for i in f:
             for  j in t:
                 from_samples.append(i)
                 to_samples.append(j)
-    
+
     return(from_samples, to_samples)
 
 print(binning_df)
@@ -77,16 +77,18 @@ def get_contigs(sample, binning_df):
 
 
 include: "resources/snakefiles/qc.smk"
+include: "resources/snakefiles/assemble.smk"
 include: "resources/snakefiles/mapping.smk"
 
 rule map_all:
     input:
         expand("output/binning/mapped_reads/{from_sample}.{to_sample}.sorted.bam",
                from_sample=from_samples,
-               to_sample=to_samples)
+               to_sample=to_samples),
+
 
 # rule map_pair:
-#     input: 
+#     input:
 #         contigs = lambda wildcards: get_contigs(wildcards.to_sample, binning_df),
 #         reads = lambda wildcards: expand(rules.merge_units.output,
 #                                          sample=wildcards.from_sample,

@@ -24,7 +24,7 @@ rule index_contigs:
         config['threads']['bowtie2_build']
     shell:
         """
-        {params.bt2b_command} --threads {threads} {params.extra} \
+        {params.bt2b_command} --threads {threads} \
         {input.contigs} {params.indexbase} 2> {log} 1>&2
         """
 
@@ -46,9 +46,9 @@ rule map_reads:
     All piped output first written to localscratch to avoid tying up filesystem.
     """
     input:
-        reads = lambda wildcards: expand(rules.merge_units.output,
+        reads = lambda wildcards: expand("output/filtered/nonhost/{sample}.{read}.fastq.gz",
                                          sample=wildcards.from_sample,
-                                         read=['R1','R2']),
+                                         read=['1','2']),
         db=rules.index_contigs.output
     output:
         aln=temp("output/binning/mapped_reads/{from_sample}.{to_sample}.bam")
@@ -59,15 +59,15 @@ rule map_reads:
     conda:
         "../env/bowtie2.yaml"
     threads:
-        config['threads']['host_filter']
+        config['threads']['map_reads']
     benchmark:
-        "output/benchmarks/bowtie2/{from_sample}.{to_sample}.benchmark.txt"
+        "output/benchmarks/map_reads/{from_sample}.{to_sample}.benchmark.txt"
     log:
-        "output/logs/binning/{from_sample}.{to_sample}.bowtie.log"
+        "output/logs/map_reads/{from_sample}.{to_sample}.bowtie.log"
     shell:
         """
         # Map reads against reference genome
-        {params.bt2_command} -p {threads} -x {params.ref} \
+        {params.bt2_command} {params.extra} -p {threads} -x {params.ref} \
           -1 {input.reads[0]} -2 {input.reads[1]} \
           2> {log} | samtools view -bS - > {output.aln}
 
@@ -86,14 +86,11 @@ rule sort_bam:
     threads:
         config['threads']['sort_bam']
     benchmark:
-        "output/benchmarks/samtools/{from_sample}.{to_sample}.sorted.txt"
+        "output/benchmarks/sort_bam/{from_sample}.{to_sample}.sorted.txt"
     log:
-        "output/logs/binning/{from_sample}.{to_sample}.sort.log"
+        "output/logs/sort_bam/{from_sample}.{to_sample}.sort.log"
     shell:
         """
-        samtools sort -o {output.bam} {input.aln} 2> {log}
+        samtools sort -o {output.bam} -@ {threads} {input.aln} 2> {log}
 
         """
-
-
-
