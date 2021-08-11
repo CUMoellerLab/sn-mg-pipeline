@@ -65,7 +65,6 @@ rule sort_bam_bt2:
     Sorts a bam file.
     """
     input:
-        #aln="output/binning/bt2/mapped_reads/{from_sample}.{to_sample}.bam"
         aln=rules.map_reads_bt2.output.aln
     output:
         bam="output/binning/bt2/mapped_reads/{from_sample}.{to_sample}.sorted.bam"
@@ -114,6 +113,7 @@ rule map_reads_minimap2:
     output:
         aln=temp("output/binning/map_reads_minimap2/{from_sample}.{to_sample}.bam")
     params:
+        k=config['params']['minimap2']['k']
     conda:
         "../env/bowtie2.yaml"
     threads:
@@ -125,7 +125,7 @@ rule map_reads_minimap2:
     shell:
         """
         # Map reads against contigs
-        minimap2 -a {input.db} {input.reads} \
+        minimap2 -a {input.db} {input.reads} -t {threads} -K {params.k} \
         2> {log} | samtools view -bS - > {output.aln}
 
         """
@@ -135,7 +135,6 @@ rule sort_bam_minimap2:
     Sorts a bam file.
     """
     input:
-        #aln="output/binning/minimap2/mapped_reads/{from_sample}.{to_sample}.bam"
         aln=rules.map_reads_minimap2.output.aln
     output:
         bam="output/binning/minimap2/mapped_reads/{from_sample}.{to_sample}.sorted.bam"
