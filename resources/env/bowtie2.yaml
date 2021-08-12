@@ -8,3 +8,4 @@ dependencies:
   - pigz
   - entrez-direct
   - tbb=2020.2
+  - minimap2

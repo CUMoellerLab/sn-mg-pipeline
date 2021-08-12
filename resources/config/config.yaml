@@ -17,15 +17,22 @@ assemblers:
 biobakery:
   - metaphlan
 
+mappers:
+  - minimap2
+  - bowtie2
+
+binners:
+  - concoct
+  
 params:
   cutadapt:
     adapter: 'GATCGGAAGAGC'
     other: "--minimum-length 1 --nextseq-trim 20"
   multiqc: ''
-  bowtie2: 
+  bowtie2:
     bt2_command: 'bowtie2'
     bt2b_command: 'bowtie2-build'
-    extra: ''
+    extra: '--very-fast'
   sourmash:
     k: 31
     scaled: 1000
@@ -34,6 +41,12 @@ params:
     db_path: "resources/db/metaphlan"
     db_name: "mpa_v30_CHOCOPhlAn_201901"
     other: "--add_viruses --unknown_estimation"
+  concoct:
+    chunk_size: 10000
+    overlap_size: 0
+  minimap2:
+    x: 'sr'
+    k: 500000000
 
 threads:
   fastqc: 1
@@ -44,7 +57,11 @@ threads:
   megahit: 8
   metaphlan: 4
   bowtie2_build: 8
+  map_reads: 1
   sort_bam: 1
+  minimap2_index: 4
+  minimap2_map_reads: 4
+  concoct: 8
 
 mem_mb:
   spades: 256000

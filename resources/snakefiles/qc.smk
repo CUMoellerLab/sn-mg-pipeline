@@ -88,7 +88,7 @@ rule host_bowtie2_build:
                  ".rev.1.bt2",
                  ".rev.2.bt2")
     log:
-        "output/logs/bowtie2/bowtie2-build.log"
+        "output/logs/host_bowtie2_build/bowtie2-build.log"
     conda:
         "../env/bowtie2.yaml"
     params:
@@ -137,9 +137,9 @@ rule host_filter:
     threads:
         config['threads']['host_filter']
     benchmark:
-        "output/benchmarks/bowtie2/{sample}_benchmark.txt"
+        "output/benchmarks/host_filter/{sample}_benchmark.txt"
     log:
-        "output/logs/bowtie2/{sample}.bowtie.log"
+        "output/logs/host_filter/{sample}.bowtie.log"
     shell:
         """
         # Make temporary directories
