@@ -90,8 +90,8 @@ rule map_all:
 #        expand("output/binning/{binner}/bins/{from_sample}.{binner}.bins.fasta",
 #                binner=config['binners'],
 #                from_sample=from_samples),
-        expand("output/binning/{to_sample}_temp/contigs_10K.fa",
-               to_sample=to_samples)
+#        expand("output/binning/{to_sample}_temp/contigs_10K.fa",
+#               to_sample=to_samples)
 
 # rule map_pair:
 #     input:
