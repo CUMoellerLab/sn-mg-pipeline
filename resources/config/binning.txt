@@ -1,4 +1,4 @@
-Sample	Contigs	To_Groups	From_Groups
+Sample	Contigs	From_Groups	To_Groups
 amy	output/assemble/metaspades/amy.contigs.fasta	A	A
 bob	output/assemble/metaspades/bob.contigs.fasta	A	A
 carl	output/assemble/metaspades/carl.contigs.fasta	A

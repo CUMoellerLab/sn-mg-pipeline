@@ -17,6 +17,13 @@ assemblers:
 biobakery:
   - metaphlan
 
+mappers:
+  - minimap2
+  - bowtie2
+
+binners:
+  - concoct
+  
 params:
   cutadapt:
     adapter: 'GATCGGAAGAGC'
@@ -38,6 +45,7 @@ params:
     chunk_size: 10000
     overlap_size: 0
   minimap2:
+    x: 'sr'
     k: 500000000
 
 threads:
@@ -53,6 +61,7 @@ threads:
   sort_bam: 1
   minimap2_index: 4
   minimap2_map_reads: 4
+  concoct: 8
 
 mem_mb:
   spades: 256000

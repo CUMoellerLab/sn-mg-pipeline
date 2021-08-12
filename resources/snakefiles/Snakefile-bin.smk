@@ -79,16 +79,19 @@ def get_contigs(sample, binning_df):
 include: "resources/snakefiles/qc.smk"
 include: "resources/snakefiles/assemble.smk"
 include: "resources/snakefiles/mapping.smk"
+include: "resources/snakefiles/binning.smk"
 
 rule map_all:
     input:
-        expand("output/binning/bt2/mapped_reads/{from_sample}.{to_sample}.sorted.bam",
-               from_sample=from_samples,
-               to_sample=to_samples),
-        expand("output/binning/minimap2/mapped_reads/{from_sample}.{to_sample}.sorted.bam",
-               from_sample=from_samples,
-               to_sample=to_samples),
-
+        expand("output/binning/{mapper}/mapped_reads/{from_sample}.MappedTo.{to_sample}.sorted.bam",
+                mapper=config['mappers'],
+                from_sample=from_samples,
+                to_sample=to_samples),
+#        expand("output/binning/{binner}/bins/{from_sample}.{binner}.bins.fasta",
+#                binner=config['binners'],
+#                from_sample=from_samples),
+        expand("output/binning/{to_sample}_temp/contigs_10K.fa",
+               to_sample=to_samples)
 
 # rule map_pair:
 #     input:
