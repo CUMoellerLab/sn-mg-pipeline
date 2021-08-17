@@ -47,6 +47,10 @@ params:
   minimap2:
     x: 'sr'
     k: 500000000
+  prototypes:
+    min_seqs: 10000000
+    max_seqs: 100000000
+    n: 12
 
 threads:
   fastqc: 1
