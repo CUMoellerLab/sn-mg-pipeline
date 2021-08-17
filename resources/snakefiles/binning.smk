@@ -1,22 +1,24 @@
 
+def make_contig_groups()
+
 rule make_metabat2_depth_file:
     """
     Uses jgi_summarize_bam_contig_depths to generate a depth.txt file.
     """
     input:
         #bams=rules.sort_bam_bt2.output.bam
-        bams = lambda wildcards: expand("output/binning/{mapper}/sorted_reads/{from_sample}.MappedTo.{to_sample}.sorted.bam",
-                        mapper=config['mappers'],
-                        to_sample=wildcards.to_sample,
-                        from_sample=from_samples)
+        bams = lambda wildcards: expand("output/binning/{mapper}/mapped_reads/{read_sample}.MappedTo.{contig_sample}.sorted.bam",
+                        mapper=wildcards.mapper,
+                        contig_sample=wildcards.contig_sample,
+                        read_sample=contig_pairings[wildcards.contig_sample])
     output:
-        coverage_table="output/binning/metabat2/{from_sample}_coverage_table.txt"
+        coverage_table="output/binning/metabat2/{contig_sample}_coverage_table.txt"
     conda:
         "../env/binning.yaml"
     benchmark:
-        "output/benchmarks/metabat2/make_metabat2_depth_file/{from_sample}_benchmark.txt"
+        "output/benchmarks/metabat2/make_metabat2_depth_file/{contig_sample}_benchmark.txt"
     log:
-        "output/logs/metabat2/make_metabat2_depth_file/{from_sample}.log"
+        "output/logs/metabat2/make_metabat2_depth_file/{contig_sample}.log"
     shell:
         """
             jgi_summarize_bam_contig_depths --outputDepth {output.coverage_table} {input.bams}
@@ -27,19 +29,19 @@ rule run_metabat2:
     Runs metabat2
     """
     input:
-        contigs = lambda wildcards: get_contigs(wildcards.to_sample,
+        contigs = lambda wildcards: get_contigs(wildcards.contig_sample,
                                                 binning_df),
         depth=rules.make_metabat2_depth_file.output.depth
     output:
-        bins="output/binning/metabat2/bins/{to_sample}_bins",
+        bins="output/binning/metabat2/bins/{contig_sample}_bins",
     conda:
         "../env/binning.yaml"
     threads:
         config['threads']['metabat2']
     benchmark:
-        "output/benchmarks/metabat2/run_metabat2/{to_sample}_benchmark.txt"
+        "output/benchmarks/metabat2/run_metabat2/{contig_sample}_benchmark.txt"
     log:
-        "output/logs/metabat2/run_metabat2/{to_sample}.log"
+        "output/logs/metabat2/run_metabat2/{contig_sample}.log"
     shell:
         """
             metabat2 \
@@ -59,10 +61,10 @@ rule cut_up_fasta:
 
     """
     input:
-        contigs="output/assemble/metaspades/{to_sample}.contigs.fasta"
+        contigs="output/assemble/metaspades/{contig_sample}.contigs.fasta"
     output:
-        bed="output/binning/{to_sample}_contigs_10K.bed",
-        contigs_10K="output/binning/{to_sample}_contigs_10K.fa"
+        bed="output/binning/{contig_sample}_contigs_10K.bed",
+        contigs_10K="output/binning/{contig_sample}_contigs_10K.fa"
 
     conda:
         "../env/binning.yaml"
@@ -70,9 +72,9 @@ rule cut_up_fasta:
         chunk_size=config['params']['concoct']['chunk_size'],
         overlap_size=config['params']['concoct']['overlap_size']
     benchmark:
-        "output/benchmarks/concoct/cut_up_fasta/{to_sample}_benchmark.txt"
+        "output/benchmarks/concoct/cut_up_fasta/{contig_sample}_benchmark.txt"
     log:
-        "output/logs/concoct/cut_up_fasta/{to_sample}.log"
+        "output/logs/concoct/cut_up_fasta/{contig_sample}.log"
     shell:
         """
           python resources/scripts/cut_up_fasta.py {input.contigs} \
@@ -91,21 +93,21 @@ rule make_concoct_coverage_table:
 
     """
     input:
-        bed=expand("output/binning/{to_sample}_contigs_10K.bed", to_sample=to_samples),
-        bams = lambda wildcards: expand("output/binning/{mapper}/sorted_reads/{from_sample}.MappedTo.{to_sample}.sorted.bam",
+        bed=expand("output/binning/{contig_sample}_contigs_10K.bed", contig_sample=contig_samples),
+        bams = lambda wildcards: expand("output/binning/{mapper}/sorted_reads/{read_sample}.MappedTo.{contig_sample}.sorted.bam",
                         mapper=config['mappers'],
-                        to_sample=wildcards.to_sample,
-                        from_sample=from_samples)
+                        contig_sample=wildcards.contig_sample,
+                        read_sample=read_samples)
 
     output:
-#        temp_dir=directory("output/binning/{from_sample}_temp"),
-        coverage_table="output/binning/concoct/{from_sample}_coverage_table.txt"
+#        temp_dir=directory("output/binning/{read_sample}_temp"),
+        coverage_table="output/binning/concoct/{read_sample}_coverage_table.txt"
     conda:
         "../env/binning.yaml"
     benchmark:
-        "output/benchmarks/concoct/concoct_coverage_table/{from_sample}_benchmark.txt"
+        "output/benchmarks/concoct/concoct_coverage_table/{read_sample}_benchmark.txt"
     log:
-        "output/logs/concoct/concoct_coverage_table/{from_sample}.log"
+        "output/logs/concoct/concoct_coverage_table/{read_sample}.log"
     shell:
         """
           python resources/scripts/concoct_coverage_table.py {input.bed} \
@@ -118,19 +120,19 @@ rule make_maxbin2_coverage_table:
       Commands to generate a coverage table using `samtools coverage` for input into maxbin2
     """
     input:
-        bams = lambda wildcards: expand("output/binning/{mapper}/sorted_reads/{from_sample}.MappedTo.{to_sample}.sorted.bam",
+        bams = lambda wildcards: expand("output/binning/{mapper}/sorted_reads/{read_sample}.MappedTo.{contig_sample}.sorted.bam",
                         mapper=config['mappers'],
-                        to_sample=wildcards.to_sample,
-                        from_sample=from_samples)
+                        contig_sample=wildcards.contig_sample,
+                        read_sample=read_samples)
 
     output:
-        coverage_table="output/binning/maxbin2/{from_sample}_coverage_table.txt"
+        coverage_table="output/binning/maxbin2/{read_sample}_coverage_table.txt"
     conda:
         "../env/binning.yaml"
     benchmark:
-        "output/benchmarks/maxbin2/maxbin2_coverage_table/{from_sample}_benchmark.txt"
+        "output/benchmarks/maxbin2/maxbin2_coverage_table/{read_sample}_benchmark.txt"
     log:
-        "output/logs/maxbin2/maxbin2_coverage_table/{from_sample}.log"
+        "output/logs/maxbin2/maxbin2_coverage_table/{read_sample}.log"
     shell:
         """
           samtools view -h {input.bams} | \

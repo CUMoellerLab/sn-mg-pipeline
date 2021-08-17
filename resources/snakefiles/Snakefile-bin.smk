@@ -42,28 +42,34 @@ def parse_groups(group_series):
                 groups[grp].append(sample)
     return(groups)
 
-def make_pairings(from_grp, to_grp):
-    if from_grp.keys() != to_grp.keys():
+def make_pairings(read_grp, ctg_grp):
+    if read_grp.keys() != ctg_grp.keys():
         raise ValueError('Not all keys in both from and to groups!')
 
     pairings = []
-    for grp in from_grp.keys():
-        f = from_grp[grp]
-        t = to_grp[grp]
+    contig_pairings = {}
+    for grp in read_grp.keys():
+        r = read_grp[grp]
+        c = ctg_grp[grp]
 
-        for i in f:
-            for  j in t:
+        for i in r:
+            for  j in c:
                 pairings.append((i, j))
+                if j not in contig_pairings:
+                    contig_pairings[j] = [i]
+                else:
+                    contig_pairings[j].append(i)
 
-    return(pairings)
+    return(pairings, contig_pairings)
 
 contig_groups = parse_groups(binning_df['Contig_Groups'])
 read_groups = parse_groups(binning_df['Read_Groups'])
-pairings = make_pairings(read_groups, contig_groups)
+pairings, contig_pairings = make_pairings(read_groups, contig_groups)
 
 print('Contig samples: %s' % contig_groups)
 print('Read samples: %s' % read_groups)
-print('Pairigs: %s' % pairings)
+print('Pairings: %s' % pairings)
+print('Contig Pairings: %s' % contig_pairings)
 
 def get_contigs(sample, binning_df):
     return(binning_df.loc[sample, 'Contigs'])
@@ -72,6 +78,7 @@ def get_contigs(sample, binning_df):
 include: "resources/snakefiles/qc.smk"
 include: "resources/snakefiles/assemble.smk"
 include: "resources/snakefiles/mapping.smk"
+# include: "resources/snakefiles/binning.smk"
 
 rule map_all:
     input:
