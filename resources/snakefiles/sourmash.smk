@@ -187,7 +187,7 @@ rule run_prototypeSelection:
         dm = rules.sourmash_dm.output.dm,
         labels = rules.sourmash_dm.output.labels
     output:
-        file = "output/sourmash/selected_prototypes.txt"
+        file = "output/sourmash/selected_prototypes.yaml"
     params:
         min_seqs = config['params']['prototypes']['min_seqs'],
         max_seqs = config['params']['prototypes']['max_seqs']
