@@ -60,26 +60,27 @@ rule map_reads_bt2:
 
         """
 
-rule sort_bam_bt2:
+rule sort_index_bam:
     """
-    Sorts a bam file.
+    Sorts and indexes bam file.
     """
     input:
-        aln=rules.map_reads_bt2.output.aln
+        aln="output/binning/{mapper}/mapped_reads/{from_sample}.MappedTo.{to_sample}.bam"
     output:
-        bam="output/binning/bowtie2/mapped_reads/{from_sample}.MappedTo.{to_sample}.sorted.bam"
+        bam=temp("output/binning/{mapper}/mapped_reads/{from_sample}.MappedTo.{to_sample}.sorted.bam"),
+        bai=temp("output/binning/{mapper}/mapped_reads/{from_sample}.MappedTo.{to_sample}.sorted.bam.bai")
     conda:
         "../env/bowtie2.yaml"
     threads:
         config['threads']['sort_bam']
     benchmark:
-        "output/benchmarks/sort_bam/bowtie2/{from_sample}.MappedTo.{to_sample}.sorted.txt"
+        "output/benchmarks/sort_bam/{mapper}/{from_sample}.MappedTo.{to_sample}.sort.index.txt"
     log:
-        "output/logs/sort_bam/bowtie2/{from_sample}.MappedTo.{to_sample}.sort.log"
+        "output/logs/sort_bam/{mapper}/{from_sample}.MappedTo.{to_sample}.sort.index.log"
     shell:
         """
         samtools sort -o {output.bam} -@ {threads} {input.aln} 2> {log}
-
+        samtools index -@ {threads} {output.bam} 2>> {log}
         """
 
 
@@ -131,24 +132,3 @@ rule map_reads_minimap2:
 
         """
 
-rule sort_bam_minimap2:
-    """
-    Sorts a bam file.
-    """
-    input:
-        aln=rules.map_reads_minimap2.output.aln
-    output:
-        bam="output/binning/minimap2/mapped_reads/{from_sample}.MappedTo.{to_sample}.sorted.bam"
-    conda:
-        "../env/bowtie2.yaml"
-    threads:
-        config['threads']['sort_bam']
-    benchmark:
-        "output/benchmarks/sort_bam/minimap2/{from_sample}.MappedTo.{to_sample}.sorted.txt"
-    log:
-        "output/logs/sort_bam/minimap2/{from_sample}.MappedTo.{to_sample}.sorted.log"
-    shell:
-        """
-        samtools sort -o {output.bam} -@ {threads} {input.aln} 2> {log}
-
-        """

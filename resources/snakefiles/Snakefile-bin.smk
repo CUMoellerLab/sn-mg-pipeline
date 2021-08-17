@@ -46,31 +46,24 @@ def make_pairings(from_grp, to_grp):
     if from_grp.keys() != to_grp.keys():
         raise ValueError('Not all keys in both from and to groups!')
 
-    to_samples = []
-    from_samples = []
+    pairings = []
     for grp in from_grp.keys():
         f = from_grp[grp]
         t = to_grp[grp]
 
         for i in f:
             for  j in t:
-                from_samples.append(i)
-                to_samples.append(j)
+                pairings.append((i, j))
 
-    return(from_samples, to_samples)
+    return(pairings)
 
-print(binning_df)
+contig_groups = parse_groups(binning_df['Contig_Groups'])
+read_groups = parse_groups(binning_df['Read_Groups'])
+pairings = make_pairings(read_groups, contig_groups)
 
-to_groups = parse_groups(binning_df['To_Groups'])
-from_groups = parse_groups(binning_df['From_Groups'])
-from_samples, to_samples = make_pairings(from_groups, to_groups)
-
-print(to_groups)
-print(from_groups)
-print(from_samples)
-print(to_samples)
-
-
+print('Contig samples: %s' % contig_groups)
+print('Read samples: %s' % read_groups)
+print('Pairigs: %s' % pairings)
 
 def get_contigs(sample, binning_df):
     return(binning_df.loc[sample, 'Contigs'])
@@ -79,14 +72,12 @@ def get_contigs(sample, binning_df):
 include: "resources/snakefiles/qc.smk"
 include: "resources/snakefiles/assemble.smk"
 include: "resources/snakefiles/mapping.smk"
-include: "resources/snakefiles/binning.smk"
 
 rule map_all:
     input:
-        expand("output/binning/{mapper}/mapped_reads/{from_sample}.MappedTo.{to_sample}.sorted.bam",
+        expand("output/binning/{mapper}/mapped_reads/{pairing[0]}.MappedTo.{pairing[1]}.sorted.bam",
                 mapper=config['mappers'],
-                from_sample=from_samples,
-                to_sample=to_samples),
+                pairing=pairings)
 #        expand("output/binning/{binner}/bins/{from_sample}.{binner}.bins.fasta",
 #                binner=config['binners'],
 #                from_sample=from_samples),
