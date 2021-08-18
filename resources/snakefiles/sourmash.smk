@@ -1,9 +1,53 @@
 import numpy as np
 import pandas as pd
 import gzip
+from os import path
 from skbio.stats.distance import DistanceMatrix
 from yaml import dump
 
+def _validate_parameters(dm, num_prototypes, seedset=None):
+    '''Validate the paramters for each algorithm.
+    Parameters
+    ----------
+    dm: skbio.stats.distance.DistanceMatrix
+        Pairwise distances for all elements in the full set S.
+    num_prototypes: int
+        Number of prototypes to select for distance matrix.
+        Must be >= 2, since a single prototype is useless.
+        Must be smaller than the number of elements in the distance matrix,
+        otherwise no reduction is necessary.
+    seedset: iterable of str
+        A set of element IDs that are pre-selected as prototypes. Remaining
+        prototypes are then recruited with the prototype selection algorithm.
+        Warning: It will most likely violate the global objective function.
+    Raises
+    ------
+    ValueError
+        The number of prototypes to be found should be at least 2 and at most
+        one element smaller than elements in the distance matrix. Otherwise, a
+        ValueError is raised.
+        The IDs in the seed set must be unique, and must be present in the
+        distance matrix. Otherwise, a ValueError is raised.
+        The size of the seed set must be smaller than the number of prototypes
+        to be found. Otherwise, a ValueError is raised.
+    '''
+    if num_prototypes < 2:
+        raise ValueError("'num_prototypes' must be >= 2, since a single "
+                         "prototype is useless.")
+    if num_prototypes >= dm.shape[0]:
+        raise ValueError("'num_prototypes' must be smaller than the number of "
+                         "elements in the distance matrix, otherwise no "
+                         "reduction is necessary.")
+    if seedset is not None:
+        seeds = set(seedset)
+        if len(seeds) < len(seedset):
+            raise ValueError("There are duplicated IDs in 'seedset'.")
+        if not seeds < set(dm.ids):  # test if set A is a subset of set B
+            raise ValueError("'seedset' is not a subset of the element IDs in "
+                             "the distance matrix.")
+        if len(seeds) >= num_prototypes:
+            raise ValueError("Size of 'seedset' must be smaller than the "
+                             "number of prototypes to select.")
 
 def prototype_selection_destructive_maxdist(dm, num_prototypes, seedset=None):
     '''Heuristically select k prototypes for given distance matrix.
@@ -182,9 +226,9 @@ rule sourmash_plot:
         {input} 2> {log} 1>&2
         """
 
-rule run_prototypeSelection:
+rule prototype_selection:
     input:
-        dm = rules.sourmash_dm.output.dm,
+        dm = rules.sourmash_dm.output.csv,
         labels = rules.sourmash_dm.output.labels
     output:
         file = "output/sourmash/selected_prototypes.yaml"
@@ -192,10 +236,10 @@ rule run_prototypeSelection:
         min_seqs = config['params']['prototypes']['min_seqs'],
         max_seqs = config['params']['prototypes']['max_seqs']
     log:
-        "output/logs/sourmash/prototypeSelection.log"
+        "output/logs/sourmash/prototype_selection.log"
     threads: 1
     run:
-        df = pd.read_csv(input[0], header=0)
+        df = pd.read_csv(input[0], header=0, encoding= 'unicode_escape')
         df.index = df.columns
 
         # test file sizes
@@ -211,7 +255,7 @@ rule run_prototypeSelection:
 
         df_filt = df.loc[pf_seqs, pf_seqs]
 
-        labels = [basename(x) for x in pf_seqs]
+        labels = [os.path.basename(x) for x in pf_seqs]
 
         dm = DistanceMatrix(1 - df_filt.values)
 
@@ -233,5 +277,5 @@ rule run_prototypeSelection:
             logfile.write("Running the run_prototypeSelection.py script.\n"
                           "The imported distance matrix has {0} elements.\n"
                           "Selecting 2 to "
-                          "{1} prototypes.\n".format(df2.shape[1],
+                          "{1} prototypes.\n".format(df.shape[1],
                                                      len(labels) - 1))

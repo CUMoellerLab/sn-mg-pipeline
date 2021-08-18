@@ -74,33 +74,30 @@ print('Contig Pairings: %s' % contig_pairings)
 def get_contigs(sample, binning_df):
     return(binning_df.loc[sample, 'Contigs'])
 
+def get_bam_list(sample, mapper, contig_pairings):
+    fp = expand("output/binning/{mapper}/mapped_reads/{sample}_Mapped_To_{contig_pairings}.sorted.bam",
+    mapper = mapper,
+    sample = sample,
+    contig_pairings = contig_pairings[sample])
+    return(fp)
+print("get_bam_list:")
+print(get_bam_list("amy", "minimap2", contig_pairings))
 
 include: "resources/snakefiles/qc.smk"
 include: "resources/snakefiles/assemble.smk"
 include: "resources/snakefiles/mapping.smk"
-# include: "resources/snakefiles/binning.smk"
+include: "resources/snakefiles/binning.smk"
 
 rule map_all:
     input:
-        expand("output/binning/{mapper}/mapped_reads/{pairing[0]}.MappedTo.{pairing[1]}.sorted.bam",
+        expand("output/binning/{mapper}/mapped_reads/{pairing[0]}_Mapped_To_{pairing[1]}.sorted.bam",
                 mapper=config['mappers'],
-                pairing=pairings)
-#        expand("output/binning/{binner}/bins/{from_sample}.{binner}.bins.fasta",
-#                binner=config['binners'],
-#                from_sample=from_samples),
-#        expand("output/binning/{to_sample}_temp/contigs_10K.fa",
-#               to_sample=to_samples)
-
-# rule map_pair:
-#     input:
-#         contigs = lambda wildcards: get_contigs(wildcards.to_sample, binning_df),
-#         reads = lambda wildcards: expand(rules.merge_units.output,
-#                                          sample=wildcards.from_sample,
-#                                          read=['R1','R2'])
-#     output:
-#         "output/binning/mapped_reads/{from_sample}.{to_sample}.bam"
-#     run:
-#         contig_fp = get_contigs(wildcards.to_sample, binning_df)
-#         print("binning_df: \n%s" % binning_df)
-#         print("wildcard: %s" % wildcards.to_sample)
-#         print("contigs: %s" % contig_fp)
+                pairing=pairings),
+         expand("output/binning/metabat2/{contig_sample}_coverage_table.txt",
+                 contig_sample=contig_groups['A']),
+         expand("output/binning/maxbin2/{contig_sample}_coverage_table.txt",
+                 contig_sample=contig_groups['A']),
+         expand("output/binning/concoct/{contig_sample}_contigs_10K.fa",
+                 contig_sample=contig_groups['A']),
+#         expand("output/binning/concoct/{contig_sample}_coverage_table.txt",
+#                 contig_sample=contig_groups['A'])

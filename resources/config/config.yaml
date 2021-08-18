@@ -12,18 +12,20 @@ reads:
 
 assemblers:
   - metaspades
-  - megahit
+#  - megahit
 
 biobakery:
   - metaphlan
 
 mappers:
   - minimap2
-  - bowtie2
+#  - bowtie2
 
 binners:
   - concoct
-  
+  - metabat2
+  - maxbin2
+
 params:
   cutadapt:
     adapter: 'GATCGGAAGAGC'
@@ -48,7 +50,7 @@ params:
     x: 'sr'
     k: 500000000
   prototypes:
-    min_seqs: 10000000
+    min_seqs: 50 # recommended: 10000000
     max_seqs: 100000000
     n: 12
 

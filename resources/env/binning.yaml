@@ -1,0 +1,8 @@
+channels:
+  - defaults
+  - bioconda
+  - conda-forge
+dependencies:
+  - samtools=1.10
+  - metabat2
+  - concoct

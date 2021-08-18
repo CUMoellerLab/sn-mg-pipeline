@@ -21,8 +21,8 @@ rule cutadapt_pe:
                                    wildcards.unit,
                                    'R2')
     output:
-        fastq1="output/trimmed/{sample}.{unit}.R1.fastq.gz",
-        fastq2="output/trimmed/{sample}.{unit}.R2.fastq.gz",
+        fastq1=temp("output/trimmed/{sample}.{unit}.R1.fastq.gz"),
+        fastq2=temp("output/trimmed/{sample}.{unit}.R2.fastq.gz"),
         qc="output/logs/cutadapt/{sample}.{unit}.qc.txt"
     params:
         "-a {} {}".format(config["params"]["cutadapt"]['adapter'],
