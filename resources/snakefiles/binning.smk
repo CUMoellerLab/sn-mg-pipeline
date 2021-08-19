@@ -10,7 +10,7 @@ rule make_metabat2_coverage_table:
 #                        contig_sample=get_contig_list(read_sample, contig_pairings))
 #        bams = lambda wildcards: expand(get_bam_list({sample}, config['mappers'], contig_pairings),
 #                        sample=wildcards.read_sample)
-        bams = get_bam_list({contig_sample}, config['mappers'], contig_pairings)
+        bams = get_bam_list(wildcards.sample, config['mappers'], contig_pairings)
     output:
         coverage_table="output/binning/metabat2/{contig_sample}_coverage_table.txt"
     conda:
