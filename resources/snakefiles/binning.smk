@@ -4,13 +4,7 @@ rule make_metabat2_coverage_table:
     Uses jgi_summarize_bam_contig_depths to generate a depth.txt file.
     """
     input:
-#        bams = lambda wildcards: expand("output/binning/{mapper}/mapped_reads/{read_sample}_Mapped_To_{contig_sample}.sorted.bam",
-#                        mapper=config['mappers'],
-#                        read_sample=wildcards.read_sample,
-#                        contig_sample=get_contig_list(read_sample, contig_pairings))
-#        bams = lambda wildcards: expand(get_bam_list({sample}, config['mappers'], contig_pairings),
-#                        sample=wildcards.read_sample)
-        bams = get_bam_list(wildcards.sample, config['mappers'], contig_pairings)
+        bams = lambda wildcards: get_bam_list(wildcards.contig_sample, config['mappers'], contig_pairings)
     output:
         coverage_table="output/binning/metabat2/{contig_sample}_coverage_table.txt"
     conda:
@@ -25,24 +19,43 @@ rule make_metabat2_coverage_table:
         """
 
 
+rule make_maxbin2_abund_list:
+    """
+       Commands to generate a coverage table using `samtools coverage` for input into maxbin2
+    """
+    input:
+        lambda wildcards: expand("output/binning/{mapper}/maxbin2/{read_sample}_Mapped_To_{contig_sample}.txt",
+        mapper = wildcards.mapper,
+        contig_sample = wildcards.contig_sample,
+        read_sample = contig_pairings[wildcards.contig_sample])
+    output:
+        abund_list = "output/binning/{mapper}/maxbin2/{contig_sample}_abund_list.txt"
+    benchmark:
+        "output/benchmarks/{mapper}/maxbin2/make_maxbin2_coverage_table/{contig_sample}_abund_list_benchmark.txt"
+    log:
+        "output/logs/{mapper}/maxbin2/make_maxbin2_coverage_table/{contig_sample}_abund_listß.log"
+    run:
+        with open(output.abund_list, 'w') as f:
+            for fp in input:
+                f.write('%s\n' % fp)
+
+
+
 
 rule make_maxbin2_coverage_table:
     """
        Commands to generate a coverage table using `samtools coverage` for input into maxbin2
     """
     input:
-        bams = lambda wildcards: expand("output/binning/{mapper}/mapped_reads/{read_sample}_Mapped_To_{contig_sample}.sorted.bam",
-                        mapper=config['mappers'],
-                        read_sample=read_groups['A'],
-                        contig_sample=contig_groups['A'])
+        bams="output/binning/{mapper}/mapped_reads/{read_sample}_Mapped_To_{contig_sample, [A-Za-z0-9]+}.sorted.bam"
     output:
-        coverage_table="output/binning/maxbin2/{contig_sample}_coverage_table.txt"
+        coverage_table="output/binning/{mapper}/maxbin2/{read_sample}_Mapped_To_{contig_sample, [A-Za-z0-9]+}.txt"
     conda:
         "../env/binning.yaml"
     benchmark:
-        "output/benchmarks/maxbin2/make_maxbin2_coverage_table/{contig_sample}_benchmark.txt"
+        "output/benchmarks/{mapper}/maxbin2/make_maxbin2_coverage_table/{read_sample}_Mapped_To_{contig_sample, [A-Za-z0-9]+}_benchmark.txt"
     log:
-        "output/logs/maxbin2/make_maxbin2_coverage_table/{contig_sample}.log"
+        "output/logs/{mapper}/maxbin2/make_maxbin2_coverage_table/{read_sample}_Mapped_To_{contig_sample, [A-Za-z0-9]+}.log"
     shell:
         """
           samtools coverage {input.bams} | \

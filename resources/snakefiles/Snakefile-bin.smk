@@ -99,5 +99,6 @@ rule map_all:
                  contig_sample=contig_groups['A']),
          expand("output/binning/concoct/{contig_sample}_contigs_10K.fa",
                  contig_sample=contig_groups['A']),
+            
 #         expand("output/binning/concoct/{contig_sample}_coverage_table.txt",
 #                 contig_sample=contig_groups['A'])
