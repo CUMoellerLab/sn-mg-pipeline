@@ -53,6 +53,11 @@ params:
     min_seqs: 50 # recommended: 10000000
     max_seqs: 100000000
     n: 12
+  metabat2:
+    extra: '--verbose'
+  maxbin2:
+    prob_threshold: 0.8
+    extra: '-verbose'
 
 threads:
   fastqc: 1
@@ -68,6 +73,8 @@ threads:
   minimap2_index: 4
   minimap2_map_reads: 4
   concoct: 8
+  run_metabat2: 4
+  run_maxbin2: 4
 
 mem_mb:
   spades: 256000
