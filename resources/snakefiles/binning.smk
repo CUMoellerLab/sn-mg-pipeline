@@ -61,13 +61,13 @@ rule make_maxbin2_coverage_table:
     input:
         bams="output/binning/{mapper}/mapped_reads/{read_sample}_Mapped_To_{contig_sample}.sorted.bam"
     output:
-        coverage_table="output/binning/maxbin2/{mapper}/{read_sample}_Mapped_To_{contig_sample, [A-Za-z0-9]+}_coverage.txt"
+        coverage_table="output/binning/maxbin2/{mapper}/{read_sample}_Mapped_To_{contig_sample, [A-Za-z0-9_]+}_coverage.txt"
     conda:
         "../env/binning.yaml"
     benchmark:
-        "output/benchmarks/maxbin2/{mapper}/make_maxbin2_coverage_table/{read_sample}_Mapped_To_{contig_sample, [A-Za-z0-9]+}_benchmark.txt"
+        "output/benchmarks/maxbin2/{mapper}/make_maxbin2_coverage_table/{read_sample}_Mapped_To_{contig_sample, [A-Za-z0-9_]+}_benchmark.txt"
     log:
-        "output/logs/maxbin2/{mapper}/make_maxbin2_coverage_table/{read_sample}_Mapped_To_{contig_sample, [A-Za-z0-9]+}.log"
+        "output/logs/maxbin2/{mapper}/make_maxbin2_coverage_table/{read_sample}_Mapped_To_{contig_sample, [A-Za-z0-9_]+}.log"
     shell:
         """
           samtools coverage {input.bams} | \
@@ -145,7 +145,7 @@ rule cut_up_fasta:
         bed="output/binning/concoct/{mapper}/{contig_sample}_contigs_10K.bed",
         contigs_10K="output/binning/concoct/{mapper}/{contig_sample}_contigs_10K.fa"
     conda:
-        "../env/concoct_osx.yaml"
+        "../env/concoct_linux.yaml"
     params:
         chunk_size=config['params']['concoct']['chunk_size'],
         overlap_size=config['params']['concoct']['overlap_size']
@@ -175,7 +175,7 @@ rule make_concoct_coverage_table:
     output:
         coverage_table="output/binning/concoct/{mapper}/{contig_sample}_coverage_table.txt"
     conda:
-        "../env/concoct_osx.yaml"
+        "../env/concoct_linux.yaml"
     benchmark:
         "output/benchmarks/concoct/{mapper}/make_concoct_coverage_table/{contig_sample}_benchmark.txt"
     log:
