@@ -49,7 +49,7 @@ rule run_metabat2:
         """
             metabat2 {params.extra} --numThreads {threads} \
             --inFile {input.contigs} \
-            --outFile {params.bins} \
+            --outFile {params.basename} \
             --abdFile {input.coverage_table} \
             2> {log}
             touch {output.bins}
