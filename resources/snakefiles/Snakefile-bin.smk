@@ -94,7 +94,7 @@ rule map_all:
         # expand("output/binning/metabat2/{mapper}/{contig_sample}_coverage_table.txt",
         #         mapper=config['mappers'],
         #         contig_sample=contig_groups['A']),
-        expand("output/binning/metabat2/{mapper}/run_metabat2/{contig_sample}/{contig_sample}_bins",
+        expand("output/binning/metabat2/{mapper}/run_metabat2/{contig_sample}/{contig_sample}_bins.1.fa",
                 mapper=config['mappers'],
                 contig_sample=contig_groups['A'])
         # expand("output/binning/maxbin2/{mapper}/{pairing[0]}_Mapped_To_{pairing[1]}_coverage.txt",
