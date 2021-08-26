@@ -92,7 +92,6 @@ rule map_reads_minimap2:
     params:
         x=config['params']['minimap2']['x'],
         k=config['params']['minimap2']['k']
-    priority: 1
     conda:
         "../env/bowtie2.yaml"
     threads:
@@ -118,7 +117,6 @@ rule sort_index_bam:
     output:
         bam="output/binning/{mapper}/mapped_reads/{read_sample}_Mapped_To_{contig_sample, [A-Za-z0-9_]+}.sorted.bam",
         bai="output/binning/{mapper}/mapped_reads/{read_sample}_Mapped_To_{contig_sample, [A-Za-z0-9_]+}.sorted.bam.bai"
-    priority: 1
     conda:
         "../env/bowtie2.yaml"
     threads:

@@ -3,5 +3,5 @@ channels:
   - bioconda
   - conda-forge
 dependencies:
-  - python=3.0
-  - concoct=1.1.0
+  - python=3
+  - concoct=1
