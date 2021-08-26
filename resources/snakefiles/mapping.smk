@@ -88,7 +88,7 @@ rule map_reads_minimap2:
                                          read=['1','2']),
         db=rules.index_contigs_minimap2.output.index
     output:
-        aln="output/binning/minimap2/mapped_reads/{read_sample}_Mapped_To_{contig_sample, [A-Za-z0-9_]+}.bam"
+        aln=temp("output/binning/minimap2/mapped_reads/{read_sample}_Mapped_To_{contig_sample, [A-Za-z0-9_]+}.bam")
     params:
         x=config['params']['minimap2']['x'],
         k=config['params']['minimap2']['k']
