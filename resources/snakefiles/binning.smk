@@ -35,7 +35,7 @@ rule run_metabat2:
     output:
         bins = directory("output/binning/metabat2/{mapper}/run_metabat2/{contig_sample}/")
     params:
-        basename = "output/binning/metabat2/{mapper}/run_metabat2/{contig_sample}_bins",
+        basename = "output/binning/metabat2/{mapper}/run_metabat2/{contig_sample}/{contig_sample}_bins",
         extra = config['params']['metabat2']['extra'],  # optional parameters
     threads:
         config['threads']['run_metabat2']
