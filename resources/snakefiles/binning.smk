@@ -33,9 +33,9 @@ rule run_metabat2:
                 mapper=config['mappers'],
                 contig_sample=wildcards.contig_sample)
     output:
-        bins = directory("output/binning/metabat2/{mapper}/run_metabat2/{contig_sample}/")
+        bins = directory("output/binning/metabat2/{mapper}/run_metabat2/{contig_sample, [A-Za-z0-9_]+}/")
     params:
-        basename = "output/binning/metabat2/{mapper}/run_metabat2/{contig_sample}/{contig_sample}_bins",
+        basename = "output/binning/metabat2/{mapper}/run_metabat2/{contig_sample, [A-Za-z0-9_]+}/{contig_sample, [A-Za-z0-9_]+}_bins",
         extra = config['params']['metabat2']['extra'],  # optional parameters
     threads:
         config['threads']['run_metabat2']
