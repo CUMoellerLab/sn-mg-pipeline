@@ -33,8 +33,9 @@ rule run_metabat2:
                 mapper=config['mappers'],
                 contig_sample=wildcards.contig_sample)
     output:
-        bins = directory("output/binning/metabat2/{mapper}/run_metabat2/{contig_sample}_bins/")
+        bins = directory("output/binning/metabat2/{mapper}/run_metabat2/")
     params:
+        basename = "output/binning/metabat2/{mapper}/run_metabat2/{contig_sample}_bins"
         extra = config['params']['metabat2']['extra'],  # optional parameters
     threads:
         config['threads']['run_metabat2']
@@ -48,9 +49,10 @@ rule run_metabat2:
         """
             metabat2 {params.extra} --numThreads {threads} \
             --inFile {input.contigs} \
-            --outFile {output.bins} \
+            --outFile {params.bins} \
             --abdFile {input.coverage_table} \
             2> {log}
+            touch {output.bins}
         """
 
 
