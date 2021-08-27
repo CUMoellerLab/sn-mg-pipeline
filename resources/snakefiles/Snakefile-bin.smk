@@ -74,12 +74,12 @@ print('Contig Pairings: %s' % contig_pairings)
 def get_contigs(sample, binning_df):
     return(binning_df.loc[sample, 'Contigs'])
 
-def get_bam_list(sample, mapper, contig_pairings):
-    fp = expand("output/binning/{mapper}/mapped_reads/{contig_pairings}_Mapped_To_{sample}.sorted.bam",
-    mapper = mapper,
-    sample = sample,
-    contig_pairings = contig_pairings[sample])
-    return(fp)
+# def get_bam_list(sample, mapper, contig_pairings):
+#     fp = expand("output/binning/{mapper}/mapped_reads/{contig_pairings}_Mapped_To_{sample}.sorted.bam",
+#     mapper = mapper,
+#     sample = sample,
+#     contig_pairings = contig_pairings[sample])
+#     return(fp)
 
 include: "resources/snakefiles/qc.smk"
 include: "resources/snakefiles/assemble.smk"

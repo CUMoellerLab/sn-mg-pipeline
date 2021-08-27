@@ -1,10 +1,17 @@
 
+def get_bam_list(sample, mapper, contig_pairings):
+    fps = expand("output/binning/{mapper}/mapped_reads/{contig_pairings}_Mapped_To_{sample}.sorted.bam",
+    mapper = mapper,
+    sample = sample,
+    contig_pairings = contig_pairings[sample])
+    return(fps)
+
 rule make_metabat2_coverage_table:
     """
     Uses jgi_summarize_bam_contig_depths to generate a depth.txt file.
     """
     input:
-        bams = lambda wildcards: get_bam_list(wildcards.contig_sample, config['mappers'], contig_pairings)
+        bams = lambda wildcards: get_bam_list(wildcards.contig_sample, wildcards.mapper, contig_pairings)
     output:
         coverage_table="output/binning/metabat2/{mapper}/{contig_sample}_coverage_table.txt"
     conda:
@@ -15,6 +22,7 @@ rule make_metabat2_coverage_table:
         "output/logs/metabat2/{mapper}/make_metabat2_depth_file/{contig_sample}.log"
     shell:
         """
+            echo {input.bams}
             jgi_summarize_bam_contig_depths --outputDepth {output.coverage_table} {input.bams} 2> {log}
         """
 
