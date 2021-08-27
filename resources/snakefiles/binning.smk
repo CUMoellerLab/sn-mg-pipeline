@@ -41,9 +41,9 @@ rule run_metabat2:
                 mapper=config['mappers'],
                 contig_sample=wildcards.contig_sample)
     output:
-        bins = directory("output/binning/metabat2/{mapper}/run_metabat2/{contig_sample, [A-Za-z0-9_]+}/")
+        bins = directory("output/binning/metabat2/{mapper}/run_metabat2/{contig_sample}/")
     params:
-        basename = "output/binning/metabat2/{mapper}/run_metabat2/{contig_sample, [A-Za-z0-9_]+}/{contig_sample, [A-Za-z0-9_]+}_bin",
+        basename = "output/binning/metabat2/{mapper}/run_metabat2/{contig_sample}/{contig_sample}_bin",
         extra = config['params']['metabat2']['extra'],  # optional parameters
     threads:
         config['threads']['run_metabat2']
@@ -71,13 +71,13 @@ rule run_metabat2:
 #     input:
 #         bams="output/binning/{mapper}/mapped_reads/{read_sample}_Mapped_To_{contig_sample}.sorted.bam"
 #     output:
-#         coverage_table="output/binning/maxbin2/{mapper}/{read_sample}_Mapped_To_{contig_sample, [A-Za-z0-9_]+}_coverage.txt"
+#         coverage_table="output/binning/maxbin2/{mapper}/{read_sample}_Mapped_To_{contig_sample}_coverage.txt"
 #     conda:
 #         "../env/binning.yaml"
 #     benchmark:
-#         "output/benchmarks/maxbin2/{mapper}/make_maxbin2_coverage_table/{read_sample}_Mapped_To_{contig_sample, [A-Za-z0-9_]+}_benchmark.txt"
+#         "output/benchmarks/maxbin2/{mapper}/make_maxbin2_coverage_table/{read_sample}_Mapped_To_{contig_sample}_benchmark.txt"
 #     log:
-#         "output/logs/maxbin2/{mapper}/make_maxbin2_coverage_table/{read_sample}_Mapped_To_{contig_sample, [A-Za-z0-9_]+}.log"
+#         "output/logs/maxbin2/{mapper}/make_maxbin2_coverage_table/{read_sample}_Mapped_To_{contig_sample}.log"
 #     shell:
 #         """
 #           samtools coverage {input.bams} | \

@@ -88,7 +88,7 @@ rule map_reads_minimap2:
                                          read=['1','2']),
         db=rules.index_contigs_minimap2.output.index
     output:
-        aln=temp("output/binning/minimap2/mapped_reads/{read_sample}_Mapped_To_{contig_sample, [A-Za-z0-9_]+}.bam")
+        aln=temp("output/binning/minimap2/mapped_reads/{read_sample}_Mapped_To_{contig_sample}.bam")
     params:
         x=config['params']['minimap2']['x'],
         k=config['params']['minimap2']['k']
@@ -115,16 +115,16 @@ rule sort_index_bam:
     input:
         aln="output/binning/{mapper}/mapped_reads/{read_sample}_Mapped_To_{contig_sample}.bam"
     output:
-        bam="output/binning/{mapper}/mapped_reads/{read_sample}_Mapped_To_{contig_sample, [A-Za-z0-9_]+}.sorted.bam",
-        bai="output/binning/{mapper}/mapped_reads/{read_sample}_Mapped_To_{contig_sample, [A-Za-z0-9_]+}.sorted.bam.bai"
+        bam="output/binning/{mapper}/sorted_reads/{read_sample}_Mapped_To_{contig_sample}.sorted.bam",
+        bai="output/binning/{mapper}/sorted_reads/{read_sample}_Mapped_To_{contig_sample}.sorted.bam.bai"
     conda:
         "../env/bowtie2.yaml"
     threads:
         config['threads']['sort_bam']
     benchmark:
-        "output/benchmarks/sort_bam/{mapper}/{read_sample}_Mapped_To_{contig_sample, [A-Za-z0-9_]+}.sorted.txt"
+        "output/benchmarks/sort_bam/{mapper}/{read_sample}_Mapped_To_{contig_sample}.sorted.txt"
     log:
-        "output/logs/sort_bam/{mapper}/{read_sample}_Mapped_To_{contig_sample, [A-Za-z0-9_]+}.sorted.log"
+        "output/logs/sort_bam/{mapper}/{read_sample}_Mapped_To_{contig_sample}.sorted.log"
     shell:
         """
         samtools sort -o {output.bam} -@ {threads} {input.aln} 2> {log}
