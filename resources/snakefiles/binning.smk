@@ -1,6 +1,6 @@
 
 def get_bam_list(sample, mapper, contig_pairings):
-    fps = expand("output/binning/{mapper}/mapped_reads/{contig_pairings}_Mapped_To_{sample}.sorted.bam",
+    fps = expand("output/binning/{mapper}/sorted_bams/{contig_pairings}_Mapped_To_{sample}.sorted.bam",
     mapper = mapper,
     sample = sample,
     contig_pairings = contig_pairings[sample])
@@ -13,13 +13,13 @@ rule make_metabat2_coverage_table:
     input:
         bams = lambda wildcards: get_bam_list(wildcards.contig_sample, wildcards.mapper, contig_pairings)
     output:
-        coverage_table="output/binning/metabat2/{mapper}/{contig_sample}_coverage_table.txt"
+        coverage_table="output/binning/metabat2/{mapper}/coverage_tables/{contig_sample}_coverage_table.txt"
     conda:
         "../env/binning.yaml"
     benchmark:
-        "output/benchmarks/metabat2/{mapper}/make_metabat2_depth_file/{contig_sample}_benchmark.txt"
+        "output/benchmarks/metabat2/{mapper}/make_metabat2_coverage_table/{contig_sample}_benchmark.txt"
     log:
-        "output/logs/metabat2/{mapper}/make_metabat2_depth_file/{contig_sample}.log"
+        "output/logs/metabat2/{mapper}/make_metabat2_coverage_table/{contig_sample}.log"
     shell:
         """
             echo {input.bams}
@@ -37,7 +37,7 @@ rule run_metabat2:
         contigs = lambda wildcards: expand("output/assemble/{assembler}/{contig_sample}.contigs.fasta",
                 assembler = config['assemblers'],
                 contig_sample = wildcards.contig_sample),
-        coverage_table = lambda wildcards: expand("output/binning/metabat2/{mapper}/{contig_sample}_coverage_table.txt",
+        coverage_table = lambda wildcards: expand("output/binning/metabat2/{mapper}/coverage_tables/{contig_sample}_coverage_table.txt",
                 mapper=config['mappers'],
                 contig_sample=wildcards.contig_sample)
     output:
@@ -69,7 +69,7 @@ rule run_metabat2:
 #        Commands to generate a coverage table using `samtools coverage` for input into maxbin2
 #     """
 #     input:
-#         bams="output/binning/{mapper}/mapped_reads/{read_sample}_Mapped_To_{contig_sample}.sorted.bam"
+#         bams="output/binning/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.sorted.bam"
 #     output:
 #         coverage_table="output/binning/maxbin2/{mapper}/{read_sample}_Mapped_To_{contig_sample}_coverage.txt"
 #     conda:

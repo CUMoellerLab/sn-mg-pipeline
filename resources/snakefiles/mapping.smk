@@ -62,8 +62,9 @@ rule map_reads_bt2:
 
 rule index_contigs_minimap2:
     input:
-        contigs = expand("output/assemble/metaspades/{sample}.contigs.fasta",
-                sample=samples)
+        # contigs = expand("output/assemble/metaspades/{sample}.contigs.fasta",
+        #         sample=samples)
+        contigs = "output/assemble/metaspades/{contig_sample}.contigs.fasta"
     output:
         index = temp("output/binning/minimap2/indexed_contigs/{contig_sample}.mmi")
     log:
@@ -115,8 +116,8 @@ rule sort_index_bam:
     input:
         aln="output/binning/{mapper}/mapped_reads/{read_sample}_Mapped_To_{contig_sample}.bam"
     output:
-        bam="output/binning/{mapper}/sorted_reads/{read_sample}_Mapped_To_{contig_sample}.sorted.bam",
-        bai="output/binning/{mapper}/sorted_reads/{read_sample}_Mapped_To_{contig_sample}.sorted.bam.bai"
+        bam="output/binning/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.sorted.bam",
+        bai="output/binning/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.sorted.bam.bai"
     conda:
         "../env/bowtie2.yaml"
     threads:

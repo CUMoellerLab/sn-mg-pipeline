@@ -66,15 +66,15 @@ threads:
   host_filter: 4
   spades: 8
   megahit: 8
-  metaphlan: 4
+  metaphlan: 8
   bowtie2_build: 8
-  map_reads: 1
-  sort_bam: 1
-  minimap2_index: 4
-  minimap2_map_reads: 4
+  map_reads: 8
+  sort_bam: 8
+  minimap2_index: 8
+  minimap2_map_reads: 8
   concoct: 8
-  run_metabat2: 4
-  run_maxbin2: 4
+  run_metabat2: 8
+  run_maxbin2: 8
 
 mem_mb:
   spades: 256000
