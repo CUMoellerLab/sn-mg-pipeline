@@ -44,7 +44,8 @@ rule run_metabat2:
         bins = directory("output/binning/metabat2/{mapper}/run_metabat2/{contig_sample}/")
     params:
         basename = "output/binning/metabat2/{mapper}/run_metabat2/{contig_sample}/{contig_sample}_bin",
-        extra = config['params']['metabat2']['extra'],  # optional parameters
+        minContig = config['params']['metabat2']['minContig']
+        extra = config['params']['metabat2']['extra']  # optional parameters
     threads:
         config['threads']['run_metabat2']
     conda:
@@ -59,6 +60,7 @@ rule run_metabat2:
             --inFile {input.contigs} \
             --outFile {params.basename} \
             --abdFile {input.coverage_table} \
+            --minContig {params.minContig} \
             2> {log}
             touch {output.bins}
         """
