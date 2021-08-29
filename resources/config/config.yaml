@@ -55,6 +55,7 @@ params:
     n: 12
   metabat2:
     extra: '--verbose'
+    minContig: 1500 # Minimum size of a contig for binning (should be >=1500).
   maxbin2:
     prob_threshold: 0.8
     extra: '-verbose'
