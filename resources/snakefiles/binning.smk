@@ -61,7 +61,7 @@ rule run_metabat2:
             --outFile {params.basename} \
             --abdFile {input.coverage_table} \
             --minContig {params.minContig} \
-            2> {log}
+            2> {log} 1>&2
             touch {output.bins}
         """
 
@@ -122,7 +122,7 @@ rule run_maxbin2:
                 mapper=config['mappers'],
                 contig_sample=wildcards.contig_sample)
     output:
-        bins = "output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}_bins"
+        bins = "output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}"
         #bins = directory("output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/")
     params:
         #basename = "output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/{contig_sample}_bin",
