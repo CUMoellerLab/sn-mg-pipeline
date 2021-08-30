@@ -100,9 +100,12 @@ rule map_all:
         # expand("output/binning/maxbin2/{mapper}/coverage_tables/{pairing[0]}_Mapped_To_{pairing[1]}_coverage.txt",
         #         mapper=config['mappers'],
         #         pairing=pairings),
-        expand("output/binning/maxbin2/{mapper}/abundance_lists/{contig_sample}_abund_list.txt",
+        # expand("output/binning/maxbin2/{mapper}/abundance_lists/{contig_sample}_abund_list.txt",
+        #         mapper=config['mappers'],
+        #         contig_sample=contig_groups['A'])
+        expand("output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/",
                 mapper=config['mappers'],
-                contig_sample=contig_groups['A'])
+                contig_sample=contig_groups['A']),
         # expand("output/binning/maxbin2/{mapper}/{contig_sample}_abund_list.txt",
         #         mapper=config['mappers'],
         #         contig_sample=contig_groups['A']),
