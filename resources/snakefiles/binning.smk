@@ -87,27 +87,27 @@ rule make_maxbin2_coverage_table:
           sort -k1 | \
           cut -f1,6 > {output.coverage_table}
        """
-#
-# rule make_maxbin2_abund_list:
-#     """
-#        Combines the file paths from 'make_maxbin2_coverage_table' for MaxBin2
-#     """
-#     input:
-#         lambda wildcards: expand("output/binning/maxbin2/{mapper}/{read_sample}_Mapped_To_{contig_sample}_coverage.txt",
-#                 mapper = wildcards.mapper,
-#                 contig_sample = wildcards.contig_sample,
-#                 read_sample = contig_pairings[wildcards.contig_sample])
-#     output:
-#         abund_list = "output/binning/maxbin2/{mapper}/{contig_sample}_abund_list.txt"
-#     benchmark:
-#         "output/benchmarks/maxbin2/{mapper}/make_maxbin2_abund_list/{contig_sample}_abund_list_benchmark.txt"
-#     log:
-#         "output/logs/maxbin2/{mapper}/make_maxbin2_abund_list/{contig_sample}_abund_list.log"
-#     run:
-#         with open(output.abund_list, 'w') as f:
-#             for fp in input:
-#                 f.write('%s\n' % fp)
-#
+
+rule make_maxbin2_abund_list:
+    """
+       Combines the file paths from 'make_maxbin2_coverage_table' for MaxBin2
+    """
+    input:
+        lambda wildcards: expand("output/binning/maxbin2/{mapper}/coverage_tables/{read_sample}_Mapped_To_{contig_sample}_coverage.txt",
+                mapper = wildcards.mapper,
+                contig_sample = wildcards.contig_sample,
+                read_sample = contig_pairings[wildcards.contig_sample])
+    output:
+        abund_list = "output/binning/maxbin2/{mapper}/abundance_lists/{contig_sample}_abund_list.txt"
+    benchmark:
+        "output/benchmarks/maxbin2/{mapper}/make_maxbin2_abund_list/{contig_sample}_abund_list_benchmark.txt"
+    log:
+        "output/logs/maxbin2/{mapper}/make_maxbin2_abund_list/{contig_sample}_abund_list.log"
+    run:
+        with open(output.abund_list, 'w') as f:
+            for fp in input:
+                f.write('%s\n' % fp)
+
 #
 # rule run_maxbin2:
 #     """
