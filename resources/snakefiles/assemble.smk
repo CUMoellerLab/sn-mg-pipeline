@@ -9,7 +9,7 @@ rule metaspades_assembly:
         fastq2=rules.host_filter.output.nonhost_R2
     output:
         contigs="output/assemble/metaspades/{sample}.contigs.fasta",
-        temp_dir=temp(directory("output/{sample}_temp"))
+        temp_dir=temp(directory("output/{sample}_temp/"))
 
     conda:
         "../env/assemble.yaml"
