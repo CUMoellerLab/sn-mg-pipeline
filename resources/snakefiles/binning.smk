@@ -122,10 +122,10 @@ rule run_maxbin2:
                 mapper=config['mappers'],
                 contig_sample=wildcards.contig_sample)
     output:
-        # bins = "output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}_bins"
-        bins = directory("output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/")
+        bins = "output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}_bins"
+        #bins = directory("output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/")
     params:
-        basename = "output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/{contig_sample}_bin",
+        #basename = "output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/{contig_sample}_bin",
         prob = config['params']['maxbin2']['prob_threshold'],  # optional parameters
         extra = config['params']['maxbin2']['extra']  # optional parameters
     threads:
@@ -141,7 +141,7 @@ rule run_maxbin2:
             run_MaxBin.pl -thread {threads} -prob_threshold {params.prob} {params.extra} \
             -contig {input.contigs} \
             -abund_list {input.abund_list} \
-            -out {params.basename}
+            -out {output.bins}
             2> {log}
             touch {output.bins}
         """
