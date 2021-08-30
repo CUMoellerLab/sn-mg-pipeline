@@ -101,6 +101,7 @@ rule map_all:
         #         mapper=config['mappers'],
         #         pairing=pairings),
         expand("output/binning/maxbin2/{mapper}/abundance_lists/{contig_sample}_abund_list.txt",
+                mapper=config['mappers'],
                 contig_sample=contig_groups['A'])
         # expand("output/binning/maxbin2/{mapper}/{contig_sample}_abund_list.txt",
         #         mapper=config['mappers'],
