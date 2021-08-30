@@ -66,27 +66,27 @@ rule run_metabat2:
         """
 
 
-# rule make_maxbin2_coverage_table:
-#     """
-#        Commands to generate a coverage table using `samtools coverage` for input into maxbin2
-#     """
-#     input:
-#         bams="output/binning/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.sorted.bam"
-#     output:
-#         coverage_table="output/binning/maxbin2/{mapper}/{read_sample}_Mapped_To_{contig_sample}_coverage.txt"
-#     conda:
-#         "../env/binning.yaml"
-#     benchmark:
-#         "output/benchmarks/maxbin2/{mapper}/make_maxbin2_coverage_table/{read_sample}_Mapped_To_{contig_sample}_benchmark.txt"
-#     log:
-#         "output/logs/maxbin2/{mapper}/make_maxbin2_coverage_table/{read_sample}_Mapped_To_{contig_sample}.log"
-#     shell:
-#         """
-#           samtools coverage {input.bams} | \
-#           tail -n +2 | \
-#           sort -k1 | \
-#           cut -f1,6 > {output.coverage_table}
-#        """
+rule make_maxbin2_coverage_table:
+    """
+       Commands to generate a coverage table using `samtools coverage` for input into maxbin2
+    """
+    input:
+        bams="output/binning/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.sorted.bam"
+    output:
+        coverage_table="output/binning/maxbin2/{mapper}/coverage_tables/{read_sample}_Mapped_To_{contig_sample}_coverage.txt"
+    conda:
+        "../env/binning.yaml"
+    benchmark:
+        "output/benchmarks/maxbin2/{mapper}/make_maxbin2_coverage_table/{read_sample}_Mapped_To_{contig_sample}_benchmark.txt"
+    log:
+        "output/logs/maxbin2/{mapper}/make_maxbin2_coverage_table/{read_sample}_Mapped_To_{contig_sample}.log"
+    shell:
+        """
+          samtools coverage {input.bams} | \
+          tail -n +2 | \
+          sort -k1 | \
+          cut -f1,6 > {output.coverage_table}
+       """
 #
 # rule make_maxbin2_abund_list:
 #     """
