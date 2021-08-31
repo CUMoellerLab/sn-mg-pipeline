@@ -53,7 +53,25 @@ rule taxonomy_kraken:
           fi
           """
 
+rule krona:
+    input:
+        rules.taxonomy_kraken.output.report
+    output:
+        "output/profile/kraken2/krona/{sample}.report.html"
+    conda:
+        "../env/profile.yaml"
+    threads:
+        1
+    log:
+        "output/logs/kraken2/taxonomy_kraken.sample_{sample}.log"
+    shell:
+        """
+        perl ../scripts/kraken2-translate.pl {input} > {output}
+        """
+
 rule kraken:
     input:
         expand("output/profile/kraken2/{sample}.report.txt",
+               sample=samples),
+        expand("output/profile/krona/{sample}.report.html",
                sample=samples)
