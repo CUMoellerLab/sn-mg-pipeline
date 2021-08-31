@@ -6,8 +6,7 @@ rule taxonomy_kraken:
         fastq1=rules.host_filter.output.nonhost_R1,
         fastq2=rules.host_filter.output.nonhost_R2
     output:
-        report = "output/profile/kraken2/{sample}.report.txt",
-        read_out = "output/profile/kraken2/{sample}.output.txt"
+        report = "output/profile/kraken2/{sample}.report.txt"
     params:
         db = config['params']['kraken2']['db'],
         levels = config['params']['kraken2']['levels'],
@@ -34,7 +33,7 @@ rule taxonomy_kraken:
             --only-classified-output \
             --threads {threads} \
             --report {output.report} \
-            --output {output.read_out} \
+            --output - \
             2> {log}
 
           # run Bracken to re-estimate abundance at given rank
