@@ -43,6 +43,8 @@ params:
     db_path: "resources/db/metaphlan"
     db_name: "mpa_v30_CHOCOPhlAn_201901"
     other: "--add_viruses --unknown_estimation"
+  metaquast:
+    references_list: "resources/config/reference_list.txt"
   concoct:
     chunk_size: 10000
     overlap_size: 0
@@ -66,6 +68,7 @@ threads:
   fastqc_post_trim: 1
   host_filter: 4
   spades: 8
+  metaquast: 8
   megahit: 8
   metaphlan: 8
   bowtie2_build: 8

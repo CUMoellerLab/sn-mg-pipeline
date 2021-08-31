@@ -1,0 +1,10 @@
+Pseudomonas aeruginosa
+Escherichia coli
+Salmonella enterica
+Lactobacillus fermentum
+Enterococcus faecalis
+Staphylococcus aureus
+Listeria monocytogenes
+Bacillus subtilis
+Saccharomyces cerevisiae
+Cryptococcus neoformans
