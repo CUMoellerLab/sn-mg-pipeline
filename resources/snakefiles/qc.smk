@@ -128,7 +128,6 @@ rule host_filter:
         nonhost_R1="output/filtered/nonhost/{sample}.1.fastq.gz",
         nonhost_R2="output/filtered/nonhost/{sample}.2.fastq.gz",
         host="output/filtered/host/{sample}.bam",
-        temp_dir=directory("output/{sample}_temp")
     params:
         ref=join(config['host_filter']['db_dir'],
                  config['host_filter']['accn'])
@@ -142,9 +141,6 @@ rule host_filter:
         "output/logs/host_filter/{sample}.bowtie.log"
     shell:
         """
-        # Make temporary directories
-        mkdir -p {output.temp_dir}
-
         # Map reads against reference genome
         bowtie2 -p {threads} -x {params.ref} \
           -1 {input.fastq1} -2 {input.fastq2} \
@@ -154,7 +150,6 @@ rule host_filter:
         # rename nonhost samples
         mv {wildcards.sample}_nonhost.1 output/filtered/nonhost/{wildcards.sample}.1.fastq.gz
         mv {wildcards.sample}_nonhost.2 output/filtered/nonhost/{wildcards.sample}.2.fastq.gz
-        rm -rf {output.temp_dir}
         """
 
 rule multiqc:
