@@ -68,8 +68,7 @@ params:
   kraken2:
     levels: 'P,C,O,F,G,S'
     db: '/workdir/dbs/kraken2/gtdb/ftp.tue.mpg.de/ebio/projects/struo/GTDB_release89/kraken2'
-  bracken:
-    db: '/workdir/dbs/kraken2/gtdb/ftp.tue.mpg.de/ebio/projects/struo/GTDB_release89/bracken'
+    bracken-db: '/workdir/dbs/kraken2/gtdb/ftp.tue.mpg.de/ebio/projects/struo/GTDB_release89/bracken'
 
 threads:
   fastqc: 1

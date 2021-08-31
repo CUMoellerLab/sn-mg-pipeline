@@ -12,6 +12,7 @@ rule taxonomy_kraken:
     params:
         db = config['params']['kraken2']['db'],
         levels = config['params']['kraken2']['levels']
+        bracken_db = config['params']['kraken2']['bracken-db']
     conda:
         "../env/profile.yaml"
     threads:
@@ -44,7 +45,7 @@ rule taxonomy_kraken:
             for level in "${{levels[@]}}"
             do
               bracken \
-                -d {params.db} \
+                -d {params.bracken_db} \
                 -i {output.report} \
                 -t 10 \
                 -l $(echo $level | head -c 1 | tr a-z A-Z) \
