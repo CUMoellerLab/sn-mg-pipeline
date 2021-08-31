@@ -125,7 +125,7 @@ rule metaquast:
                                  assembler=config['assemblers'],
                                  sample=wildcards.sample)
     output:
-        report="output/assemble/metaquast/{sample}/report.txt",
+        report="output/assemble/metaquast/{sample}/report.html",
         outdir=directory("output/assemble/metaquast/{sample}")
     threads:
         config['threads']['metaquast']
@@ -148,7 +148,7 @@ rule metaquast:
 
 rule multiqc_metaquast:
     input:
-        lambda wildcards: expand("output/assemble/metaquast/{sample}/report.txt",
+        lambda wildcards: expand("output/assemble/metaquast/{sample}/report.html",
                                  sample=samples)
     output:
         "output/assemble/multiqc_metaquast/multiqc.html"
