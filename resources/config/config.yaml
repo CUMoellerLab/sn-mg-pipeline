@@ -66,6 +66,7 @@ params:
     prob_threshold: 0.8
     extra: '-verbose'
   kraken2:
+    levels: 'P,C,O,F,G,S'
     db: '/workdir/dbs/kraken2/gtdb/ftp.tue.mpg.de/ebio/projects/struo/GTDB_release89/kraken2'
   bracken:
     db: '/workdir/dbs/kraken2/gtdb/ftp.tue.mpg.de/ebio/projects/struo/GTDB_release89/bracken'
