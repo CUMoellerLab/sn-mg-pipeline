@@ -57,13 +57,13 @@ rule krona:
     input:
         rules.taxonomy_kraken.output.report
     output:
-        "output/profile/kraken2/krona/{sample}.report.html"
+        "output/profile/krona/{sample}.report.html"
     conda:
         "../env/profile.yaml"
     threads:
         1
     log:
-        "output/logs/kraken2/taxonomy_kraken.sample_{sample}.log"
+        "output/logs/krona/krona.sample_{sample}.log"
     shell:
         """
         perl ../scripts/kraken2-translate.pl {input} > {input}.temp
