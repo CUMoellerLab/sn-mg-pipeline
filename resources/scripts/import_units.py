@@ -83,3 +83,7 @@ def import_df(df_path, match_column, seq_dirs, name_column,
         f.write('Sample\tUnit\tR1\tR2\n')
         for sample, unit, r1, r2 in seq_tuples:
             f.write('%s\n' % '\t'.join(sample, unit, r1, r2))
+
+
+if __name__ == '__main__':
+    import_df()
