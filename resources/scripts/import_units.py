@@ -42,7 +42,7 @@ def parse_seq_dir(dir_fp,
               default='units.txt',
               help='output units.txt filepath')
 def import_df(df_path, match_column, seq_dirs, name_column,
-              output_fp, units_fp):
+              samples_fp, units_fp):
     """
     associates sample names from a dataframe column with f and r files
     """
@@ -74,7 +74,7 @@ def import_df(df_path, match_column, seq_dirs, name_column,
                     seq_tuples.append((name, unit, r1, r2))
                     break
 
-    with open(output_fp, 'w') as f:
+    with open(samples_fp, 'w') as f:
         f.write('Sample\n')
         for sample, _, _, _ in seq_tuples:
             f.write('%s\n' % sample)
