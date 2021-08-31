@@ -15,9 +15,9 @@ rule taxonomy_kraken:
     threads:
         config['threads']['kraken2']
     log:
-        taxonomy_dir + "logs/taxonomy_kraken.sample_{sample}.log"
+        "output/logs/kraken2/taxonomy_kraken.sample_{sample}.log"
     benchmark:
-        "benchmarks/taxonomy/taxonomy_kraken.sample_{sample}.txt"
+        "output/benchmarks/kraken2/taxonomy_kraken.sample_{sample}.txt"
     shell:
         """
           # get stem file path
