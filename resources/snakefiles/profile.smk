@@ -7,8 +7,7 @@ rule taxonomy_kraken:
         fastq2=rules.host_filter.output.nonhost_R2
     output:
         report = "output/profile/kraken2/{sample}.report.txt",
-        read_out = "output/profile/kraken2/{sample}.output.txt",
-        profile = "output/profile/kraken2/{sample}.profile.txt"
+        read_out = "output/profile/kraken2/{sample}.output.txt"
     params:
         db = config['params']['kraken2']['db'],
         levels = config['params']['kraken2']['levels'],
