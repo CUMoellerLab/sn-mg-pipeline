@@ -66,7 +66,9 @@ rule krona:
         "output/logs/kraken2/taxonomy_kraken.sample_{sample}.log"
     shell:
         """
-        perl ../scripts/kraken2-translate.pl {input} > {output}
+        perl ../scripts/kraken2-translate.pl {input} > {input}.temp
+        ktImportText -o {output} {input}.temp
+        rm {input}.temp
         """
 
 rule kraken:
