@@ -50,7 +50,6 @@ rule taxonomy_kraken:
                 -l $(echo $level | head -c 1 | tr a-z A-Z) \
                 -o $stem.redist.$level.txt \
                 2>> {log} 1>&2
-              rm $stem.report_bracken.txt
             done
           fi
           """
