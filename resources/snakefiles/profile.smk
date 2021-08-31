@@ -12,6 +12,8 @@ rule taxonomy_kraken:
     params:
         db = config['params']['kraken2']['db'],
         levels = config['params']['kraken2']['levels']
+    conda:
+        "../env/profile.yaml"
     threads:
         config['threads']['kraken2']
     log:
