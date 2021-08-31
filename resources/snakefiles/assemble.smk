@@ -87,7 +87,8 @@ rule quast:
                                  sample=wildcards.sample)
     output:
         report="output/assemble/quast/{sample}/report.txt",
-        outdir=directory("output/assemble/quast/{sample}")
+    params:
+        outdir=directory("output/assemble/quast/{sample}/")
     threads:
         1
     log:
@@ -99,9 +100,10 @@ rule quast:
     shell:
         """
         quast.py \
-          -o {output.outdir} \
+          -o {params.outdir} \
           -t {threads} \
           {input}
+          touch {output.report}
         """
 
 rule multiqc_assemble:
