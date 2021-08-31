@@ -61,8 +61,12 @@ def import_df(df_path, match_column, seq_dirs, name_column,
             name = row[name_column]
         else:
             name = i
+
+        unit = 0
         for seq_dir in seq_fps:
-            unit = seq_dir
+            unit = += 1
+
+            unit_name = 'unit_%s' % unit
             r1 = None
             r2 = None
             for j, s in enumerate(seq_fps[seq_dir]):
