@@ -140,7 +140,7 @@ rule metaquast:
     shell:
         """
         metaquast.py \
-          --references-list {params.refs}
+          --references-list {params.refs} \
           -o {output.outdir} \
           -t {threads} \
           {input}
