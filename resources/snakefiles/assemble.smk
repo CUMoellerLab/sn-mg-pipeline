@@ -9,7 +9,7 @@ rule metaspades_assembly:
         fastq2=rules.host_filter.output.nonhost_R2
     output:
         contigs="output/assemble/metaspades/{sample}.contigs.fasta",
-        temp_dir=temp(directory("output/{sample}_temp/"))
+        temp_dir=directory("output/{sample}_temp/")
 
     conda:
         "../env/assemble.yaml"
@@ -37,6 +37,7 @@ rule metaspades_assembly:
 
         # move and rename the contigs file into a permanent directory
         mv {output.temp_dir}/contigs.fasta {output.contigs}
+        rm -rf {output.temp_dir}
 
         """
 
