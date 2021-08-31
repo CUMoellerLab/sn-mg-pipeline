@@ -11,7 +11,7 @@ rule taxonomy_kraken:
         profile = "output/profile/kraken2/{sample}.profile.txt"
     params:
         db = config['params']['kraken2']['db'],
-        levels = config['params']['kraken2']['levels']
+        levels = config['params']['kraken2']['levels'],
         bracken_db = config['params']['kraken2']['bracken-db']
     conda:
         "../env/profile.yaml"
