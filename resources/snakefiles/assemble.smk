@@ -9,11 +9,10 @@ rule metaspades_assembly:
         fastq2=rules.host_filter.output.nonhost_R2
     output:
         contigs="output/assemble/metaspades/{sample}.contigs.fasta",
+    params:
         temp_dir=directory("output/{sample}_temp/")
-
     conda:
         "../env/assemble.yaml"
-
     threads:
         config['threads']['spades']
     benchmark:
@@ -25,19 +24,19 @@ rule metaspades_assembly:
     shell:
         """
         # Make temporary output directory
-        mkdir -p {output.temp_dir}
+        mkdir -p {params.temp_dir}
 
         # run the metaspades assembly
         metaspades.py --threads {threads} \
-          -o {output.temp_dir}/ \
+          -o {params.temp_dir}/ \
           --memory $(({resources.mem_mb}/1024)) \
           --pe1-1 {input.fastq1} \
           --pe1-2 {input.fastq2} \
           2> {log} 1>&2
 
         # move and rename the contigs file into a permanent directory
-        mv {output.temp_dir}/contigs.fasta {output.contigs}
-        rm -rf {output.temp_dir}
+        mv {params.temp_dir}/contigs.fasta {output.contigs}
+        rm -rf {params.temp_dir}
 
         """
 
