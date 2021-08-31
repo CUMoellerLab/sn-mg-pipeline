@@ -64,7 +64,7 @@ def import_df(df_path, match_column, seq_dirs, name_column,
 
         unit = 0
         for seq_dir in seq_fps:
-            unit = += 1
+            unit += 1
 
             unit_name = 'unit_%s' % unit
             r1 = None
@@ -75,7 +75,7 @@ def import_df(df_path, match_column, seq_dirs, name_column,
                 if re.match(r2_pattern, s):
                     r2 = abspath(s)
                 if r1 and r2:
-                    seq_tuples.append((name, unit, r1, r2))
+                    seq_tuples.append((name, unit_name, r1, r2))
                     break
 
     with open(samples_fp, 'w') as f:
