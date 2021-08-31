@@ -26,6 +26,7 @@ include: "resources/snakefiles/qc.smk"
 include: "resources/snakefiles/assemble.smk"
 include: "resources/snakefiles/sourmash.smk"
 include: "resources/snakefiles/metaphlan.smk"
+include: "resources/snakefiles/profile.smk"
 
 rule all:
     input:

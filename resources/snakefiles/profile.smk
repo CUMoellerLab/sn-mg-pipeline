@@ -48,13 +48,12 @@ rule taxonomy_kraken:
         fastq1=rules.host_filter.output.nonhost_R1,
         fastq2=rules.host_filter.output.nonhost_R2
     output:
-        report = taxonomy_dir + "{sample}/kraken2/{sample}.report.txt",
-        read_out = taxonomy_dir + "{sample}/kraken2/{sample}.output.txt",
-        profile = taxonomy_dir + "{sample}/kraken2/{sample}.profile.txt"
+        report = "output/profile/kraken2/{sample}.report.txt",
+        read_out = "output/profile/kraken2/{sample}.output.txt",
+        profile = "output/profile/kraken2/{sample}.profile.txt"
     params:
         db = config['params']['kraken2']['db'],
-        kmers = config['params']['bracken']['kmers'],
-        levels = config['params']['kraken2']['levels'],
+        levels = config['params']['kraken2']['      '],
         map = config['params']['kraken2']['map']
     threads:
         config['threads']['kraken2']
@@ -97,35 +96,7 @@ rule taxonomy_kraken:
           fi
           """
 
-rule taxonomy_kraken_combine_profiles:
-    """
-    Combines per-sample Kraken/Bracken output tables into single OTU tables.
-    """
-    input:
-        expand(taxonomy_dir + "{sample}/kraken/{sample}.profile.txt",
-               sample=samples)
-    output:
-        taxonomy_dir + "kraken/combined_profile.biom"
-        # extra output files:
-        # combined_redist.{level}.biom foreach {levels}
-    params:
-        levels = config['params']['kraken']['levels']
-    log:
-        taxonomy_dir + "logs/taxonomy_kraken_combine_profiles.log"
-    benchmark:
-        "benchmarks/taxonomy/taxonomy_kraken_combine_profiles.txt"
-    run:
-        pandas2biom(output[0], combine_profiles(zip(samples, input)))
-        for level in params['levels'].split(','):
-            redists = ['%s/%s/kraken/%s.redist.%s.txt'
-                       % (taxonomy_dir, sample, sample, level)
-                       for sample in samples]
-            pandas2biom('%s/kraken/combined_redist.%s.biom'
-                        % (taxonomy_dir, level),
-                        combine_bracken(zip(samples, redists)))
-
-
 rule kraken:
     input:
-        taxonomy_dir + "kraken/combined_profile.biom"
-
+        expand("output/profile/kraken2/{sample}.report.txt",
+               sample=samples)
