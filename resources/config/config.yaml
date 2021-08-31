@@ -44,7 +44,7 @@ params:
     db_name: "mpa_v30_CHOCOPhlAn_201901"
     other: "--add_viruses --unknown_estimation"
   metaquast:
-    references_list: "resources/config/reference_list.txt"
+    reference_dir: "resources/db/metaquast/"
   concoct:
     chunk_size: 10000
     overlap_size: 0

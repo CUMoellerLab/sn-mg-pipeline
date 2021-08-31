@@ -132,7 +132,7 @@ rule metaquast:
     log:
         "output/logs/metaquast/{sample}.metaquast.log"
     params:
-        refs=config['params']['metaquast']['references_list']
+        refs=config['params']['metaquast']['reference_dir']
     conda:
         "../env/assemble.yaml"
     benchmark:
@@ -140,7 +140,7 @@ rule metaquast:
     shell:
         """
         metaquast.py \
-          --references-list {params.refs} \
+          -r {params.refs} \
           -o {output.outdir} \
           -t {threads} \
           {input}
