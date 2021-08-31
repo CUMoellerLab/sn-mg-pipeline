@@ -11,8 +11,7 @@ rule taxonomy_kraken:
         profile = "output/profile/kraken2/{sample}.profile.txt"
     params:
         db = config['params']['kraken2']['db'],
-        levels = config['params']['kraken2']['      '],
-        map = config['params']['kraken2']['map']
+        levels = config['params']['kraken2']['levels']
     threads:
         config['threads']['kraken2']
     log:
