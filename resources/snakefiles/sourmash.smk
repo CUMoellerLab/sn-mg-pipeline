@@ -246,12 +246,12 @@ rule prototype_selection:
 
         pf_seqs = []
         for fp in df.columns:
-            echo fp
+            print(fp)
             with gzip.open(fp, 'rb') as f:
                 for i, l in enumerate(f):
                     pass
             seqs = (i + 1) / 4
-            echo seqs
+            print(seqs)
             if params['min_seqs'] <= seqs <= params['max_seqs']:
                 pf_seqs.append(fp)
 
