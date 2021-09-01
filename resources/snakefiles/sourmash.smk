@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import gzip
 from os import path
-from scikit-bio.stats.distance import DistanceMatrix
+from skbio import DistanceMatrix
 from yaml import dump
 
 def _validate_parameters(dm, num_prototypes, seedset=None):
