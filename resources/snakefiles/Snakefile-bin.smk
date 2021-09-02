@@ -42,39 +42,44 @@ def parse_groups(group_series):
                 groups[grp].append(sample)
     return(groups)
 
-def make_pairings(from_grp, to_grp):
-    if from_grp.keys() != to_grp.keys():
+def make_pairings(read_grp, ctg_grp):
+    if read_grp.keys() != ctg_grp.keys():
         raise ValueError('Not all keys in both from and to groups!')
 
-    to_samples = []
-    from_samples = []
-    for grp in from_grp.keys():
-        f = from_grp[grp]
-        t = to_grp[grp]
+    pairings = []
+    contig_pairings = {}
+    for grp in read_grp.keys():
+        r = read_grp[grp]
+        c = ctg_grp[grp]
 
-        for i in f:
-            for  j in t:
-                from_samples.append(i)
-                to_samples.append(j)
+        for i in r:
+            for  j in c:
+                pairings.append((i, j))
+                if j not in contig_pairings:
+                    contig_pairings[j] = [i]
+                else:
+                    contig_pairings[j].append(i)
 
-    return(from_samples, to_samples)
+    return(pairings, contig_pairings)
 
-print(binning_df)
+contig_groups = parse_groups(binning_df['Contig_Groups'])
+read_groups = parse_groups(binning_df['Read_Groups'])
+pairings, contig_pairings = make_pairings(read_groups, contig_groups)
 
-to_groups = parse_groups(binning_df['To_Groups'])
-from_groups = parse_groups(binning_df['From_Groups'])
-from_samples, to_samples = make_pairings(from_groups, to_groups)
-
-print(to_groups)
-print(from_groups)
-print(from_samples)
-print(to_samples)
-
-
+print('Contig samples: %s' % contig_groups)
+print('Read samples: %s' % read_groups)
+print('Pairings: %s' % pairings)
+print('Contig Pairings: %s' % contig_pairings)
 
 def get_contigs(sample, binning_df):
     return(binning_df.loc[sample, 'Contigs'])
 
+# def get_bam_list(sample, mapper, contig_pairings):
+#     fp = expand("output/binning/{mapper}/mapped_reads/{contig_pairings}_Mapped_To_{sample}.sorted.bam",
+#     mapper = mapper,
+#     sample = sample,
+#     contig_pairings = contig_pairings[sample])
+#     return(fp)
 
 include: "resources/snakefiles/qc.smk"
 include: "resources/snakefiles/assemble.smk"
@@ -83,26 +88,30 @@ include: "resources/snakefiles/binning.smk"
 
 rule map_all:
     input:
-        expand("output/binning/{mapper}/mapped_reads/{from_sample}.MappedTo.{to_sample}.sorted.bam",
+        expand("output/binning/{mapper}/sorted_bams/{pairing[0]}_Mapped_To_{pairing[1]}.sorted.bam",
                 mapper=config['mappers'],
-                from_sample=from_samples,
-                to_sample=to_samples),
-#        expand("output/binning/{binner}/bins/{from_sample}.{binner}.bins.fasta",
-#                binner=config['binners'],
-#                from_sample=from_samples),
-#        expand("output/binning/{to_sample}_temp/contigs_10K.fa",
-#               to_sample=to_samples)
-
-# rule map_pair:
-#     input:
-#         contigs = lambda wildcards: get_contigs(wildcards.to_sample, binning_df),
-#         reads = lambda wildcards: expand(rules.merge_units.output,
-#                                          sample=wildcards.from_sample,
-#                                          read=['R1','R2'])
-#     output:
-#         "output/binning/mapped_reads/{from_sample}.{to_sample}.bam"
-#     run:
-#         contig_fp = get_contigs(wildcards.to_sample, binning_df)
-#         print("binning_df: \n%s" % binning_df)
-#         print("wildcard: %s" % wildcards.to_sample)
-#         print("contigs: %s" % contig_fp)
+                pairing=pairings),
+        # expand("output/binning/metabat2/{mapper}/{contig_sample}_coverage_table.txt",
+        #         mapper=config['mappers'],
+        #         contig_sample=contig_groups['A']),
+        expand("output/binning/metabat2/{mapper}/run_metabat2/{contig_sample}/",
+                mapper=config['mappers'],
+                contig_sample=contig_groups['A']),
+        # expand("output/binning/maxbin2/{mapper}/coverage_tables/{pairing[0]}_Mapped_To_{pairing[1]}_coverage.txt",
+        #         mapper=config['mappers'],
+        #         pairing=pairings),
+        # expand("output/binning/maxbin2/{mapper}/abundance_lists/{contig_sample}_abund_list.txt",
+        #         mapper=config['mappers'],
+        #         contig_sample=contig_groups['A'])
+        expand("output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}_bins",
+                mapper=config['mappers'],
+                contig_sample=contig_groups['A']),
+        # expand("output/binning/maxbin2/{mapper}/{contig_sample}_abund_list.txt",
+        #         mapper=config['mappers'],
+        #         contig_sample=contig_groups['A']),
+        # expand("output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}_bins",
+        #         mapper=config['mappers'],
+        #         contig_sample=contig_groups['A']),
+        # expand("output/binning/concoct/{mapper}/{contig_sample}_coverage_table.txt",
+        #         mapper=config['mappers'],
+        #         contig_sample=contig_groups['A'])

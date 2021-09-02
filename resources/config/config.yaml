@@ -12,18 +12,20 @@ reads:
 
 assemblers:
   - metaspades
-  - megahit
+#  - megahit
 
 biobakery:
   - metaphlan
 
 mappers:
   - minimap2
-  - bowtie2
+#  - bowtie2
 
 binners:
   - concoct
-  
+  - metabat2
+  - maxbin2
+
 params:
   cutadapt:
     adapter: 'GATCGGAAGAGC'
@@ -47,6 +49,16 @@ params:
   minimap2:
     x: 'sr'
     k: 500000000
+  prototypes:
+    min_seqs: 50 # recommended: 10000000
+    max_seqs: 100000000
+    n: 12
+  metabat2:
+    extra: '--verbose'
+    minContig: 1500 # Minimum size of a contig for binning (should be >=1500).
+  maxbin2:
+    prob_threshold: 0.8
+    extra: '-verbose'
 
 threads:
   fastqc: 1
@@ -55,13 +67,15 @@ threads:
   host_filter: 4
   spades: 8
   megahit: 8
-  metaphlan: 4
+  metaphlan: 8
   bowtie2_build: 8
-  map_reads: 1
-  sort_bam: 1
-  minimap2_index: 4
-  minimap2_map_reads: 4
+  map_reads: 8
+  sort_bam: 8
+  minimap2_index: 8
+  minimap2_map_reads: 8
   concoct: 8
+  run_metabat2: 8
+  run_maxbin2: 8
 
 mem_mb:
   spades: 256000

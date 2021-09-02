@@ -2,10 +2,10 @@ from os.path import splitext
 
 rule index_contigs_bt2:
     input:
-        contigs = lambda wildcards: get_contigs(wildcards.to_sample,
+        contigs = lambda wildcards: get_contigs(wildcards.contig_sample,
                                                 binning_df)
     output:
-        temp(multiext("output/binning/bowtie2/indexed_contigs/{to_sample}",
+        temp(multiext("output/binning/bowtie2/indexed_contigs/{contig_sample}",
                       ".1.bt2",
                       ".2.bt2",
                       ".3.bt2",
@@ -13,13 +13,13 @@ rule index_contigs_bt2:
                       ".rev.1.bt2",
                       ".rev.2.bt2"))
     log:
-        "output/logs/binning/bowtie2-build.{to_sample}.log"
+        "output/logs/binning/bowtie2-build.{contig_sample}.log"
     conda:
         "../env/bowtie2.yaml"
     params:
         bt2b_command = config['params']['bowtie2']['bt2b_command'],
         extra = config['params']['bowtie2']['extra'],  # optional parameters
-        indexbase = "output/binning/bowtie2/indexed_contigs/{to_sample}"
+        indexbase = "output/binning/bowtie2/indexed_contigs/{contig_sample}"
     threads:
         config['threads']['bowtie2_build']
     shell:
@@ -34,13 +34,13 @@ rule map_reads_bt2:
     """
     input:
         reads = lambda wildcards: expand("output/filtered/nonhost/{sample}.{read}.fastq.gz",
-                                         sample=wildcards.from_sample,
+                                         sample=wildcards.read_sample,
                                          read=['1','2']),
         db=rules.index_contigs_bt2.output
     output:
-        aln=temp("output/binning/bowtie2/mapped_reads/{from_sample}.MappedTo.{to_sample}.bam")
+        aln=temp("output/binning/bowtie2/mapped_reads/{read_sample}_Mapped_To_{contig_sample}.bam")
     params:
-        ref="output/binning/bowtie2/indexed_contigs/{to_sample}",
+        ref="output/binning/bowtie2/indexed_contigs/{contig_sample}",
         bt2_command = config['params']['bowtie2']['bt2_command'],
         extra = config['params']['bowtie2']['extra'],  # optional parameters
     conda:
@@ -48,9 +48,9 @@ rule map_reads_bt2:
     threads:
         config['threads']['map_reads']
     benchmark:
-        "output/benchmarks/map_reads_bt2/{from_sample}.MappedTo.{to_sample}.benchmark.txt"
+        "output/benchmarks/map_reads_bt2/{read_sample}_Mapped_To_{contig_sample}.benchmark.txt"
     log:
-        "output/logs/map_reads_bt2/{from_sample}.MappedTo.{to_sample}.bowtie.log"
+        "output/logs/map_reads_bt2/{read_sample}_Mapped_To_{contig_sample}.bowtie.log"
     shell:
         """
         # Map reads against reference genome
@@ -60,37 +60,15 @@ rule map_reads_bt2:
 
         """
 
-rule sort_bam_bt2:
-    """
-    Sorts a bam file.
-    """
-    input:
-        aln=rules.map_reads_bt2.output.aln
-    output:
-        bam="output/binning/bowtie2/mapped_reads/{from_sample}.MappedTo.{to_sample}.sorted.bam"
-    conda:
-        "../env/bowtie2.yaml"
-    threads:
-        config['threads']['sort_bam']
-    benchmark:
-        "output/benchmarks/sort_bam/bowtie2/{from_sample}.MappedTo.{to_sample}.sorted.txt"
-    log:
-        "output/logs/sort_bam/bowtie2/{from_sample}.MappedTo.{to_sample}.sort.log"
-    shell:
-        """
-        samtools sort -o {output.bam} -@ {threads} {input.aln} 2> {log}
-
-        """
-
-
 rule index_contigs_minimap2:
     input:
-        contigs = lambda wildcards: get_contigs(wildcards.to_sample,
-                                                binning_df)
+        # contigs = expand("output/assemble/metaspades/{sample}.contigs.fasta",
+        #         sample=samples)
+        contigs = "output/assemble/metaspades/{contig_sample}.contigs.fasta"
     output:
-        index=temp("output/binning/minimap2/indexed_contigs/{to_sample}.mmi")
+        index = temp("output/binning/minimap2/indexed_contigs/{contig_sample}.mmi")
     log:
-        "output/logs/binning/minimap2.index.{to_sample}.log"
+        "output/logs/binning/minimap2.index.{contig_sample}.log"
     conda:
         "../env/bowtie2.yaml"
     threads:
@@ -107,11 +85,11 @@ rule map_reads_minimap2:
     """
     input:
         reads = lambda wildcards: expand("output/filtered/nonhost/{sample}.{read}.fastq.gz",
-                                         sample=wildcards.from_sample,
+                                         sample=wildcards.read_sample,
                                          read=['1','2']),
         db=rules.index_contigs_minimap2.output.index
     output:
-        aln=temp("output/binning/minimap2/mapped_reads/{from_sample}.MappedTo.{to_sample}.bam")
+        aln=temp("output/binning/minimap2/mapped_reads/{read_sample}_Mapped_To_{contig_sample}.bam")
     params:
         x=config['params']['minimap2']['x'],
         k=config['params']['minimap2']['k']
@@ -120,9 +98,9 @@ rule map_reads_minimap2:
     threads:
         config['threads']['minimap2_map_reads']
     benchmark:
-        "output/benchmarks/map_reads_minimap2/{from_sample}.MappedTo.{to_sample}.benchmark.txt"
+        "output/benchmarks/map_reads_minimap2/{read_sample}_Mapped_To_{contig_sample}.benchmark.txt"
     log:
-        "output/logs/map_reads_minimap2/{from_sample}.MappedTo.{to_sample}.bowtie.log"
+        "output/logs/map_reads_minimap2/{read_sample}_Mapped_To_{contig_sample}.minimap2.log"
     shell:
         """
         # Map reads against contigs
@@ -131,24 +109,25 @@ rule map_reads_minimap2:
 
         """
 
-rule sort_bam_minimap2:
+rule sort_index_bam:
     """
-    Sorts a bam file.
+    Sorts and indexes bam file.
     """
     input:
-        aln=rules.map_reads_minimap2.output.aln
+        aln="output/binning/{mapper}/mapped_reads/{read_sample}_Mapped_To_{contig_sample}.bam"
     output:
-        bam="output/binning/minimap2/mapped_reads/{from_sample}.MappedTo.{to_sample}.sorted.bam"
+        bam="output/binning/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.sorted.bam",
+        bai="output/binning/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.sorted.bam.bai"
     conda:
         "../env/bowtie2.yaml"
     threads:
         config['threads']['sort_bam']
     benchmark:
-        "output/benchmarks/sort_bam/minimap2/{from_sample}.MappedTo.{to_sample}.sorted.txt"
+        "output/benchmarks/sort_bam/{mapper}/{read_sample}_Mapped_To_{contig_sample}.sorted.txt"
     log:
-        "output/logs/sort_bam/minimap2/{from_sample}.MappedTo.{to_sample}.sorted.log"
+        "output/logs/sort_bam/{mapper}/{read_sample}_Mapped_To_{contig_sample}.sorted.log"
     shell:
         """
         samtools sort -o {output.bam} -@ {threads} {input.aln} 2> {log}
-
+        samtools index -b -@ {threads} {output.bam} 2>> {log}
         """

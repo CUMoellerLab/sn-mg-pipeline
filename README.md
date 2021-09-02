@@ -7,25 +7,27 @@ Snakemake pipeline for basic processing of metagenomic data from the lab. It acc
 
 ### Install
 
-First install [Snakemake](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html) using `conda`.
+First, clone this github repository:
 
-We recommend first installing and using mamba:
+```
+$ git clone https://github.com/CUMoellerLab/sn-mg-pipeline.git
+cd sn-mg-pipeline
+```
+
+We recommend installing and using mamba:
 
 ```
 $ conda install -c conda-forge mamba
 ```
 
-Then install snakemake using mamba:
+Then install the snakemake version for this workflow using mamba:
 
 ```
-$ mamba create -c conda-forge -c bioconda -n snakemake snakemake
+$ mamba env create -n snakemake -f resources/env/snakemake.yaml
 $ conda activate snakemake
 ```
-Next, clone this github repository
-```
-$ git clone https://github.com/CUMoellerLab/sn-mg-pipeline.git
-cd sn-mg-pipeline
-```
+
+
 
 ### Update Files
 
