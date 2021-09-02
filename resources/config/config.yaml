@@ -26,6 +26,10 @@ binners:
   - metabat2
   - maxbin2
 
+profilers:
+  - kraken2
+  - bracken
+
 params:
   cutadapt:
     adapter: 'GATCGGAAGAGC'
@@ -61,6 +65,10 @@ params:
   maxbin2:
     prob_threshold: 0.8
     extra: '-verbose'
+  kraken2:
+    levels: 'P,C,O,F,G,S'
+    db: '/workdir/dbs/kraken2/gtdb/ftp.tue.mpg.de/ebio/projects/struo/GTDB_release89/kraken2'
+    bracken-db: '/workdir/dbs/kraken2/gtdb/ftp.tue.mpg.de/ebio/projects/struo/GTDB_release89/bracken'
 
 threads:
   fastqc: 1
@@ -70,6 +78,7 @@ threads:
   spades: 8
   metaquast: 8
   megahit: 8
+  kraken2: 4
   metaphlan: 8
   bowtie2_build: 8
   map_reads: 8
