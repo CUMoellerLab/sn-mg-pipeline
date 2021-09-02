@@ -118,3 +118,46 @@ rule multiqc_assemble:
         "output/logs/multiqc/multiqc_assemble.log"
     wrapper:
         "0.72.0/bio/multiqc"
+
+rule metaquast:
+    """
+    Does an evaluation of assembly quality with Quast
+    """
+    input:
+        lambda wildcards: expand("output/assemble/{assembler}/{sample}.contigs.fasta",
+                                 assembler=config['assemblers'],
+                                 sample=wildcards.sample)
+    output:
+        report="output/assemble/metaquast/{sample}/report.html",
+        outdir=directory("output/assemble/metaquast/{sample}")
+    threads:
+        config['threads']['metaquast']
+    log:
+        "output/logs/metaquast/{sample}.metaquast.log"
+    params:
+        refs=config['params']['metaquast']['reference_dir']
+    conda:
+        "../env/assemble.yaml"
+    benchmark:
+        "output/benchmarks/metaquast/{sample}_benchmark.txt"
+    shell:
+        """
+        metaquast.py \
+          -r {params.refs} \
+          -o {output.outdir} \
+          -t {threads} \
+          {input}
+        """
+
+rule multiqc_metaquast:
+    input:
+        lambda wildcards: expand("output/assemble/metaquast/{sample}/report.html",
+                                 sample=samples)
+    output:
+        "output/assemble/multiqc_metaquast/multiqc.html"
+    params:
+        config['params']['multiqc']  # Optional: extra parameters for multiqc.
+    log:
+        "output/logs/multiqc/multiqc_metaquast.log"
+    wrapper:
+        "0.72.0/bio/multiqc"
