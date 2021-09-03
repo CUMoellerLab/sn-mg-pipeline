@@ -86,17 +86,17 @@ rule quast:
                                  assembler=config['assemblers'],
                                  sample=wildcards.sample)
     output:
-        report="output/assemble/quast/{sample}/report.txt",
+        report="output/assemble/{assembler}/quast/{sample}/report.txt",
     params:
-        outdir=directory("output/assemble/quast/{sample}/")
+        outdir=directory("output/assemble/{assembler}/quast/{sample}/")
     threads:
         1
     log:
-        "output/logs/quast/{sample}.quast.log"
+        "output/logs/{assembler}/quast/{sample}.quast.log"
     conda:
         "../env/assemble.yaml"
     benchmark:
-        "output/benchmarks/quast/{sample}_benchmark.txt"
+        "output/benchmarks/{assembler}/quast/{sample}_benchmark.txt"
     shell:
         """
         quast.py \
@@ -108,10 +108,11 @@ rule quast:
 
 rule multiqc_assemble:
     input:
-        lambda wildcards: expand("output/assemble/quast/{sample}/report.txt",
+        lambda wildcards: expand("output/assemble/{assembler}/quast/{sample}/report.txt",
+                                 assembler=config['assemblers'],
                                  sample=samples)
     output:
-        "output/assemble/multiqc/multiqc.html"
+        "output/assemble/{assembler}/multiqc/multiqc.html"
     params:
         config['params']['multiqc']  # Optional: extra parameters for multiqc.
     log:
@@ -128,8 +129,8 @@ rule metaquast:
                                  assembler=config['assemblers'],
                                  sample=wildcards.sample)
     output:
-        report="output/assemble/metaquast/{sample}/report.html",
-        outdir=directory("output/assemble/metaquast/{sample}")
+        report="output/assemble/{assembler}/metaquast/{sample}/report.html",
+        outdir=directory("output/assemble/{assembler}/metaquast/{sample}")
     threads:
         config['threads']['metaquast']
     log:
@@ -139,7 +140,7 @@ rule metaquast:
     conda:
         "../env/assemble.yaml"
     benchmark:
-        "output/benchmarks/metaquast/{sample}_benchmark.txt"
+        "output/benchmarks/{assembler}/metaquast/{sample}_benchmark.txt"
     shell:
         """
         metaquast.py \
@@ -151,7 +152,8 @@ rule metaquast:
 
 rule multiqc_metaquast:
     input:
-        lambda wildcards: expand("output/assemble/metaquast/{sample}/report.html",
+        lambda wildcards: expand("output/assemble/{assembler}/metaquast/{sample}/report.html",
+                                 assembler=config['assemblers'],
                                  sample=samples)
     output:
         "output/assemble/multiqc_metaquast/multiqc.html"
