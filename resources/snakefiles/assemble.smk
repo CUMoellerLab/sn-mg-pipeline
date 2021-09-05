@@ -110,13 +110,13 @@ rule multiqc_assemble:
                                  assembler=config['assemblers'],
                                  sample=samples)
     output:
-        "output/assemble/{assembler}/multiqc_assemble/multiqc.html"
+        "output/assemble/multiqc_assemble/multiqc.html"
     params:
         config['params']['multiqc']  # Optional: extra parameters for multiqc.
     log:
-        "output/logs/assemble/{assembler}/multiqc_assemble/multiqc_assemble.log"
+        "output/logs/assemble/multiqc_assemble/multiqc_assemble.log"
     benchmark:
-        "output/benchmarks/assemble/{assembler}/multiqc_assemble/multiqc_assemble_benchmark.txt"
+        "output/benchmarks/assemble/multiqc_assemble/multiqc_assemble_benchmark.txt"
     wrapper:
         "0.72.0/bio/multiqc"
 
@@ -126,7 +126,7 @@ rule metaquast:
     """
     input:
         lambda wildcards: expand("output/assemble/{assembler}/{sample}.contigs.fasta",
-                                 assembler=config['assemblers'],
+                                 assembler=wildcards.assembler,
                                  sample=wildcards.sample)
     output:
         report="output/assemble/{assembler}/metaquast/{sample}/report.html",
