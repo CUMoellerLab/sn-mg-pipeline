@@ -74,13 +74,6 @@ print('Contig Pairings: %s' % contig_pairings)
 def get_contigs(sample, binning_df):
     return(binning_df.loc[sample, 'Contigs'])
 
-# def get_bam_list(sample, mapper, contig_pairings):
-#     fp = expand("output/binning/{mapper}/mapped_reads/{contig_pairings}_Mapped_To_{sample}.sorted.bam",
-#     mapper = mapper,
-#     sample = sample,
-#     contig_pairings = contig_pairings[sample])
-#     return(fp)
-
 include: "resources/snakefiles/qc.smk"
 include: "resources/snakefiles/assemble.smk"
 include: "resources/snakefiles/mapping.smk"
@@ -88,10 +81,10 @@ include: "resources/snakefiles/binning.smk"
 
 rule map_all:
     input:
-        expand("output/binning/{mapper}/sorted_bams/{pairing[0]}_Mapped_To_{pairing[1]}.sorted.bam",
+        expand("output/mapping/{mapper}/sorted_bams/{pairing[0]}_Mapped_To_{pairing[1]}.sorted.bam",
                 mapper=config['mappers'],
                 pairing=pairings),
-        # expand("output/binning/metabat2/{mapper}/{contig_sample}_coverage_table.txt",
+        # expand("output/binning/metabat2/{mapper}/coverage_tables/{contig_sample}_coverage_table.txt",
         #         mapper=config['mappers'],
         #         contig_sample=contig_groups['A']),
         expand("output/binning/metabat2/{mapper}/run_metabat2/{contig_sample}/",
@@ -102,16 +95,13 @@ rule map_all:
         #         pairing=pairings),
         # expand("output/binning/maxbin2/{mapper}/abundance_lists/{contig_sample}_abund_list.txt",
         #         mapper=config['mappers'],
-        #         contig_sample=contig_groups['A'])
+        #         contig_sample=contig_groups['A']),
         expand("output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}_bins",
                 mapper=config['mappers'],
                 contig_sample=contig_groups['A']),
-        # expand("output/binning/maxbin2/{mapper}/{contig_sample}_abund_list.txt",
-        #         mapper=config['mappers'],
-        #         contig_sample=contig_groups['A']),
-        # expand("output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}_bins",
-        #         mapper=config['mappers'],
-        #         contig_sample=contig_groups['A']),
-        # expand("output/binning/concoct/{mapper}/{contig_sample}_coverage_table.txt",
-        #         mapper=config['mappers'],
-        #         contig_sample=contig_groups['A'])
+        expand("output/binning/concoct/{mapper}/contigs_10K/{contig_sample}.bed",
+                mapper=config['mappers'],
+                contig_sample=contig_groups['A']),
+        expand("output/binning/concoct/{mapper}/coverage_tables/{contig_sample}_coverage_table.txt",
+                mapper=config['mappers'],
+                contig_sample=contig_groups['A'])

@@ -16,9 +16,9 @@ rule taxonomy_kraken:
     threads:
         config['threads']['kraken2']
     log:
-        "output/logs/kraken2/taxonomy_kraken.sample_{sample}.log"
+        "output/logs/profile/kraken2/taxonomy_kraken/{sample}.log"
     benchmark:
-        "output/benchmarks/kraken2/taxonomy_kraken.sample_{sample}.txt"
+        "output/benchmarks/profile/kraken2/taxonomy_kraken/{sample}_benchmark.txt"
     shell:
         """
           # get stem file path
@@ -63,7 +63,9 @@ rule krona:
     threads:
         1
     log:
-        "output/logs/krona/krona.sample_{sample}.log"
+        "output/logs/profile/krona/{sample}.log"
+    benchmark:
+        "output/benchmarks/profile/krona/{sample}_benchmark.txt"
     shell:
         """
         perl resources/scripts/kraken2-translate.pl {input} > {input}.temp
@@ -84,9 +86,9 @@ rule download_metaphlan_db:
     conda:
         "../env/profile.yaml"
     log:
-        "output/logs/metaphlan/download_metaphlan_db.log"
+        "output/logs/profile/download_metaphlan_db/download_metaphlan_db.log"
     benchmark:
-        "output/benchmarks/metaphlan/download_metaphlan_db_benchmark.txt"
+        "output/benchmarks/profile/download_metaphlan_db/download_metaphlan_db_benchmark.txt"
     shell:
         """
         if test -f "{output}/mpa_latest"; then
@@ -97,7 +99,6 @@ rule download_metaphlan_db:
                 2> {log} 1>&2
         fi
         """
-
 
 rule metaphlan:
     """
@@ -110,19 +111,19 @@ rule metaphlan:
         fastq2=rules.host_filter.output.nonhost_R2,
         db_path=rules.download_metaphlan_db.output
     output:
-        bt2="output/metaphlan/bowtie2s/{sample}.bowtie2.bz2",
-        sam="output/metaphlan/sams/{sample}.sam.bz2",
-        profile="output/metaphlan/profiles/{sample}_profile.txt",
+        bt2="output/profile/metaphlan/bowtie2s/{sample}.bowtie2.bz2",
+        sam="output/profile/metaphlan/sams/{sample}.sam.bz2",
+        profile="output/profile/metaphlan/profiles/{sample}_profile.txt"
     conda:
         "../env/profile.yaml"
     threads:
         config['threads']['metaphlan']
     params:
-        other=config['params']['metaphlan']['other'],
+        other=config['params']['metaphlan']['other']
     benchmark:
-        "output/benchmarks/metaphlan/{sample}_benchmark.txt"
+        "output/benchmarks/profile/metaphlan/{sample}_benchmark.txt"
     log:
-        "output/logs/metaphlan/{sample}.metaphlan.log"
+        "output/logs/profile/metaphlan/{sample}.log"
     shell:
         """
         metaphlan {input.fastq1},{input.fastq2} \
@@ -142,14 +143,16 @@ rule merge_metaphlan_tables:
 
     """
     input:
-        expand(rules.run_metaphlan.output.profile,
+        expand(rules.metaphlan.output.profile,
                sample=samples)
     output:
-        merged_abundance_table="output/metaphlan/merged_abundance_table.txt"
+        merged_abundance_table="output/profile/metaphlan/merged_abundance_table.txt"
     conda:
         "../env/profile.yaml"
     log:
-        "output/logs/metaphlan/metaphlan.merged_abundance_table.log"
+        "output/logs/profile/metaphlan/merge_metaphlan_tables/merged_abundance_table.log"
+    benchmark:
+        "output/benchmarks/profile/metaphlan/merge_metaphlan_tables/merged_abundance_table_benchmark.txt"
     shell:
         """
         merge_metaphlan_tables.py {input} \

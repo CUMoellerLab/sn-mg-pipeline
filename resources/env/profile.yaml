@@ -8,5 +8,6 @@ dependencies:
   - bracken=>2.6.0
   - krona
   - python>=3.7
+  - numpy>=1.20
   - humann>=3.0
   - bowtie2>=2.3.0
