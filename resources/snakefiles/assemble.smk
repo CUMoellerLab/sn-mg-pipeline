@@ -131,14 +131,15 @@ rule metaquast:
                                  assembler=wildcards.assembler,
                                  sample=wildcards.sample)
     output:
-        report="output/assemble/{assembler}/metaquast/{sample}/report.html",
-        outdir=directory("output/assemble/{assembler}/metaquast/{sample}")
+        report="output/assemble/{assembler}/metaquast/{sample}/report.html"
     threads:
         config['threads']['metaquast']
     log:
         "output/logs/assemble/{assembler}/metaquast/{sample}.log"
     params:
-        refs=config['params']['metaquast']['reference_dir']
+        outdir=directory("output/assemble/{assembler}/metaquast/{sample}"),
+        refs=config['params']['metaquast']['reference_dir'],
+        extra=config['params']['metaquast']
     conda:
         "../env/assemble.yaml"
     benchmark:
@@ -147,17 +148,19 @@ rule metaquast:
         """
         metaquast.py \
           -r {params.refs} \
-          -o {output.outdir} \
+          -o {params.outdir} \
           -t {threads} \
+          {params.extra} \
           {input}
         """
 
 rule multiqc_metaquast:
     input:
-        lambda wildcards: expand("output/assemble/metaquast/{sample}/report.html",
-                                 sample=samples)
+        expand(rules.metaquast.output.report,
+               assembler=config['assemblers'],
+               sample=samples)
     output:
-        "output/assemble/{assembler}/multiqc_metaquast/multiqc.html"
+        "output/assemble/multiqc_metaquast/multiqc.html"
     params:
         config['params']['multiqc']  # Optional: extra parameters for multiqc.
     log:
