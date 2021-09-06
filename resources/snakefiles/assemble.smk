@@ -37,7 +37,6 @@ rule metaspades:
         # move and rename the contigs file into a permanent directory
         mv {params.temp_dir}/contigs.fasta {output.contigs}
         rm -rf {params.temp_dir}
-
         """
 
 rule megahit:
@@ -113,9 +112,13 @@ rule multiqc_assemble:
                                  assembler=config['assemblers'],
                                  sample=samples)
     output:
-        "output/assemble/multiqc/multiqc.html"
+        "output/assemble/multiqc_assemble/multiqc.html"
     params:
         config['params']['multiqc']  # Optional: extra parameters for multiqc.
+    log:
+        "output/logs/assemble/multiqc_assemble/multiqc_assemble.log"
+    benchmark:
+        "output/benchmarks/assemble/multiqc_assemble/multiqc_assemble_benchmark.txt"
     wrapper:
         "0.72.0/bio/multiqc"
 
@@ -154,12 +157,12 @@ rule multiqc_metaquast:
         lambda wildcards: expand("output/assemble/metaquast/{sample}/report.html",
                                  sample=samples)
     output:
-        "output/assemble/multiqc_metaquast/multiqc.html"
+        "output/assemble/{assembler}/multiqc_metaquast/multiqc.html"
     params:
         config['params']['multiqc']  # Optional: extra parameters for multiqc.
     log:
         "output/logs/assemble/multiqc_metaquast/multiqc_metaquast.log"
     benchmark:
-        "output/benchmarks/assemble/multiqc_metaquast/multiqc_metaquast.log"
+        "output/benchmarks/assemble/multiqc_metaquast/multiqc_metaquast_benchmark.txt"
     wrapper:
         "0.72.0/bio/multiqc"

@@ -51,6 +51,10 @@ rule fastqc_post_trim:
     log:
         "output/logs/qc/fastqc_post_trim/{sample}.{unit}.{read}.log"
     params: ""
+    log:
+        "output/logs/qc/fastqc_post_trim/{sample}_{unit}_{read}.log"
+    benchmark:
+        "output/benchmarks/qc/fastqc_post_trim/{sample}_{unit}_{read}_benchmark.txt"
     threads:
         config['threads']['fastqc_post_trim']
     wrapper:
@@ -69,6 +73,10 @@ rule merge_units:
     log:
         "output/logs/qc/merge_units/{sample}.combined.{read}.log"
     params: ""
+    log:
+        "output/logs/qc/merge_units/{sample}_combined_{read}.log"
+    benchmark:
+        "output/benchmarks/qc/merge_units/{sample}_combined_{read}_benchmark.txt"
     threads: 1
     shell: "cat {input} > {output}"
 
@@ -85,7 +93,7 @@ rule download_NCBI_assembly:
     log:
         "output/logs/qc/download_NCBI_assembly/{accn}.log"
     benchmark:
-        "output/benchmarks/qc/merge_units/{accn}_benchmark.txt"
+        "output/benchmarks/qc/download_NCBI_assembly/{accn}_benchmark.txt"
     conda:
         "../env/qc.yaml"
     shell: "esearch -db assembly -query {params.accn} | \
@@ -106,6 +114,10 @@ rule host_bowtie2_build:
                  ".4.bt2",
                  ".rev.1.bt2",
                  ".rev.2.bt2")
+    log:
+        "output/logs/host_bowtie2_build/{accn}.log"
+    benchmark:
+        "output/benchmarks/qc/host_bowtie2_build/{accn}_benchmark.txt"
     conda:
         "../env/qc.yaml"
     params:
@@ -152,10 +164,10 @@ rule host_filter:
         "../env/qc.yaml"
     threads:
         config['threads']['host_filter']
-    benchmark:
-        "output/benchmarks/qc/host_filter/{sample}_benchmark.txt"
     log:
         "output/logs/qc/host_filter/{sample}.log"
+    benchmark:
+        "output/benchmarks/qc/host_filter/{sample}_benchmark.txt"
     shell:
         """
         # Map reads against reference genome
@@ -184,6 +196,8 @@ rule multiqc:
     params:
         config['params']['multiqc']  # Optional: extra parameters for multiqc.
     log:
-        "output/logs/qc/multiqc/multiqc.log"
+        "output/logs/qc/multiqc/multiqc.log
+    benchmark:
+        "output/benchmarks/qc/multiqc/multiqc_benchmark.txt"
     wrapper:
         "0.72.0/bio/multiqc"
