@@ -1,6 +1,6 @@
 
 def get_bam_list(sample, mapper, contig_pairings):
-    fps = expand("output/binning/{mapper}/sorted_bams/{contig_pairings}_Mapped_To_{sample}.sorted.bam",
+    fps = expand("output/mapping/{mapper}/sorted_bams/{contig_pairings}_Mapped_To_{sample}.sorted.bam",
     mapper = mapper,
     sample = sample,
     contig_pairings = contig_pairings[sample])
@@ -17,9 +17,9 @@ rule make_metabat2_coverage_table:
     conda:
         "../env/binning.yaml"
     benchmark:
-        "output/benchmarks/metabat2/{mapper}/make_metabat2_coverage_table/{contig_sample}_benchmark.txt"
+        "output/benchmarks/binning/metabat2/{mapper}/make_metabat2_coverage_table/{contig_sample}_benchmark.txt"
     log:
-        "output/logs/metabat2/{mapper}/make_metabat2_coverage_table/{contig_sample}.log"
+        "output/logs/binning/metabat2/{mapper}/make_metabat2_coverage_table/{contig_sample}.log"
     shell:
         """
             echo {input.bams}
@@ -51,9 +51,9 @@ rule run_metabat2:
     conda:
         "../env/binning.yaml"
     benchmark:
-        "output/benchmarks/metabat2/{mapper}/run_metabat2/{contig_sample}_benchmark.txt"
+        "output/benchmarks/binning/metabat2/{mapper}/run_metabat2/{contig_sample}_benchmark.txt"
     log:
-        "output/logs/metabat2/{mapper}/run_metabat2/{contig_sample}.log"
+        "output/logs/binning/metabat2/{mapper}/run_metabat2/{contig_sample}.log"
     shell:
         """
             metabat2 {params.extra} --numThreads {threads} \
@@ -71,15 +71,15 @@ rule make_maxbin2_coverage_table:
        Commands to generate a coverage table using `samtools coverage` for input into maxbin2
     """
     input:
-        bams="output/binning/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.sorted.bam"
+        bams="output/mapping/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.sorted.bam"
     output:
         coverage_table="output/binning/maxbin2/{mapper}/coverage_tables/{read_sample}_Mapped_To_{contig_sample}_coverage.txt"
     conda:
         "../env/binning.yaml"
     benchmark:
-        "output/benchmarks/maxbin2/{mapper}/make_maxbin2_coverage_table/{read_sample}_Mapped_To_{contig_sample}_benchmark.txt"
+        "output/benchmarks/binning/maxbin2/{mapper}/make_maxbin2_coverage_table/{read_sample}_Mapped_To_{contig_sample}_benchmark.txt"
     log:
-        "output/logs/maxbin2/{mapper}/make_maxbin2_coverage_table/{read_sample}_Mapped_To_{contig_sample}.log"
+        "output/logs/binning/maxbin2/{mapper}/make_maxbin2_coverage_table/{read_sample}_Mapped_To_{contig_sample}.log"
     shell:
         """
           samtools coverage {input.bams} | \
@@ -100,9 +100,9 @@ rule make_maxbin2_abund_list:
     output:
         abund_list = "output/binning/maxbin2/{mapper}/abundance_lists/{contig_sample}_abund_list.txt"
     benchmark:
-        "output/benchmarks/maxbin2/{mapper}/make_maxbin2_abund_list/{contig_sample}_abund_list_benchmark.txt"
+        "output/benchmarks/binning/maxbin2/{mapper}/make_maxbin2_abund_list/{contig_sample}_abund_list_benchmark.txt"
     log:
-        "output/logs/maxbin2/{mapper}/make_maxbin2_abund_list/{contig_sample}_abund_list.log"
+        "output/logs/binning/maxbin2/{mapper}/make_maxbin2_abund_list/{contig_sample}_abund_list.log"
     run:
         with open(output.abund_list, 'w') as f:
             for fp in input:
@@ -122,7 +122,7 @@ rule run_maxbin2:
                 mapper=config['mappers'],
                 contig_sample=wildcards.contig_sample)
     output:
-        bins = "output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}"
+        bins = "output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}_bins"
         #bins = directory("output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/")
     params:
         #basename = "output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/{contig_sample}_bin",
@@ -133,9 +133,9 @@ rule run_maxbin2:
     conda:
         "../env/binning.yaml"
     benchmark:
-        "output/benchmarks/maxbin2/{mapper}/run_maxbin2/{contig_sample}_benchmark.txt"
+        "output/benchmarks/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}_benchmark.txt"
     log:
-        "output/logs/maxbin2/{mapper}/run_maxbin2/{contig_sample}.log"
+        "output/logs/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}.log"
     shell:
         """
             run_MaxBin.pl -thread {threads} -prob_threshold {params.prob} {params.extra} \
@@ -146,57 +146,56 @@ rule run_maxbin2:
             touch {output.bins}
         """
 
-# rule cut_up_fasta:
-#     """
-#     Cut up fasta file in non-overlapping or overlapping parts of equal length.
-#     Optionally creates a BED-file where the cutup contigs are specified in terms
-#     of the original contigs. This can be used as input to concoct_coverage_table.py.
-#     """
-#     input:
-#         contigs = lambda wildcards: expand("output/assemble/{assembler}/{contig_sample}.contigs.fasta",
-#                 assembler = config['assemblers'],
-#                 contig_sample = wildcards.contig_sample)
-#     output:
-#         bed="output/binning/concoct/{mapper}/{contig_sample}_contigs_10K.bed",
-#         contigs_10K="output/binning/concoct/{mapper}/{contig_sample}_contigs_10K.fa"
-#     conda:
-#         "../env/concoct_linux.yaml"
-#     params:
-#         chunk_size=config['params']['concoct']['chunk_size'],
-#         overlap_size=config['params']['concoct']['overlap_size']
-#     benchmark:
-#         "output/benchmarks/concoct/{mapper}/cut_up_fasta/{contig_sample}_benchmark.txt"
-#     log:
-#         "output/logs/concoct/{mapper}/cut_up_fasta/{contig_sample}.log"
-#     shell:
-#         """
-#           python resources/scripts/cut_up_fasta.py {input.contigs} \
-#           -c {params.chunk_size} \
-#           -o {params.overlap_size} \
-#           --merge_last \
-#           -b {output.bed} > {output.contigs_10K} 2> {log}
-#         """
-#
-#
-# rule make_concoct_coverage_table:
-#     """
-#     Generates table with per sample coverage depth.
-#     Assumes the directory "/output/binning/{mapper}/mapped_reads/" contains sorted and indexed bam files where each contig file has has reads mapped against it from the selected prototypes.
-#
-#     """
-#     input:
-#         bed="output/binning/concoct/{mapper}/{contig_sample}_contigs_10K.bed",
-#         bams = lambda wildcards: get_bam_list(wildcards.contig_sample, config['mappers'], contig_pairings)
-#     output:
-#         coverage_table="output/binning/concoct/{mapper}/{contig_sample}_coverage_table.txt"
-#     conda:
-#         "../env/concoct_linux.yaml"
-#     benchmark:
-#         "output/benchmarks/concoct/{mapper}/make_concoct_coverage_table/{contig_sample}_benchmark.txt"
-#     log:
-#         "output/logs/concoct/{mapper}/make_concoct_coverage_table/{contig_sample}.log"
-#     shell:
-#         """
-#           python resources/scripts/concoct_coverage_table.py {input.bed} \
-#           {input.bams} > {output.coverage_table} 2> {log}
-#         """
+rule cut_up_fasta:
+    """
+    Cut up fasta file in non-overlapping or overlapping parts of equal length.
+    Optionally creates a BED-file where the cutup contigs are specified in terms
+    of the original contigs. This can be used as input to concoct_coverage_table.py.
+    """
+    input:
+        contigs = lambda wildcards: expand("output/assemble/{assembler}/{contig_sample}.contigs.fasta",
+                assembler = config['assemblers'],
+                contig_sample = wildcards.contig_sample)
+    output:
+        bed="output/binning/concoct/{mapper}/contigs_10K/{contig_sample}.bed",
+        contigs_10K="output/binning/concoct/{mapper}/contigs_10K/{contig_sample}.fa"
+    conda:
+        "../env/binning_concoct_osx.yaml"
+    params:
+        chunk_size=config['params']['concoct']['chunk_size'],
+        overlap_size=config['params']['concoct']['overlap_size']
+    benchmark:
+        "output/benchmarks/binning/concoct/{mapper}/cut_up_fasta/{contig_sample}_benchmark.txt"
+    log:
+        "output/logs/binning/concoct/{mapper}/cut_up_fasta/{contig_sample}.log"
+    shell:
+        """
+          python resources/scripts/cut_up_fasta.py {input.contigs} \
+          -c {params.chunk_size} \
+          -o {params.overlap_size} \
+          --merge_last \
+          -b {output.bed} > {output.contigs_10K} 2> {log}
+        """
+
+rule make_concoct_coverage_table:
+    """
+    Generates table with per sample coverage depth.
+    Assumes the directory "/output/binning/{mapper}/mapped_reads/" contains sorted and indexed bam files where each contig file has has reads mapped against it from the selected prototypes.
+
+    """
+    input:
+        bed="output/binning/concoct/{mapper}/contigs_10K/{contig_sample}.bed",
+        bams = lambda wildcards: get_bam_list(wildcards.contig_sample, config['mappers'], contig_pairings)
+    output:
+        coverage_table="output/binning/concoct/{mapper}/coverage_tables/{contig_sample}_coverage_table.txt"
+    conda:
+        "../env/binning_concoct_osx.yaml"
+    benchmark:
+        "output/benchmarks/binning/concoct/{mapper}/make_concoct_coverage_table/{contig_sample}_benchmark.txt"
+    log:
+        "output/logs/binning/concoct/{mapper}/make_concoct_coverage_table/{contig_sample}.log"
+    shell:
+        """
+          python resources/scripts/concoct_coverage_table.py {input.bed} \
+          {input.bams} > {output.coverage_table} 2> {log}
+        """

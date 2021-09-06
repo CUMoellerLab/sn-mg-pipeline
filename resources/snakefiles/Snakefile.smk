@@ -30,7 +30,7 @@ include: "resources/snakefiles/profile.smk"
 rule all:
     input:
         "output/qc/multiqc/multiqc.html",
-        "output/prototype_selection/plots",
-        "output/prototype_selection/selected_prototypes.yaml",
         "output/assemble/multiqc/multiqc.html",
-        "output/profile/merged_abundance_table.txt"
+        "output/prototype_selection/sourmash_plot",
+        "output/prototype_selection/prototype_selection/selected_prototypes.yaml",
+        "output/profile/metaphlan/merged_abundance_table.txt"

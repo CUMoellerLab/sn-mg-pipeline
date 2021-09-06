@@ -5,7 +5,7 @@ rule index_contigs_bt2:
         contigs = lambda wildcards: get_contigs(wildcards.contig_sample,
                                                 binning_df)
     output:
-        temp(multiext("output/binning/bowtie2/indexed_contigs/{contig_sample}",
+        temp(multiext("output/mapping/bowtie2/indexed_contigs/{contig_sample}",
                       ".1.bt2",
                       ".2.bt2",
                       ".3.bt2",
@@ -13,13 +13,15 @@ rule index_contigs_bt2:
                       ".rev.1.bt2",
                       ".rev.2.bt2"))
     log:
-        "output/logs/binning/bowtie2-build.{contig_sample}.log"
+        "output/logs/mapping/bowtie2/indexed_contigs/{contig_sample}.log"
+    benchmark:
+        "output/benchmarks/mapping/bowtie2/indexed_contigs/{contig_sample}_benchmark.txt"
     conda:
         "../env/mapping.yaml"
     params:
         bt2b_command = config['params']['bowtie2']['bt2b_command'],
         extra = config['params']['bowtie2']['extra'],  # optional parameters
-        indexbase = "output/binning/bowtie2/indexed_contigs/{contig_sample}"
+        indexbase = "output/mapping/bowtie2/indexed_contigs/{contig_sample}"
     threads:
         config['threads']['bowtie2_build']
     shell:
@@ -33,14 +35,14 @@ rule map_reads_bt2:
     Maps reads to contig files using bowtie2.
     """
     input:
-        reads = lambda wildcards: expand("output/filtered/nonhost/{sample}.{read}.fastq.gz",
+        reads = lambda wildcards: expand("output/qc/host_filter/nonhost/{sample}.{read}.fastq.gz",
                                          sample=wildcards.read_sample,
                                          read=['1','2']),
         db=rules.index_contigs_bt2.output
     output:
-        aln=temp("output/binning/bowtie2/mapped_reads/{read_sample}_Mapped_To_{contig_sample}.bam")
+        aln=temp("output/mapping/bowtie2/mapped_reads/{read_sample}_Mapped_To_{contig_sample}.bam")
     params:
-        ref="output/binning/bowtie2/indexed_contigs/{contig_sample}",
+        ref="output/mapping/bowtie2/mapped_reads/{contig_sample}",
         bt2_command = config['params']['bowtie2']['bt2_command'],
         extra = config['params']['bowtie2']['extra'],  # optional parameters
     conda:
@@ -48,9 +50,9 @@ rule map_reads_bt2:
     threads:
         config['threads']['map_reads']
     benchmark:
-        "output/benchmarks/map_reads_bt2/{read_sample}_Mapped_To_{contig_sample}.benchmark.txt"
+        "output/benchmarks/mapping/bowtie2/mapped_reads/{read_sample}_Mapped_To_{contig_sample}.benchmark.txt"
     log:
-        "output/logs/map_reads_bt2/{read_sample}_Mapped_To_{contig_sample}.bowtie.log"
+        "output/logs/mapping/bowtie2/mapped_reads/{read_sample}_Mapped_To_{contig_sample}.log"
     shell:
         """
         # Map reads against reference genome
@@ -62,13 +64,17 @@ rule map_reads_bt2:
 
 rule index_contigs_minimap2:
     input:
-        # contigs = expand("output/assemble/metaspades/{sample}.contigs.fasta",
-        #         sample=samples)
-        contigs = "output/assemble/metaspades/{contig_sample}.contigs.fasta"
+        # contigs = lambda wildcards: expand("output/assemble/{assembler}/{contig_sample}.contigs.fasta",
+        #                          assembler=config['assemblers'],
+        #                          read=wildcards.contig_sample)
+        contigs = lambda wildcards: get_contigs(wildcards.contig_sample,
+                                                binning_df)
     output:
-        index = temp("output/binning/minimap2/indexed_contigs/{contig_sample}.mmi")
+        index = temp("output/mapping/minimap2/indexed_contigs/{contig_sample}.mmi")
     log:
-        "output/logs/binning/minimap2.index.{contig_sample}.log"
+        "output/logs/mapping/minimap2/indexed_contigs/{contig_sample}.log"
+    benchmark:
+        "output/benchmarks/mapping/minimap2/indexed_contigs/{contig_sample}_benchmark.txt"
     conda:
         "../env/mapping.yaml"
     threads:
@@ -84,12 +90,12 @@ rule map_reads_minimap2:
     Maps reads to contig files using minimap2.
     """
     input:
-        reads = lambda wildcards: expand("output/filtered/nonhost/{sample}.{read}.fastq.gz",
+        reads = lambda wildcards: expand("output/qc/host_filter/nonhost/{sample}.{read}.fastq.gz",
                                          sample=wildcards.read_sample,
                                          read=['1','2']),
         db=rules.index_contigs_minimap2.output.index
     output:
-        aln=temp("output/binning/minimap2/mapped_reads/{read_sample}_Mapped_To_{contig_sample}.bam")
+        aln=temp("output/mapping/minimap2/mapped_reads/{read_sample}_Mapped_To_{contig_sample}.bam")
     params:
         x=config['params']['minimap2']['x'],
         k=config['params']['minimap2']['k']
@@ -98,9 +104,9 @@ rule map_reads_minimap2:
     threads:
         config['threads']['minimap2_map_reads']
     benchmark:
-        "output/benchmarks/map_reads_minimap2/{read_sample}_Mapped_To_{contig_sample}.benchmark.txt"
+        "output/benchmarks/mapping/minimap2/mapped_reads/{read_sample}_Mapped_To_{contig_sample}_benchmark.txt"
     log:
-        "output/logs/map_reads_minimap2/{read_sample}_Mapped_To_{contig_sample}.minimap2.log"
+        "output/logs/mapping/minimap2/mapped_reads/{read_sample}_Mapped_To_{contig_sample}.log"
     shell:
         """
         # Map reads against contigs
@@ -114,10 +120,10 @@ rule sort_index_bam:
     Sorts and indexes bam file.
     """
     input:
-        aln="output/binning/{mapper}/mapped_reads/{read_sample}_Mapped_To_{contig_sample}.bam"
+        aln="output/mapping/{mapper}/mapped_reads/{read_sample}_Mapped_To_{contig_sample}.bam"
     output:
-        bam="output/binning/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.sorted.bam",
-        bai="output/binning/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.sorted.bam.bai"
+        bam="output/mapping/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.sorted.bam",
+        bai="output/mapping/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.sorted.bam.bai"
     conda:
         "../env/mapping.yaml"
     threads:

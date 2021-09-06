@@ -1,4 +1,4 @@
-rule metaspades_assembly:
+rule metaspades:
     """
 
     Performs a metagenomic assembly on a sample using MetaSPAdes.
@@ -16,9 +16,9 @@ rule metaspades_assembly:
     threads:
         config['threads']['spades']
     benchmark:
-        "output/benchmarks/metaspades/{sample}_benchmark.txt"
+        "output/benchmarks/assemble/metaspades/{sample}_benchmark.txt"
     log:
-        "output/logs/metaspades/{sample}.metaspades.log"
+        "output/logs/assemble/metaspades/{sample}.log"
     resources:
         mem_mb=config['mem_mb']['spades']
     shell:
@@ -40,7 +40,7 @@ rule metaspades_assembly:
 
         """
 
-rule megahit_assembly:
+rule megahit:
     """
 
     Performs a metagenomic assembly on a sample using MEGAHIT.
@@ -50,30 +50,31 @@ rule megahit_assembly:
         fastq1=rules.host_filter.output.nonhost_R1,
         fastq2=rules.host_filter.output.nonhost_R2
     output:
-        contigs="output/assemble/megahit/{sample}.contigs.fasta",
-        temp_dir=temp(directory("output/{sample}_temp"))
+        contigs="output/assemble/megahit/{sample}.contigs.fasta"
+    params:
+        temp_dir=directory("output/{sample}_temp/")
     conda:
         "../env/assemble.yaml"
     threads:
         config['threads']['megahit']
     benchmark:
-        "output/benchmarks/megahit/{sample}_benchmark.txt"
+        "output/benchmarks/assemble/megahit/{sample}_benchmark.txt"
     log:
-        "output/logs/megahit/{sample}.megahit.log"
+        "output/logs/assemble/megahit/{sample}.log"
     resources:
         mem_mb=config['mem_mb']['megahit']
     shell:
         """
-        # run the metaspades assembly
         megahit -t {threads} \
-          -o {output.temp_dir}/ \
+          -o {params.temp_dir}/ \
           --memory $(({resources.mem_mb}*1024*1024)) \
           -1 {input.fastq1} \
           -2 {input.fastq2} \
           2> {log} 1>&2
 
         # move and rename the contigs file into a permanent directory
-        mv {output.temp_dir}/final.contigs.fa {output.contigs}
+        mv {params.temp_dir}/final.contigs.fa {output.contigs}
+        rm -rf {params.temp_dir}
 
         """
 
@@ -92,11 +93,11 @@ rule quast:
     threads:
         1
     log:
-        "output/logs/{assembler}/quast/{sample}.quast.log"
+        "output/logs/assemble/{assembler}/quast/{sample}.log"
     conda:
         "../env/assemble.yaml"
     benchmark:
-        "output/benchmarks/{assembler}/quast/{sample}_benchmark.txt"
+        "output/benchmarks/assemble/{assembler}/quast/{sample}_benchmark.txt"
     shell:
         """
         quast.py \
@@ -112,11 +113,9 @@ rule multiqc_assemble:
                                  assembler=config['assemblers'],
                                  sample=samples)
     output:
-        "output/assemble/{assembler}/multiqc/multiqc.html"
+        "output/assemble/multiqc/multiqc.html"
     params:
         config['params']['multiqc']  # Optional: extra parameters for multiqc.
-    log:
-        "output/logs/multiqc/multiqc_assemble.log"
     wrapper:
         "0.72.0/bio/multiqc"
 
@@ -126,7 +125,7 @@ rule metaquast:
     """
     input:
         lambda wildcards: expand("output/assemble/{assembler}/{sample}.contigs.fasta",
-                                 assembler=config['assemblers'],
+                                 assembler=wildcards.assembler,
                                  sample=wildcards.sample)
     output:
         report="output/assemble/{assembler}/metaquast/{sample}/report.html",
@@ -134,13 +133,13 @@ rule metaquast:
     threads:
         config['threads']['metaquast']
     log:
-        "output/logs/metaquast/{sample}.metaquast.log"
+        "output/logs/assemble/{assembler}/metaquast/{sample}.log"
     params:
         refs=config['params']['metaquast']['reference_dir']
     conda:
         "../env/assemble.yaml"
     benchmark:
-        "output/benchmarks/{assembler}/metaquast/{sample}_benchmark.txt"
+        "output/benchmarks/assemble/{assembler}/metaquast/{sample}_benchmark.txt"
     shell:
         """
         metaquast.py \
@@ -160,6 +159,6 @@ rule multiqc_metaquast:
     params:
         config['params']['multiqc']  # Optional: extra parameters for multiqc.
     log:
-        "output/logs/multiqc/multiqc_metaquast.log"
+        "output/logs/assemble/multiqc/multiqc_metaquast.log"
     wrapper:
         "0.72.0/bio/multiqc"

@@ -168,12 +168,14 @@ def prototype_selection_destructive_maxdist(dm, num_prototypes, seedset=None):
 
 rule sourmash_sketch_reads:
     input:
-        R1 = "output/filtered/nonhost/{sample}.1.fastq.gz",
-        R2 = "output/filtered/nonhost/{sample}.2.fastq.gz"
+        fastq1=rules.host_filter.output.nonhost_R1,
+        fastq2=rules.host_filter.output.nonhost_R2
     output:
-        "output/sourmash/sketches/{sample}.sig"
+        "output/prototype_selection/sourmash_sketch_reads/{sample}.sig"
     log:
-        "output/logs/sourmash/sourmash_sketch_reads.{sample}.log"
+        "output/logs/prototype_selection/sourmash_sketch_reads/{sample}.log"
+    benchmark:
+        "output/benchmarks/prototype_selection/sourmash_sketch_reads/{sample}_benchmark.txt"
     threads: 1
     conda: "../env/prototype_selection.yaml"
     params:
@@ -195,11 +197,11 @@ rule sourmash_dm:
         expand(rules.sourmash_sketch_reads.output,
                sample=samples)
     output:
-        dm = "output/sourmash/sourmash.dm",
-        csv = "output/sourmash/sourmash.csv",
-        labels = "output/sourmash/sourmash.dm.labels.txt"
+        dm = "output/prototype_selection/sourmash_dm/sourmash.dm",
+        csv = "output/prototype_selection/sourmash_dm/sourmash.csv",
+        labels = "output/prototype_selection/sourmash_dm/sourmash.dm.labels.txt"
     log:
-        "output/logs/sourmash/sourmash_dm.log"
+        "output/logs/prototype_selection/sourmash_dm/sourmash_dm.log"
     threads: 1
     conda: "../env/prototype_selection.yaml"
     shell:
@@ -212,11 +214,11 @@ rule sourmash_dm:
 
 rule sourmash_plot:
     input:
-        "output/sourmash/sourmash.dm"
+        rules.sourmash_dm.output.dm
     output:
-        directory("output/sourmash/plots")
+        directory("output/prototype_selection/sourmash_plot/")
     log:
-        "output/logs/sourmash/sourmash_plot.log"
+        "output/logs/prototype_selection/sourmash_plot/sourmash_plot.log"
     threads: 1
     conda: "../env/prototype_selection.yaml"
     shell:
@@ -231,12 +233,12 @@ rule prototype_selection:
         dm = rules.sourmash_dm.output.csv,
         labels = rules.sourmash_dm.output.labels
     output:
-        file = "output/sourmash/selected_prototypes.yaml"
+        file = "output/prototype_selection/prototype_selection/selected_prototypes.yaml"
     params:
         min_seqs = config['params']['prototypes']['min_seqs'],
         max_seqs = config['params']['prototypes']['max_seqs']
     log:
-        "output/logs/sourmash/prototype_selection.log"
+        "output/logs/prototype_selection/prototype_selection/prototype_selection.log"
     threads: 1
     run:
         df = pd.read_csv(input[0], header=0, encoding= 'unicode_escape')

@@ -11,8 +11,8 @@ reads:
   - R2
 
 assemblers:
-  - metaspades
-#  - megahit
+#  - metaspades
+  - megahit
 
 biobakery:
   - metaphlan
