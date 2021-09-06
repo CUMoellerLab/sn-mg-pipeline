@@ -24,13 +24,13 @@ def get_read(sample, unit, read):
 
 include: "resources/snakefiles/qc.smk"
 include: "resources/snakefiles/assemble.smk"
-include: "resources/snakefiles/sourmash.smk"
+include: "resources/snakefiles/prototype_selection.smk"
 include: "resources/snakefiles/profile.smk"
 
 rule all:
     input:
         "output/qc/multiqc/multiqc.html",
-        "output/sourmash/plots",
-        "output/sourmash/selected_prototypes.yaml",
         "output/assemble/multiqc/multiqc.html",
-        "output/metaphlan/merged_abundance_table.txt"
+        "output/prototype_selection/sourmash_plot",
+        "output/prototype_selection/prototype_selection/selected_prototypes.yaml",
+        "output/profile/metaphlan/merged_abundance_table.txt"

@@ -4,13 +4,13 @@ rule fastqc_pre_trim:
                                    wildcards.unit,
                                    wildcards.read)
     output:
-        html="output/qc/fastqc_pre_trim/{sample}_{unit}_{read}.html",
-        zip="output/qc/fastqc_pre_trim/{sample}_{unit}_{read}_fastqc.zip" #  the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
+        html="output/qc/fastqc_pre_trim/{sample}.{unit}.{read}.html",
+        zip="output/qc/fastqc_pre_trim/{sample}.{unit}.{read}_fastqc.zip" #  the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
     params: ""
-    log:
-        "output/logs/qc/fastqc_pre_trim/{sample}_{unit}_{read}.log"
     benchmark:
-        "output/benchmarks/qc/fastqc_pre_trim/{sample}_{unit}_{read}_benchmark.txt"
+        "output/benchmarks/qc/fastqc_pre_trim/{sample}.{unit}.{read}_benchmark.txt"
+    log:
+        "output/logs/qc/fastqc_pre_trim/{sample}.{unit}.{read}.log"
     threads:
         config['threads']['fastqc']
     wrapper:
@@ -25,16 +25,16 @@ rule cutadapt_pe:
                                    wildcards.unit,
                                    'R2')
     output:
-        fastq1=temp("output/qc/cutadapt_pe/{sample}_{unit}_R1.fastq.gz"),
-        fastq2=temp("output/qc/cutadapt_pe/{sample}_{unit}_R2.fastq.gz"),
-        qc="output/logs/qc/cutadapt_pe/{sample}_{unit}.txt"
+        fastq1=temp("output/qc/cutadapt_pe/{sample}.{unit}.R1.fastq.gz"),
+        fastq2=temp("output/qc/cutadapt_pe/{sample}.{unit}.R2.fastq.gz"),
+        qc="output/logs/qc/cutadapt_pe/{sample}.{unit}.txt"
     params:
         "-a {} {}".format(config["params"]["cutadapt"]['adapter'],
                           config["params"]["cutadapt"]['other'])
-    log:
-        "output/logs/qc/cutadapt_pe/{sample}_{unit}.txt"
     benchmark:
-        "output/benchmarks/qc/cutadapt_pe/{sample}_{unit}_benchmark.txt"
+        "output/benchmarks/qc/cutadapt_pe/{sample}.{unit}_benchmark.txt"
+    log:
+        "output/logs/qc/cutadapt_pe/{sample}.{unit}.log"
     threads:
         config['threads']['cutadapt_pe']
     wrapper:
@@ -42,10 +42,14 @@ rule cutadapt_pe:
 
 rule fastqc_post_trim:
     input:
-        "output/qc/fastqc_post_trim/{sample}_{unit}_{read}.fastq.gz"
+        "output/qc/cutadapt_pe/{sample}.{unit}.{read}.fastq.gz"
     output:
-        html="output/qc/fastqc_post_trim/{sample}_{unit}_{read}.html",
-        zip="output/qc/fastqc_post_trim/{sample}_{unit}_{read}_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
+        html="output/qc/fastqc_post_trim/{sample}.{unit}.{read}.html",
+        zip="output/qc/fastqc_post_trim/{sample}.{unit}.{read}_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
+    benchmark:
+        "output/benchmarks/qc/fastqc_post_trim/{sample}.{unit}.{read}_benchmark.txt"
+    log:
+        "output/logs/qc/fastqc_post_trim/{sample}.{unit}.{read}.log"
     params: ""
     log:
         "output/logs/qc/fastqc_post_trim/{sample}_{unit}_{read}.log"
@@ -56,15 +60,18 @@ rule fastqc_post_trim:
     wrapper:
         "0.72.0/bio/fastqc"
 
-
 rule merge_units:
     input:
-        lambda wildcards: expand("output/qc/fastqc_post_trim/{sample}_{sequnit}_{read}.fastq.gz",
+        lambda wildcards: expand("output/qc/cutadapt_pe/{sample}.{sequnit}.{read}.fastq.gz",
                                  sample=wildcards.sample,
                                  sequnit=list(units_table.loc[wildcards.sample].index),
                                  read=wildcards.read)
     output:
-        temp("output/qc/merge_units/{sample}_combined_{read}.fastq.gz")
+        temp("output/qc/merge_units/{sample}.combined.{read}.fastq.gz")
+    benchmark:
+        "output/benchmarks/qc/merge_units/{sample}.combined.{read}_benchmark.txt"
+    log:
+        "output/logs/qc/merge_units/{sample}.combined.{read}.log"
     params: ""
     log:
         "output/logs/qc/merge_units/{sample}_combined_{read}.log"
@@ -88,10 +95,11 @@ rule download_NCBI_assembly:
     benchmark:
         "output/benchmarks/qc/download_NCBI_assembly/{accn}_benchmark.txt"
     conda:
-        "../env/bowtie2.yaml"
+        "../env/qc.yaml"
     shell: "esearch -db assembly -query {params.accn} | \
             elink -target nucleotide -name assembly_nuccore_insdc | \
-            efetch -format fasta > {output}"
+            efetch -format fasta > {output} \
+            2>> {log} 1>&2"
 
 rule host_bowtie2_build:
     input:
@@ -111,9 +119,9 @@ rule host_bowtie2_build:
     benchmark:
         "output/benchmarks/qc/host_bowtie2_build/{accn}_benchmark.txt"
     conda:
-        "../env/bowtie2.yaml"
+        "../env/qc.yaml"
     params:
-        extra="",  # optional parameters,
+        extra="",  # optional parameters
         indexbase=join(config['host_filter']['db_dir'],
                        config['host_filter']['accn'])
     threads:
@@ -121,7 +129,7 @@ rule host_bowtie2_build:
     shell:
         """
         bowtie2-build --threads {threads} {params.extra} \
-        {input.reference} {params.indexbase} 2> {log} 1>&2
+        {input.reference} {params.indexbase}
         """
 
 rule host_filter:
@@ -153,7 +161,7 @@ rule host_filter:
         ref=join(config['host_filter']['db_dir'],
                  config['host_filter']['accn'])
     conda:
-        "../env/bowtie2.yaml"
+        "../env/qc.yaml"
     threads:
         config['threads']['host_filter']
     log:
@@ -166,7 +174,7 @@ rule host_filter:
         bowtie2 -p {threads} -x {params.ref} \
           -1 {input.fastq1} -2 {input.fastq2} \
           --un-conc-gz {wildcards.sample}_nonhost \
-          2> {log} | samtools view -bS - > {output.host}
+          2> {log} | samtools view -bS - > {output.host} 
 
         # rename nonhost samples
         mv {wildcards.sample}_nonhost.1 output/qc/host_filter/nonhost/{wildcards.sample}.1.fastq.gz
@@ -175,11 +183,11 @@ rule host_filter:
 
 rule multiqc:
     input:
-        expand("output/qc/fastqc_pre_trim/{units.Index[0]}_{units.Index[1]}_{read}.html",
+        expand("output/qc/fastqc_pre_trim/{units.Index[0]}.{units.Index[1]}.{read}.html",
                units=units_table.itertuples(), read=reads),
-        expand("output/logs/qc/cutadapt_pe/{units.Index[0]}_{units.Index[1]}.txt",
+        expand("output/logs/qc/cutadapt_pe/{units.Index[0]}.{units.Index[1]}.txt",
                units=units_table.itertuples()),
-        expand("output/qc/fastqc_post_trim/{units.Index[0]}_{units.Index[1]}_{read}.html",
+        expand("output/qc/fastqc_post_trim/{units.Index[0]}.{units.Index[1]}.{read}.html",
                units=units_table.itertuples(), read=reads),
         lambda wildcards: expand(rules.host_filter.log,
                                  sample=samples)
@@ -188,7 +196,7 @@ rule multiqc:
     params:
         config['params']['multiqc']  # Optional: extra parameters for multiqc.
     log:
-        "output/logs/qc/multiqc/multiqc.log"
+        "output/logs/qc/multiqc/multiqc.log
     benchmark:
         "output/benchmarks/qc/multiqc/multiqc_benchmark.txt"
     wrapper:
