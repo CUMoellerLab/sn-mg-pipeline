@@ -69,7 +69,7 @@ rule download_NCBI_assembly:
     threads: 1
     log: "output/logs/setup/download_NCBI_assembly.{accn}.log"
     conda:
-        "../env/bowtie2.yaml"
+        "../env/qc.yaml"
     shell: "esearch -db assembly -query {params.accn} | \
             elink -target nucleotide -name assembly_nuccore_insdc | \
             efetch -format fasta > {output}"
@@ -90,7 +90,7 @@ rule host_bowtie2_build:
     log:
         "output/logs/host_bowtie2_build/bowtie2-build.log"
     conda:
-        "../env/bowtie2.yaml"
+        "../env/qc.yaml"
     params:
         extra="",  # optional parameters,
         indexbase=join(config['host_filter']['db_dir'],
@@ -132,7 +132,7 @@ rule host_filter:
         ref=join(config['host_filter']['db_dir'],
                  config['host_filter']['accn'])
     conda:
-        "../env/bowtie2.yaml"
+        "../env/qc.yaml"
     threads:
         config['threads']['host_filter']
     benchmark:

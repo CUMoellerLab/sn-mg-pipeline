@@ -15,7 +15,7 @@ rule index_contigs_bt2:
     log:
         "output/logs/binning/bowtie2-build.{contig_sample}.log"
     conda:
-        "../env/bowtie2.yaml"
+        "../env/mapping.yaml"
     params:
         bt2b_command = config['params']['bowtie2']['bt2b_command'],
         extra = config['params']['bowtie2']['extra'],  # optional parameters
@@ -44,7 +44,7 @@ rule map_reads_bt2:
         bt2_command = config['params']['bowtie2']['bt2_command'],
         extra = config['params']['bowtie2']['extra'],  # optional parameters
     conda:
-        "../env/bowtie2.yaml"
+        "../env/mapping.yaml"
     threads:
         config['threads']['map_reads']
     benchmark:
@@ -70,7 +70,7 @@ rule index_contigs_minimap2:
     log:
         "output/logs/binning/minimap2.index.{contig_sample}.log"
     conda:
-        "../env/bowtie2.yaml"
+        "../env/mapping.yaml"
     threads:
         config['threads']['minimap2_index']
     shell:
@@ -94,7 +94,7 @@ rule map_reads_minimap2:
         x=config['params']['minimap2']['x'],
         k=config['params']['minimap2']['k']
     conda:
-        "../env/bowtie2.yaml"
+        "../env/mapping.yaml"
     threads:
         config['threads']['minimap2_map_reads']
     benchmark:
@@ -119,7 +119,7 @@ rule sort_index_bam:
         bam="output/binning/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.sorted.bam",
         bai="output/binning/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.sorted.bam.bai"
     conda:
-        "../env/bowtie2.yaml"
+        "../env/mapping.yaml"
     threads:
         config['threads']['sort_bam']
     benchmark:
