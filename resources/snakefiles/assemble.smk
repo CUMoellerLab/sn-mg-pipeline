@@ -151,14 +151,15 @@ rule metaquast:
 
 rule multiqc_metaquast:
     input:
-        lambda wildcards: expand("output/assemble/{assembler}/metaquast/{sample}/report.html",
-                                 assembler=config['assemblers'],
+        lambda wildcards: expand("output/assemble/metaquast/{sample}/report.html",
                                  sample=samples)
     output:
         "output/assemble/multiqc_metaquast/multiqc.html"
     params:
         config['params']['multiqc']  # Optional: extra parameters for multiqc.
     log:
-        "output/logs/assemble/multiqc/multiqc_metaquast.log"
+        "output/logs/assemble/multiqc_metaquast/multiqc_metaquast.log"
+    benchmark:
+        "output/benchmarks/assemble/multiqc_metaquast/multiqc_metaquast.log"
     wrapper:
         "0.72.0/bio/multiqc"
