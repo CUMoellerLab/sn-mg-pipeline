@@ -99,7 +99,7 @@ rule download_NCBI_assembly:
     shell: "esearch -db assembly -query {params.accn} | \
             elink -target nucleotide -name assembly_nuccore_insdc | \
             efetch -format fasta > {output} \
-            2>> {log} 1>&2"
+            2>> {log}"
 
 rule host_bowtie2_build:
     input:
