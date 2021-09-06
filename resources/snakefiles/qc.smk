@@ -107,7 +107,7 @@ rule host_bowtie2_build:
                          accn=config['host_filter']['accn'])
     output:
         multiext(join(config['host_filter']['db_dir'],
-                      'genome'),
+                      config['host_filter']['accn']),
                  ".1.bt2",
                  ".2.bt2",
                  ".3.bt2",
@@ -131,7 +131,7 @@ rule host_bowtie2_build:
     shell:
         """
         bowtie2-build --threads {threads} {params.extra} \
-        {input.reference} {params.indexbase}
+        {input.reference} {params.indexbase} 2> {log}
         """
 
 rule host_filter:
