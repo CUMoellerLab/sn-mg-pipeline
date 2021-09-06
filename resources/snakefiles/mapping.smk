@@ -37,7 +37,7 @@ rule map_reads_bt2:
     input:
         reads = lambda wildcards: expand("output/qc/host_filter/nonhost/{sample}.{read}.fastq.gz",
                                          sample=wildcards.read_sample,
-                                         read=['1','2']),
+                                         read=['R1', 'R2']),
         db=rules.index_contigs_bt2.output
     output:
         aln=temp("output/mapping/bowtie2/mapped_reads/{read_sample}_Mapped_To_{contig_sample}.bam")
@@ -92,7 +92,7 @@ rule map_reads_minimap2:
     input:
         reads = lambda wildcards: expand("output/qc/host_filter/nonhost/{sample}.{read}.fastq.gz",
                                          sample=wildcards.read_sample,
-                                         read=['1','2']),
+                                         read=['R1', 'R2']),
         db=rules.index_contigs_minimap2.output.index
     output:
         aln=temp("output/mapping/minimap2/mapped_reads/{read_sample}_Mapped_To_{contig_sample}.bam")
