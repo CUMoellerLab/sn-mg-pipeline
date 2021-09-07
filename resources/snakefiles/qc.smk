@@ -131,7 +131,7 @@ rule host_bowtie2_build:
     shell:
         """
         bowtie2-build --threads {threads} {params.extra} \
-        {input.reference} {params.indexbase} 2> {log}
+        {input.reference} {params.indexbase} 2> {log} 1>&2
         """
 
 rule host_filter:
