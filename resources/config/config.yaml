@@ -44,7 +44,7 @@ params:
     scaled: 1000
     extra: ''
   metaphlan:
-    db_path: "resources/db/metaphlan"
+    db_path: "/workdir/dbs/metaphlan3"
     db_name: "mpa_v30_CHOCOPhlAn_201901"
     other: "--add_viruses --unknown_estimation"
   metaquast:
