@@ -56,7 +56,7 @@ rule fastqc_post_trim:
     benchmark:
         "output/benchmarks/qc/fastqc_post_trim/{sample}_{unit}_{read}_benchmark.txt"
     threads:
-        config['threads']['fastqc_post_trim']
+        config['threads']['fastqc']
     wrapper:
         "0.72.0/bio/fastqc"
 
@@ -99,7 +99,7 @@ rule download_NCBI_assembly:
     shell: "esearch -db assembly -query {params.accn} | \
             elink -target nucleotide -name assembly_nuccore_insdc | \
             efetch -format fasta > {output} \
-            2>> {log} 1>&2"
+            2>> {log}"
 
 rule host_bowtie2_build:
     input:
@@ -115,9 +115,11 @@ rule host_bowtie2_build:
                  ".rev.1.bt2",
                  ".rev.2.bt2")
     log:
-        "output/logs/host_bowtie2_build/{accn}.log"
+        "output/logs/host_bowtie2_build/{0}.log".format(
+            config['host_filter']['accn'])
     benchmark:
-        "output/benchmarks/qc/host_bowtie2_build/{accn}_benchmark.txt"
+        "output/benchmarks/qc/host_bowtie2_build/{0}_benchmark.txt".format(
+            config['host_filter']['accn'])
     conda:
         "../env/qc.yaml"
     params:
@@ -129,7 +131,7 @@ rule host_bowtie2_build:
     shell:
         """
         bowtie2-build --threads {threads} {params.extra} \
-        {input.reference} {params.indexbase}
+        {input.reference} {params.indexbase} 2> {log} 1>&2
         """
 
 rule host_filter:
@@ -154,8 +156,8 @@ rule host_filter:
         fastq2="output/qc/merge_units/{sample}.combined.R2.fastq.gz",
         db=rules.host_bowtie2_build.output
     output:
-        nonhost_R1="output/qc/host_filter/nonhost/{sample}.1.fastq.gz",
-        nonhost_R2="output/qc/host_filter/nonhost/{sample}.2.fastq.gz",
+        nonhost_R1="output/qc/host_filter/nonhost/{sample}.R1.fastq.gz",
+        nonhost_R2="output/qc/host_filter/nonhost/{sample}.R2.fastq.gz",
         host="output/qc/host_filter/host/{sample}.bam",
     params:
         ref=join(config['host_filter']['db_dir'],
@@ -177,9 +179,25 @@ rule host_filter:
           2> {log} | samtools view -bS - > {output.host} 
 
         # rename nonhost samples
-        mv {wildcards.sample}_nonhost.1 output/qc/host_filter/nonhost/{wildcards.sample}.1.fastq.gz
-        mv {wildcards.sample}_nonhost.2 output/qc/host_filter/nonhost/{wildcards.sample}.2.fastq.gz
+        mv {wildcards.sample}_nonhost.1 output/qc/host_filter/nonhost/{wildcards.sample}.R1.fastq.gz
+        mv {wildcards.sample}_nonhost.2 output/qc/host_filter/nonhost/{wildcards.sample}.R2.fastq.gz
         """
+
+rule fastqc_post_host:
+    input:
+        "output/qc/host_filter/nonhost/{sample}.{read}.fastq.gz"
+    output:
+        html="output/qc/fastqc_post_host/{sample}.{read}.html",
+        zip="output/qc/fastqc_post_host/{sample}.{read}_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
+    benchmark:
+        "output/benchmarks/qc/fastqc_post_host/{sample}.{read}_benchmark.txt"
+    log:
+        "output/logs/qc/fastqc_post_host/{sample}.{read}.log"
+    params: ""
+    threads:
+        config['threads']['fastqc']
+    wrapper:
+        "0.72.0/bio/fastqc"
 
 rule multiqc:
     input:
@@ -189,6 +207,8 @@ rule multiqc:
                units=units_table.itertuples()),
         expand("output/qc/fastqc_post_trim/{units.Index[0]}.{units.Index[1]}.{read}.html",
                units=units_table.itertuples(), read=reads),
+        expand("output/qc/fastqc_post_host/{units.Index[0]}.{read}.html",
+               units=units_table.itertuples(), read=reads),
         lambda wildcards: expand(rules.host_filter.log,
                                  sample=samples)
     output:
@@ -196,7 +216,7 @@ rule multiqc:
     params:
         config['params']['multiqc']  # Optional: extra parameters for multiqc.
     log:
-        "output/logs/qc/multiqc/multiqc.log
+        "output/logs/qc/multiqc/multiqc.log"
     benchmark:
         "output/benchmarks/qc/multiqc/multiqc_benchmark.txt"
     wrapper:
