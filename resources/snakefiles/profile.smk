@@ -91,10 +91,13 @@ rule download_metaphlan_db:
         "output/benchmarks/profile/download_metaphlan_db/download_metaphlan_db_benchmark.txt"
     shell:
         """
-            # Download the database
+        if test -f "{output}/mpa_latest"; then
+            touch {output}
+            echo "DB already installed at {output}"
+        else
             metaphlan --install --bowtie2db {output} \
-            2> {log} 1>&2
-
+                2> {log} 1>&2
+        fi
         """
 
 rule metaphlan:
