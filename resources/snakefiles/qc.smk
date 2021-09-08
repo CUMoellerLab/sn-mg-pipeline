@@ -194,10 +194,6 @@ rule fastqc_post_host:
     log:
         "output/logs/qc/fastqc_post_host/{sample}.{read}.log"
     params: ""
-    log:
-        "output/logs/qc/fastqc_post_host/{sample}_{read}.log"
-    benchmark:
-        "output/benchmarks/qc/fastqc_post_host/{sample}_{read}_benchmark.txt"
     threads:
         config['threads']['fastqc']
     wrapper:
