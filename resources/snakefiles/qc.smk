@@ -1,3 +1,8 @@
+from os.path import splitext
+
+host_base = join(config['host_filter']['db_dir'],
+                      splitext(config['host_filter']['genome'])[0])
+
 rule fastqc_pre_trim:
     input:
         lambda wildcards: get_read(wildcards.sample,
@@ -80,34 +85,11 @@ rule merge_units:
     threads: 1
     shell: "cat {input} > {output}"
 
-rule download_NCBI_assembly:
-    """
-    Downloads a genome by its GenBank assembly accession number.
-    """
-    output:
-        temp(join(config['host_filter']['db_dir'],
-                  '{accn}.fa'))
-    params:
-        accn=config['host_filter']['accn']
-    threads: 1
-    log:
-        "output/logs/qc/download_NCBI_assembly/{accn}.log"
-    benchmark:
-        "output/benchmarks/qc/download_NCBI_assembly/{accn}_benchmark.txt"
-    conda:
-        "../env/qc.yaml"
-    shell: "esearch -db assembly -query {params.accn} | \
-            elink -target nucleotide -name assembly_nuccore_insdc | \
-            efetch -format fasta > {output} \
-            2>> {log}"
-
 rule host_bowtie2_build:
     input:
-        reference=expand(rules.download_NCBI_assembly.output,
-                         accn=config['host_filter']['accn'])
+        reference=config['host_filter']['genome']
     output:
-        multiext(join(config['host_filter']['db_dir'],
-                      config['host_filter']['accn']),
+        multiext(host_base,
                  ".1.bt2",
                  ".2.bt2",
                  ".3.bt2",
@@ -118,14 +100,12 @@ rule host_bowtie2_build:
         "output/logs/qc/host_bowtie2_build/{0}.log".format(
             config['host_filter']['accn'])
     benchmark:
-        "output/benchmarks/qc/host_bowtie2_build/{0}_benchmark.txt".format(
-            config['host_filter']['accn'])
+        "output/benchmarks/qc/host_bowtie2_build/host_bowtie2_build_benchmark.txt"
     conda:
         "../env/qc.yaml"
     params:
         extra="",  # optional parameters
-        indexbase=join(config['host_filter']['db_dir'],
-                       config['host_filter']['accn'])
+        indexbase=host_base
     threads:
         config['threads']['host_filter']
     shell:
@@ -160,8 +140,7 @@ rule host_filter:
         nonhost_R2="output/qc/host_filter/nonhost/{sample}.R2.fastq.gz",
         host="output/qc/host_filter/host/{sample}.bam",
     params:
-        ref=join(config['host_filter']['db_dir'],
-                 config['host_filter']['accn'])
+        ref=host_base
     conda:
         "../env/qc.yaml"
     threads:
