@@ -115,7 +115,7 @@ rule host_bowtie2_build:
                  ".rev.1.bt2",
                  ".rev.2.bt2")
     log:
-        "output/logs/host_bowtie2_build/{0}.log".format(
+        "output/logs/qc/host_bowtie2_build/{0}.log".format(
             config['host_filter']['accn'])
     benchmark:
         "output/benchmarks/qc/host_bowtie2_build/{0}_benchmark.txt".format(
@@ -176,7 +176,7 @@ rule host_filter:
         bowtie2 -p {threads} -x {params.ref} \
           -1 {input.fastq1} -2 {input.fastq2} \
           --un-conc-gz {wildcards.sample}_nonhost \
-          2> {log} | samtools view -bS - > {output.host} 
+          2> {log} | samtools view -bS - > {output.host}
 
         # rename nonhost samples
         mv {wildcards.sample}_nonhost.1 output/qc/host_filter/nonhost/{wildcards.sample}.R1.fastq.gz
