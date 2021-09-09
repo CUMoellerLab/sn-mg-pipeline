@@ -97,8 +97,7 @@ rule host_bowtie2_build:
                  ".rev.1.bt2",
                  ".rev.2.bt2")
     log:
-        "output/logs/host_bowtie2_build/{0}.log".format(
-            config['host_filter']['accn'])
+        "output/logs/host_bowtie2_build/host_bowtie2_build.log"
     benchmark:
         "output/benchmarks/qc/host_bowtie2_build/host_bowtie2_build_benchmark.txt"
     conda:
