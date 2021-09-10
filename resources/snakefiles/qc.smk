@@ -154,11 +154,11 @@ rule host_filter:
         bowtie2 -p {threads} -x {params.ref} \
           -1 {input.fastq1} -2 {input.fastq2} \
           --un-conc-gz {wildcards.sample}_nonhost \
-          2> {log} | samtools view -bS - > {output.host} 
+          2> {log} | samtools view -bS - > {output.host}
 
         # rename nonhost samples
-        mv {wildcards.sample}_nonhost.1 output/qc/host_filter/nonhost/{wildcards.sample}.R1.fastq.gz
-        mv {wildcards.sample}_nonhost.2 output/qc/host_filter/nonhost/{wildcards.sample}.R2.fastq.gz
+        cp {wildcards.sample}_nonhost.1 output/qc/host_filter/nonhost/{wildcards.sample}.R1.fastq.gz
+        cp {wildcards.sample}_nonhost.2 output/qc/host_filter/nonhost/{wildcards.sample}.R2.fastq.gz
         """
 
 rule fastqc_post_host:
