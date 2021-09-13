@@ -193,7 +193,7 @@ rule multiqc:
     output:
         "output/qc/multiqc/multiqc.html"
     params:
-        config['params']['multiqc']  # Optional: extra parameters for multiqc.
+        "--dirs " + config['params']['multiqc']  # Optional: extra parameters for multiqc.
     log:
         "output/logs/qc/multiqc/multiqc.log"
     benchmark:
