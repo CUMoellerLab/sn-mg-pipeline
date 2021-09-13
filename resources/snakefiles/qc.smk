@@ -154,7 +154,8 @@ rule host_filter:
         bowtie2 -p {threads} -x {params.ref} \
           -1 {input.fastq1} -2 {input.fastq2} \
           --un-conc-gz {wildcards.sample}_nonhost \
-          2> {log} | samtools view -bS - > {output.host} 
+          --no-unal \
+          2> {log} | samtools view -bS - > {output.host}
 
         # rename nonhost samples
         mv {wildcards.sample}_nonhost.1 output/qc/host_filter/nonhost/{wildcards.sample}.R1.fastq.gz
@@ -192,7 +193,7 @@ rule multiqc:
     output:
         "output/qc/multiqc/multiqc.html"
     params:
-        "--dirs " + config['params']['multiqc']  # Optional: extra parameters for multiqc.
+        config['params']['multiqc']  # Optional: extra parameters for multiqc.
     log:
         "output/logs/qc/multiqc/multiqc.log"
     benchmark:
