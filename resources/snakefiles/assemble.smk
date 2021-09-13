@@ -114,7 +114,7 @@ rule multiqc_assemble:
     output:
         "output/assemble/multiqc_assemble/multiqc.html"
     params:
-        config['params']['multiqc']  # Optional: extra parameters for multiqc.
+        "--dirs " + config['params']['multiqc']  # Optional: extra parameters for multiqc.
     log:
         "output/logs/assemble/multiqc_assemble/multiqc_assemble.log"
     benchmark:
@@ -162,7 +162,7 @@ rule multiqc_metaquast:
     output:
         "output/assemble/multiqc_metaquast/multiqc.html"
     params:
-        config['params']['multiqc']  # Optional: extra parameters for multiqc.
+        "--dirs " + config['params']['multiqc']  # Optional: extra parameters for multiqc.
     log:
         "output/logs/assemble/multiqc_metaquast/multiqc_metaquast.log"
     benchmark:
