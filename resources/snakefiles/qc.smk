@@ -97,7 +97,7 @@ rule host_bowtie2_build:
                  ".rev.1.bt2",
                  ".rev.2.bt2")
     log:
-        "output/logs/host_bowtie2_build/host_bowtie2_build.log"
+        "output/logs/qc/host_bowtie2_build/host_bowtie2_build.log"
     benchmark:
         "output/benchmarks/qc/host_bowtie2_build/host_bowtie2_build_benchmark.txt"
     conda:
@@ -193,7 +193,7 @@ rule multiqc:
     output:
         "output/qc/multiqc/multiqc.html"
     params:
-        config['params']['multiqc']  # Optional: extra parameters for multiqc.
+        "--dirs " + config['params']['multiqc']  # Optional: extra parameters for multiqc.
     log:
         "output/logs/qc/multiqc/multiqc.log"
     benchmark:
