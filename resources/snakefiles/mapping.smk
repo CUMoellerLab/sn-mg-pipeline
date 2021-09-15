@@ -64,9 +64,6 @@ rule map_reads_bt2:
 
 rule index_contigs_minimap2:
     input:
-        # contigs = lambda wildcards: expand("output/assemble/{assembler}/{contig_sample}.contigs.fasta",
-        #                          assembler=config['assemblers'],
-        #                          read=wildcards.contig_sample)
         contigs = lambda wildcards: get_contigs(wildcards.contig_sample,
                                                 binning_df)
     output:
