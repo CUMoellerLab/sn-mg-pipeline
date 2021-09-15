@@ -96,7 +96,7 @@ rule map_all:
         # expand("output/binning/maxbin2/{mapper}/abundance_lists/{contig_sample}_abund_list.txt",
         #         mapper=config['mappers'],
         #         contig_sample=contig_groups['A']),
-        expand("output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}_bins",
+        expand("output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/{contig_sample}_bins",
                 mapper=config['mappers'],
                 contig_sample=contig_groups['A']),
         expand("output/binning/concoct/{mapper}/contigs_10K/{contig_sample}.bed",
