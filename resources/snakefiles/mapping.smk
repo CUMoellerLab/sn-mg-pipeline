@@ -122,8 +122,8 @@ rule sort_index_bam:
     input:
         aln="output/mapping/{mapper}/mapped_reads/{read_sample}_Mapped_To_{contig_sample}.bam"
     output:
-        bam="output/mapping/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.sorted.bam",
-        bai="output/mapping/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.sorted.bam.bai"
+        bam=temp("output/mapping/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.sorted.bam"),
+        bai=temp("output/mapping/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.sorted.bam.bai")
     conda:
         "../env/mapping.yaml"
     threads:
