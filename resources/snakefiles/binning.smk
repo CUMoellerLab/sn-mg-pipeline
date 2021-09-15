@@ -211,12 +211,10 @@ rule run_concoct:
         contigs_10K=rules.cut_up_fasta.output.contigs_10K,
         coverage_table=rules.make_concoct_coverage_table.output.coverage_table
     output:
-        bins = "output/binning/concoct/{mapper}/run_concoct/{contig_sample}/{contig_sample}_bins"
+        bins = "output/binning/concoct/{mapper}/run_concoct/{contig_sample}/"
     # params:
     #     prob = config['params']['maxbin2']['prob_threshold'],  # optional parameters
     #     extra = config['params']['maxbin2']['extra']  # optional parameters
-    threads:
-        config['threads']['run_concoct']
     conda:
         "../env/concoct_linux.yaml"
     benchmark:
