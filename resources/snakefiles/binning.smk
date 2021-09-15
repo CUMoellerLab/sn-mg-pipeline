@@ -157,7 +157,7 @@ rule cut_up_fasta:
         bed="output/binning/concoct/{mapper}/contigs_10K/{contig_sample}.bed",
         contigs_10K="output/binning/concoct/{mapper}/contigs_10K/{contig_sample}.fa"
     conda:
-        "../env/binning_concoct_osx.yaml"
+        "../env/concoct_linux.yaml"
     params:
         chunk_size=config['params']['concoct']['chunk_size'],
         overlap_size=config['params']['concoct']['overlap_size']
@@ -186,7 +186,7 @@ rule make_concoct_coverage_table:
     output:
         coverage_table="output/binning/concoct/{mapper}/coverage_tables/{contig_sample}_coverage_table.txt"
     conda:
-        "../env/binning_concoct_osx.yaml"
+        "../env/concoct_linux.yaml"
     benchmark:
         "output/benchmarks/binning/concoct/{mapper}/make_concoct_coverage_table/{contig_sample}_benchmark.txt"
     log:
@@ -195,4 +195,39 @@ rule make_concoct_coverage_table:
         """
           python resources/scripts/concoct_coverage_table.py {input.bed} \
           {input.bams} > {output.coverage_table} 2> {log}
+        """
+
+rule run_concoct:
+    """
+    CONCOCT does unsupervised binning of metagenomic contigs by using nucleotide composition - kmer frequencies - and coverage data for multiple samples.
+    """
+    input:
+        # contigs = lambda wildcards: expand("output/assemble/{assembler}/{contig_sample}.contigs.fasta",
+        #         assembler = config['assemblers'],
+        #         contig_sample = wildcards.contig_sample),
+        # abund_list = lambda wildcards: expand("output/binning/maxbin2/{mapper}/abundance_lists/{contig_sample}_abund_list.txt",
+        #         mapper=config['mappers'],
+        #         contig_sample=wildcards.contig_sample)
+        contigs_10K=rules.cut_up_fasta.output.contigs_10K,
+        coverage_table=rules.make_concoct_coverage_table.output.coverage_table
+    output:
+        bins = "output/binning/concoct/{mapper}/run_concoct/{contig_sample}/{contig_sample}_bins"
+    # params:
+    #     prob = config['params']['maxbin2']['prob_threshold'],  # optional parameters
+    #     extra = config['params']['maxbin2']['extra']  # optional parameters
+    threads:
+        config['threads']['run_concoct']
+    conda:
+        "../env/concoct_linux.yaml"
+    benchmark:
+        "output/benchmarks/binning/concoct/{mapper}/run_concoct/{contig_sample}_benchmark.txt"
+    log:
+        "output/logs/binning/concoct/{mapper}/run_concoct/{contig_sample}.log"
+    shell:
+        """
+            concoct --composition_file {input.contigs_10K} \
+            --coverage_file {input.coverage_table} \
+            -b {output.bins}
+            2> {log}
+            touch {output.bins}
         """

@@ -87,6 +87,7 @@ threads:
   concoct: 8
   run_metabat2: 8
   run_maxbin2: 8
+  run_concoct: 8
 
 mem_mb:
   spades: 256000
