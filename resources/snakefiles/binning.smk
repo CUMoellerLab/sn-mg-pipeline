@@ -232,18 +232,10 @@ rule merge_cutup_clustering:
     Merges subcontig clustering into original contig clustering.
     """
     input:
-        # contigs = lambda wildcards: expand("output/assemble/{assembler}/{contig_sample}.contigs.fasta",
-        #         assembler = config['assemblers'],
-        #         contig_sample = wildcards.contig_sample)
         bins = lambda wildcards: expand("output/binning/concoct/{mapper}/run_concoct/{contig_sample}/{contig_sample}_bins_clustering_gt{length}.csv",
                 mapper = config['mappers'],
                 contig_sample = wildcards.contig_sample,
                 length = config["params"]["concoct"]['length_threshold'])
-
-        # bins = "output/binning/concoct/{mapper}/run_concoct/{contig_sample}/{contig_sample}_bins_clustering_gt{length}.csv".format(
-        # mapper = config['mappers'],
-        # contig_sample = contig_groups['A'],
-        # length = config["params"]["concoct"]['length_threshold'])
     output:
         merged = "output/binning/concoct/{mapper}/merge_cutup_clustering/{contig_sample}_clustering_merged.csv"
     conda:
@@ -256,4 +248,30 @@ rule merge_cutup_clustering:
         """
             python merge_cutup_clustering.py {input.bins} > {output.merged}
             touch {output.merged} 2> {log}
+        """
+
+rule extract_fasta_bins:
+    """
+    Extracts bins as individual FASTA.
+    """
+    input:
+        original_contigs = lambda wildcards: expand("output/assemble/{assembler}/{contig_sample}.contigs.fasta",
+                assembler = config['assemblers'],
+                contig_sample = wildcards.contig_sample)
+        clustering_merged = "output/binning/concoct/{mapper}/merge_cutup_clustering/{contig_sample}_clustering_merged.csv"
+    output:
+        fasta_bins = "output/binning/concoct/{mapper}/extract_fasta_bins/{contig_sample}/{contig_sample}"
+    conda:
+        "../env/concoct_linux.yaml"
+    benchmark:
+        "output/benchmarks/binning/concoct/{mapper}/extract_fasta_bins/{contig_sample}_benchmark.txt"
+    log:
+        "output/logs/binning/concoct/{mapper}/extract_fasta_bins/{contig_sample}.log"
+    shell:
+        """
+            python extract_fasta_bins.py \
+            {input.original_contigs} \
+            {input.clustering_merged} \
+            --output_path {output.fasta_bins}
+            touch {output.fasta_bins} 2> {log}
         """
