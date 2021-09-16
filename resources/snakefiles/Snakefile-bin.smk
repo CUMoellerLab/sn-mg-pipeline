@@ -81,9 +81,13 @@ include: "resources/snakefiles/binning.smk"
 
 rule map_all:
     input:
+        expand("output/mapping/{mapper}/sorted_bams/{pairing[0]}_Mapped_To_{pairing[1]}.sorted.bam",
+                mapper=config['mappers'],
+                pairing=pairings),
         expand("output/mapping/{mapper}/sorted_bams/{pairing[0]}_Mapped_To_{pairing[1]}.sorted.bam.bai",
                 mapper=config['mappers'],
                 pairing=pairings),
+
         expand("output/binning/metabat2/{mapper}/run_metabat2/{contig_sample}/",
                 mapper=config['mappers'],
                 contig_sample=contig_groups['A']),
