@@ -49,10 +49,6 @@ params:
     other: "--add_viruses --unknown_estimation"
   metaquast:
     reference_dir: "resources/db/metaquast/"
-  concoct:
-    chunk_size: 10000
-    overlap_size: 0
-    length_threshold: 1000
   minimap2:
     x: 'sr'
     k: 500000000
@@ -62,10 +58,14 @@ params:
     n: 12
   metabat2:
     extra: '--verbose'
-    minContig: 1000 # Minimum size of a contig for binning (should be >=1500).
+    min_contig_length: 1000 # Minimum size of a contig for binning (should be >=1500).
   maxbin2:
     prob_threshold: 0.8
     extra: '-verbose'
+    min_contig_length: 1000
+  concoct:
+    chunk_size: 10000
+    overlap_size: 0
     min_contig_length: 1000
   kraken2:
     levels: 'P,C,O,F,G,S'

@@ -43,7 +43,7 @@ rule run_metabat2:
         bins = directory("output/binning/metabat2/{mapper}/run_metabat2/{contig_sample}/")
     params:
         basename = "output/binning/metabat2/{mapper}/run_metabat2/{contig_sample}/{contig_sample}_bin",
-        minContig = config['params']['metabat2']['minContig'],
+        min_contig_length = config['params']['metabat2']['min_contig_length'],
         extra = config['params']['metabat2']['extra']  # optional parameters
     threads:
         config['threads']['run_metabat2']
@@ -59,7 +59,7 @@ rule run_metabat2:
             --inFile {input.contigs} \
             --outFile {params.basename} \
             --abdFile {input.coverage_table} \
-            --minContig {params.minContig} \
+            --minContig {params.min_contig_length} \
             2> {log} 1>&2
             touch {output.bins}
         """
@@ -214,14 +214,14 @@ rule run_concoct:
     threads:
         config['threads']['run_concoct']
     params:
-        length_threshold=config['params']['concoct']['length_threshold'],
+        min_contig_length=config['params']['concoct']['min_contig_length'],
     benchmark:
         "output/benchmarks/binning/concoct/{mapper}/run_concoct/{contig_sample}_benchmark.txt"
     log:
         "output/logs/binning/concoct/{mapper}/run_concoct/{contig_sample}.log"
     shell:
         """
-            concoct --threads {threads} -l {params.length_threshold}\
+            concoct --threads {threads} -l {params.min_contig_length}\
             --composition_file {input.contigs_10K} \
             --coverage_file {input.coverage_table} \
             -b {output.bins}
