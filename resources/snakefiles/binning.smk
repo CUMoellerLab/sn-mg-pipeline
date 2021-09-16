@@ -199,31 +199,28 @@ rule make_concoct_coverage_table:
 
 rule run_concoct:
     """
+    CONCOCT - Clustering cONtigs with COverage and ComposiTion
     CONCOCT does unsupervised binning of metagenomic contigs by using nucleotide composition - kmer frequencies - and coverage data for multiple samples.
     """
     input:
-        # contigs = lambda wildcards: expand("output/assemble/{assembler}/{contig_sample}.contigs.fasta",
-        #         assembler = config['assemblers'],
-        #         contig_sample = wildcards.contig_sample),
-        # abund_list = lambda wildcards: expand("output/binning/maxbin2/{mapper}/abundance_lists/{contig_sample}_abund_list.txt",
-        #         mapper=config['mappers'],
-        #         contig_sample=wildcards.contig_sample)
         contigs_10K=rules.cut_up_fasta.output.contigs_10K,
         coverage_table=rules.make_concoct_coverage_table.output.coverage_table
     output:
-        bins = "output/binning/concoct/{mapper}/run_concoct/{contig_sample}/"
-    # params:
-    #     prob = config['params']['maxbin2']['prob_threshold'],  # optional parameters
-    #     extra = config['params']['maxbin2']['extra']  # optional parameters
+        bins = "output/binning/concoct/{mapper}/run_concoct/{contig_sample}/{contig_sample}_bins"
     conda:
         "../env/concoct_linux.yaml"
+    threads:
+        config['threads']['run_concoct']
+    params:
+        length_threshold=config['params']['concoct']['length_threshold'],
     benchmark:
         "output/benchmarks/binning/concoct/{mapper}/run_concoct/{contig_sample}_benchmark.txt"
     log:
         "output/logs/binning/concoct/{mapper}/run_concoct/{contig_sample}.log"
     shell:
         """
-            concoct --composition_file {input.contigs_10K} \
+            concoct --threads {threads} -l {params.length_threshold}\
+            --composition_file {input.contigs_10K} \
             --coverage_file {input.coverage_table} \
             -b {output.bins}
             2> {log}

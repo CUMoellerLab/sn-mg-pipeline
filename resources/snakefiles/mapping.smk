@@ -126,9 +126,9 @@ rule sort_index_bam:
     threads:
         config['threads']['sort_bam']
     benchmark:
-        "output/benchmarks/sort_bam/{mapper}/{read_sample}_Mapped_To_{contig_sample}.sorted.txt"
+        "output/benchmarks/mapping/{mapper}/sort_index_bam/{read_sample}_Mapped_To_{contig_sample}.sorted.txt"
     log:
-        "output/logs/sort_bam/{mapper}/{read_sample}_Mapped_To_{contig_sample}.sorted.log"
+        "output/logs/mapping/{mapper}/sort_index_bam/sort_index_bam/{read_sample}_Mapped_To_{contig_sample}.sorted.log"
     shell:
         """
         samtools sort -o {output.bam} -@ {threads} {input.aln} 2> {log}
