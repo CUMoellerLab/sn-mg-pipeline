@@ -270,7 +270,7 @@ rule extract_fasta_bins:
         "output/logs/binning/concoct/{mapper}/extract_fasta_bins/{contig_sample}.log"
     shell:
         """
-            python resources/scripts/extract_fasta_bins.py \
+            extract_fasta_bins.py \
             {input.original_contigs} \
             {input.clustering_merged} \
             --output_path {output.fasta_bins} \
