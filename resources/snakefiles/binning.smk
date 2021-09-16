@@ -246,7 +246,7 @@ rule merge_cutup_clustering:
         "output/logs/binning/concoct/{mapper}/merge_cutup_clustering/{contig_sample}.log"
     shell:
         """
-            python merge_cutup_clustering.py {input.bins} > {output.merged}
+            python resources/scripts/merge_cutup_clustering.py {input.bins} > {output.merged}
             touch {output.merged} 2> {log}
         """
 
@@ -269,7 +269,7 @@ rule extract_fasta_bins:
         "output/logs/binning/concoct/{mapper}/extract_fasta_bins/{contig_sample}.log"
     shell:
         """
-            python extract_fasta_bins.py \
+            python resources/scripts/extract_fasta_bins.py \
             {input.original_contigs} \
             {input.clustering_merged} \
             --output_path {output.fasta_bins}
