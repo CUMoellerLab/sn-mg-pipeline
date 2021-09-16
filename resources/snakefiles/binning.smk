@@ -237,7 +237,7 @@ rule merge_cutup_clustering:
         bins = lambda wildcards: expand("output/binning/concoct/{mapper}/run_concoct/{contig_sample}/{contig_sample}_bins_clustering_gt{length}.csv",
                 mapper = config['mappers'],
                 contig_sample = wildcards.contig_sample,
-                length = config["params"]["concoct"]['length_threshold'])
+                length = config["params"]["concoct"]['min_contig_length'])
     output:
         merged = "output/binning/concoct/{mapper}/merge_cutup_clustering/{contig_sample}_clustering_merged.csv"
     conda:
