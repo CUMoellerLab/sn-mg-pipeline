@@ -92,4 +92,7 @@ rule map_all:
                 contig_sample=contig_groups['A']),
         expand("output/binning/concoct/{mapper}/run_concoct/{contig_sample}/{contig_sample}_bins",
                 mapper=config['mappers'],
-                contig_sample=contig_groups['A'])
+                contig_sample=contig_groups['A']),
+        expand("output/binning/concoct/{mapper}/merge_cutup_clustering/{contig_sample}_clustering_merged.csv",
+                mapper=config['mappers'],
+                contig_sample=contig_groups['A'])               

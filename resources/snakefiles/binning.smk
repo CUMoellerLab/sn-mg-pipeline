@@ -235,7 +235,10 @@ rule merge_cutup_clustering:
         # contigs = lambda wildcards: expand("output/assemble/{assembler}/{contig_sample}.contigs.fasta",
         #         assembler = config['assemblers'],
         #         contig_sample = wildcards.contig_sample)
-        bins = "output/binning/concoct/{mapper}/run_concoct/{contig_sample}/{contig_sample}_bins_clustering_gt{}.csv".format(config["params"]["concoct"]['length_threshold'])
+        bins = "output/binning/concoct/{0}/run_concoct/{1}/{1}_bins_clustering_gt{3}.csv".format(
+        config['mappers'],
+        contig_sample=contig_groups['A'],
+        config["params"]["concoct"]['length_threshold'])
     output:
         merged = "output/binning/concoct/{mapper}/merge_cutup_clustering/{contig_sample}_clustering_merged.csv"
     conda:
