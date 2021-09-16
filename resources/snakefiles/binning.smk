@@ -226,3 +226,26 @@ rule run_concoct:
             2> {log}
             touch {output.bins}
         """
+
+rule merge_cutup_clustering:
+    """
+    Merges subcontig clustering into original contig clustering.
+    """
+    input:
+        # contigs = lambda wildcards: expand("output/assemble/{assembler}/{contig_sample}.contigs.fasta",
+        #         assembler = config['assemblers'],
+        #         contig_sample = wildcards.contig_sample)
+        bins = "output/binning/concoct/{mapper}/run_concoct/{contig_sample}/{contig_sample}_bins_clustering_gt{}.csv".format(config["params"]["concoct"]['length_threshold'])
+    output:
+        merged = "output/binning/concoct/{mapper}/merge_cutup_clustering/{contig_sample}_clustering_merged.csv"
+    conda:
+        "../env/concoct_linux.yaml"
+    benchmark:
+        "output/benchmarks/binning/concoct/{mapper}/merge_cutup_clustering/{contig_sample}_benchmark.txt"
+    log:
+        "output/logs/binning/concoct/{mapper}/merge_cutup_clustering/{contig_sample}.log"
+    shell:
+        """
+            python merge_cutup_clustering.py {input.bins} > {output.merged}
+            touch {output.bins} 2> {log}
+        """
