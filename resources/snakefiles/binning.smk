@@ -271,7 +271,7 @@ rule extract_fasta_bins:
         "output/logs/binning/concoct/{mapper}/extract_fasta_bins/{contig_sample}.log"
     shell:
         """
-            mdkir -p {output.fasta_bins}
+            mkdir -p {output.fasta_bins}
             extract_fasta_bins.py \
             {input.original_contigs} \
             {input.clustering_merged} \
