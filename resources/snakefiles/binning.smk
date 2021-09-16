@@ -246,7 +246,7 @@ rule merge_cutup_clustering:
         "output/logs/binning/concoct/{mapper}/merge_cutup_clustering/{contig_sample}.log"
     shell:
         """
-            python resources/scripts/merge_cutup_clustering.py {input.bins} > {output.merged}
+            merge_cutup_clustering.py {input.bins} > {output.merged}
             touch {output.merged} 2> {log}
         """
 
