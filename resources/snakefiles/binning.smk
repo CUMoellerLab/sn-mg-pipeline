@@ -262,7 +262,7 @@ rule extract_fasta_bins:
                     contig_sample = wildcards.contig_sample),
         clustering_merged = rules.merge_cutup_clustering.output.merged
     output:
-        fasta_bins = "output/binning/concoct/{mapper}/extract_fasta_bins/{contig_sample,[A-Za-z0-9_]+}_bins/"
+        fasta_bins = "output/binning/concoct/{mapper}/extract_fasta_bins/{contig_sample}_bins/"
     conda:
         "../env/concoct_linux.yaml"
     benchmark:
@@ -271,6 +271,7 @@ rule extract_fasta_bins:
         "output/logs/binning/concoct/{mapper}/extract_fasta_bins/{contig_sample}.log"
     shell:
         """
+            mdkir -p {output.fasta_bins}
             extract_fasta_bins.py \
             {input.original_contigs} \
             {input.clustering_merged} \
