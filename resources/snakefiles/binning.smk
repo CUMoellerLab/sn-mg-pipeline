@@ -262,7 +262,7 @@ rule extract_fasta_bins:
                     contig_sample = wildcards.contig_sample),
         clustering_merged = rules.merge_cutup_clustering.output.merged
     output:
-        fasta_bins = "output/binning/concoct/{mapper}/extract_fasta_bins/{contig_sample}/"
+        fasta_bins = directory("output/binning/concoct/{mapper}/extract_fasta_bins/{contig_sample}/")
     conda:
         "../env/concoct_linux.yaml"
     benchmark:
