@@ -221,12 +221,14 @@ rule run_concoct:
         "output/logs/binning/concoct/{mapper}/run_concoct/{contig_sample}.log"
     shell:
         """
-            concoct --threads {threads} -l {params.min_contig_length}\
+            concoct --threads {threads} -l {params.min_contig_length} \
             --composition_file {input.contigs_10K} \
             --coverage_file {input.coverage_table} \
             -b {output.bins}
             2> {log}
-            touch {output.bins}
+            # touch {output.bins}
+
+            mv output/binning/concoct/{wildcards.mapper}/run_concoct/{wildcards.contig_sample}/{wildcardscontig_sample}_bins_clustering_gt${params.min_contig_length}.csv output/binning/concoct/{wildcards.mapper}/run_concoct/{wildcards.contig_sample}/{wildcardscontig_sample}_bins_clustering.csv
         """
 
 rule merge_cutup_clustering:
