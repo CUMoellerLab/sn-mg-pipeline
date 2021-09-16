@@ -257,10 +257,13 @@ rule extract_fasta_bins:
     Extracts bins as individual FASTA.
     """
     input:
-        original_contigs = lambda wildcards: expand("output/assemble/{assembler}/{contig_sample}.contigs.fasta",
-                assembler = config['assemblers'],
-                contig_sample = wildcards.contig_sample),
+        # original_contigs = lambda wildcards: expand("output/assemble/{assembler}/{contig_sample}.contigs.fasta",
+        #         assembler = config['assemblers'],
+        #         contig_sample = wildcards.contig_sample),
         # clustering_merged = "output/binning/concoct/{mapper}/merge_cutup_clustering/{contig_sample}_clustering_merged.csv"
+        original_contigs = lambda wildcards: expand("output/assemble/{assembler}/{contig_sample}.contigs.fasta",
+                                         assembler=wildcards.assembler,
+                                         contig_sample=wildcards.contig_sample)
         clustering_merged = rules.merge_cutup_clustering.output.merged
     output:
         fasta_bins = "output/binning/concoct/{mapper}/extract_fasta_bins/{contig_sample}_bins/"
