@@ -255,5 +255,5 @@ rule merge_cutup_clustering:
     shell:
         """
             python merge_cutup_clustering.py {input.bins} > {output.merged}
-            touch {output.bins} 2> {log}
+            touch {output.merged} 2> {log}
         """
