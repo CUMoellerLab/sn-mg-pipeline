@@ -52,6 +52,7 @@ params:
   concoct:
     chunk_size: 10000
     overlap_size: 0
+    length_threshold: 1500
   minimap2:
     x: 'sr'
     k: 500000000
