@@ -52,7 +52,7 @@ params:
   concoct:
     chunk_size: 10000
     overlap_size: 0
-    length_threshold: 1500
+    length_threshold: 1000
   minimap2:
     x: 'sr'
     k: 500000000
@@ -62,10 +62,11 @@ params:
     n: 12
   metabat2:
     extra: '--verbose'
-    minContig: 1500 # Minimum size of a contig for binning (should be >=1500).
+    minContig: 1000 # Minimum size of a contig for binning (should be >=1500).
   maxbin2:
     prob_threshold: 0.8
     extra: '-verbose'
+    min_contig_length: 1000
   kraken2:
     levels: 'P,C,O,F,G,S'
     db: '/workdir/dbs/kraken2/gtdb/ftp.tue.mpg.de/ebio/projects/struo/GTDB_release89/kraken2'

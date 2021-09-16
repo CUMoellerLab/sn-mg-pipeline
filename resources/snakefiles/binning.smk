@@ -124,6 +124,7 @@ rule run_maxbin2:
         bins = "output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/{contig_sample}_bins"
     params:
         prob = config['params']['maxbin2']['prob_threshold'],  # optional parameters
+        min_contig_length = config['params']['maxbin2']['min_contig_length'],
         extra = config['params']['maxbin2']['extra']  # optional parameters
     threads:
         config['threads']['run_maxbin2']
@@ -135,7 +136,8 @@ rule run_maxbin2:
         "output/logs/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}.log"
     shell:
         """
-            run_MaxBin.pl -thread {threads} -prob_threshold {params.prob} {params.extra} \
+            run_MaxBin.pl -thread {threads} -prob_threshold {params.prob} \
+            -min_contig_length {params.min_contig_length} {params.extra} \
             -contig {input.contigs} \
             -abund_list {input.abund_list} \
             -out {output.bins}
@@ -167,7 +169,7 @@ rule cut_up_fasta:
         "output/logs/binning/concoct/{mapper}/cut_up_fasta/{contig_sample}.log"
     shell:
         """
-          python resources/scripts/cut_up_fasta.py {input.contigs} \
+          cut_up_fasta.py {input.contigs} \
           -c {params.chunk_size} \
           -o {params.overlap_size} \
           --merge_last \
@@ -193,7 +195,7 @@ rule make_concoct_coverage_table:
         "output/logs/binning/concoct/{mapper}/make_concoct_coverage_table/{contig_sample}.log"
     shell:
         """
-          python resources/scripts/concoct_coverage_table.py {input.bed} \
+          concoct_coverage_table.py {input.bed} \
           {input.bams} > {output.coverage_table} 2> {log}
         """
 
