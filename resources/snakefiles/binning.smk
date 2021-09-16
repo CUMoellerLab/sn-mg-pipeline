@@ -228,7 +228,7 @@ rule run_concoct:
             2> {log}
             # touch {output.bins}
 
-            mv output/binning/concoct/{wildcards.mapper}/run_concoct/{wildcards.contig_sample}/{wildcardscontig_sample}_bins_clustering_gt${params.min_contig_length}.csv output/binning/concoct/{wildcards.mapper}/run_concoct/{wildcards.contig_sample}/{wildcardscontig_sample}_bins_clustering.csv
+            mv output/binning/concoct/{wildcards.mapper}/run_concoct/{wildcards.contig_sample}/{wildcards.contig_sample}_bins_clustering_gt${params.min_contig_length}.csv output/binning/concoct/{wildcards.mapper}/run_concoct/{wildcards.contig_sample}/{wildcards.contig_sample}_bins_clustering.csv
         """
 
 rule merge_cutup_clustering:
