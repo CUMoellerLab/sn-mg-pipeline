@@ -222,9 +222,6 @@ rule run_concoct:
         clustering = "output/binning/concoct/{mapper}/run_concoct/{contig_sample}/{contig_sample}_bins_clustering.csv"
     params:
         bins = "output/binning/concoct/{mapper}/run_concoct/{contig_sample}/{contig_sample,[A-Za-z0-9_]+}_bins",
-        # basename = lambda wildcards: expand("output/binning/concoct/{mapper}/run_concoct/{contig_sample}/{contig_sample}_bins",
-        #         mapper = config['mappers'],
-        #         contig_sample = wildcards.contig_sample),
         min_contig_length=config['params']['concoct']['min_contig_length']
     conda:
         "../env/concoct_linux.yaml"
@@ -251,10 +248,6 @@ rule merge_cutup_clustering:
     Merges subcontig clustering into original contig clustering.
     """
     input:
-        # bins = lambda wildcards: expand("output/binning/concoct/{mapper}/run_concoct/{contig_sample}/{contig_sample}_bins_clustering_gt{length}.csv",
-        #         mapper = config['mappers'],
-        #         contig_sample = wildcards.contig_sample,
-        #         length = config["params"]["concoct"]['min_contig_length'])
         bins = lambda wildcards: expand("output/binning/concoct/{mapper}/run_concoct/{contig_sample}/{contig_sample}_bins_clustering.csv",
                 mapper = config['mappers'],
                 contig_sample = wildcards.contig_sample)
