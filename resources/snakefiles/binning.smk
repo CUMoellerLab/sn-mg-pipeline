@@ -185,7 +185,7 @@ rule make_concoct_coverage_table:
     input:
         bed="output/binning/concoct/{mapper}/contigs_10K/{contig_sample}.bed",
         bam = lambda wildcards: get_bam_list(wildcards.contig_sample, config['mappers'], contig_pairings),
-        index = [i + '.bai' for i in {input.bam}]
+        index = [i + '.bai' for i in bam]
     output:
         coverage_table="output/binning/concoct/{mapper}/coverage_tables/{contig_sample}_coverage_table.txt"
     conda:
