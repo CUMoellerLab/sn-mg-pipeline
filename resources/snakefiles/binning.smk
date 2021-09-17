@@ -218,7 +218,9 @@ rule run_concoct:
         contigs_10K=rules.cut_up_fasta.output.contigs_10K,
         coverage_table=rules.make_concoct_coverage_table.output.coverage_table
     output:
-        bins = directory("output/binning/concoct/{mapper}/run_concoct/{contig_sample,[A-Za-z0-9_]+}/")
+        bins = lambda wildcards: expand(directory("output/binning/concoct/{mapper}/run_concoct/{contig_sample}/"),
+                mapper = config['mappers'],
+                contig_sample = wildcards.contig_sample)
     params:
         basename = "output/binning/concoct/{mapper}/run_concoct/{contig_sample}/{contig_sample,[A-Za-z0-9_]+}_bins",
         # basename = lambda wildcards: expand("output/binning/concoct/{mapper}/run_concoct/{contig_sample}/{contig_sample}_bins",
