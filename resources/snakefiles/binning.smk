@@ -220,7 +220,7 @@ rule run_concoct:
     output:
         bins = directory("output/binning/concoct/{mapper}/run_concoct/{contig_sample}/")
     params:
-        basename = "output/binning/concoct/{mapper}/run_concoct/{contig_sample}/{contig_sample}_bins",
+        basename = "output/binning/concoct/{mapper}/run_concoct/{contig_sample}/{wildcards.contig_sample}_bins",
         min_contig_length=config['params']['concoct']['min_contig_length']
     conda:
         "../env/concoct_linux.yaml"
