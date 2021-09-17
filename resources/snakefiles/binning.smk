@@ -224,7 +224,7 @@ rule run_concoct:
     threads:
         config['threads']['run_concoct']
     params:
-        min_contig_length=config['params']['concoct']['min_contig_length'],
+        min_contig_length=config['params']['concoct']['min_contig_length']
     benchmark:
         "output/benchmarks/binning/concoct/{mapper}/run_concoct/{contig_sample}_benchmark.txt"
     log:
@@ -235,10 +235,10 @@ rule run_concoct:
             --composition_file {input.contigs_10K} \
             --coverage_file {input.coverage_table} \
             -b {output.bins}
-            2> {log}
+            2> {log} 1>&2
             # touch {output.bins}
 
-            mv output/binning/concoct/{wildcards.mapper}/run_concoct/{wildcards.contig_sample}/{wildcards.contig_sample}_bins_clustering_gt${params.min_contig_length}.csv output/binning/concoct/{wildcards.mapper}/run_concoct/{wildcards.contig_sample}/{wildcards.contig_sample}_bins_clustering.csv
+            mv output/binning/concoct/{wildcards.mapper}/run_concoct/{wildcards.contig_sample}/{wildcards.contig_sample}_bins_clustering_gt{params.min_contig_length}.csv output/binning/concoct/{wildcards.mapper}/run_concoct/{wildcards.contig_sample}/{wildcards.contig_sample}_bins_clustering.csv
         """
 
 rule merge_cutup_clustering:
