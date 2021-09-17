@@ -251,10 +251,13 @@ rule merge_cutup_clustering:
     Merges subcontig clustering into original contig clustering.
     """
     input:
-        bins = lambda wildcards: expand("output/binning/concoct/{mapper}/run_concoct/{contig_sample}/{contig_sample}_bins_clustering_gt{length}.csv",
+        # bins = lambda wildcards: expand("output/binning/concoct/{mapper}/run_concoct/{contig_sample}/{contig_sample}_bins_clustering_gt{length}.csv",
+        #         mapper = config['mappers'],
+        #         contig_sample = wildcards.contig_sample,
+        #         length = config["params"]["concoct"]['min_contig_length'])
+        bins = lambda wildcards: expand("output/binning/concoct/{mapper}/run_concoct/{contig_sample}/{contig_sample}_bins_clustering.csv",
                 mapper = config['mappers'],
-                contig_sample = wildcards.contig_sample,
-                length = config["params"]["concoct"]['min_contig_length'])
+                contig_sample = wildcards.contig_sample)
     output:
         merged = "output/binning/concoct/{mapper}/merge_cutup_clustering/{contig_sample}_clustering_merged.csv"
     conda:
