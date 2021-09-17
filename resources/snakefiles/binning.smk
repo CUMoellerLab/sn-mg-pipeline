@@ -237,7 +237,7 @@ rule run_concoct:
         "output/logs/binning/concoct/{mapper}/run_concoct/{contig_sample}.log"
     shell:
         """
-            mkdir {output.outdir}
+            # mkdir {output.outdir}
             concoct --threads {threads} -l {params.min_contig_length} \
             --composition_file {input.contigs_10K} \
             --coverage_file {input.coverage_table} \
