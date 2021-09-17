@@ -128,8 +128,9 @@ rule run_maxbin2:
                 mapper=config['mappers'],
                 contig_sample=wildcards.contig_sample)
     output:
-        bins = "output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/{contig_sample}_bins"
+        bins = directory("output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/")
     params:
+        basename = "output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/{contig_sample}_bin",
         prob = config['params']['maxbin2']['prob_threshold'],  # optional parameters
         min_contig_length = config['params']['maxbin2']['min_contig_length'],
         extra = config['params']['maxbin2']['extra']  # optional parameters
@@ -147,7 +148,7 @@ rule run_maxbin2:
             -min_contig_length {params.min_contig_length} {params.extra} \
             -contig {input.contigs} \
             -abund_list {input.abund_list} \
-            -out {output.bins}
+            -out {params.basename}
             2> {log}
             touch {output.bins}
         """
