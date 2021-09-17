@@ -183,11 +183,11 @@ rule make_concoct_coverage_table:
 
     """
     input:
-        bed="output/binning/concoct/{mapper}/contigs_10K/{contig_sample}.bed",
+        bed = "output/binning/concoct/{mapper}/contigs_10K/{contig_sample}.bed",
         bam = lambda wildcards: get_bam_list(wildcards.contig_sample, config['mappers'], contig_pairings),
-        index = [i + '.bai' for i in bam]
+        index = [i + '.bai' for i in lambda wildcards: get_bam_list(wildcards.contig_sample, config['mappers'], contig_pairings)]
     output:
-        coverage_table="output/binning/concoct/{mapper}/coverage_tables/{contig_sample}_coverage_table.txt"
+        coverage_table = "output/binning/concoct/{mapper}/coverage_tables/{contig_sample}_coverage_table.txt"
     conda:
         "../env/concoct_linux.yaml"
     benchmark:
