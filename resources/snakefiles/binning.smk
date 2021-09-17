@@ -218,13 +218,14 @@ rule run_concoct:
         contigs_10K=rules.cut_up_fasta.output.contigs_10K,
         coverage_table=rules.make_concoct_coverage_table.output.coverage_table
     output:
-        bins = "output/binning/concoct/{mapper}/run_concoct/{contig_sample}/{contig_sample}_bins"
+        bins = directory("output/binning/concoct/{mapper}/run_concoct/{contig_sample}/")
+    params:
+        basename = "output/binning/concoct/{mapper}/run_concoct/{contig_sample}/{contig_sample}_bins"
+        min_contig_length=config['params']['concoct']['min_contig_length']
     conda:
         "../env/concoct_linux.yaml"
     threads:
         config['threads']['run_concoct']
-    params:
-        min_contig_length=config['params']['concoct']['min_contig_length']
     benchmark:
         "output/benchmarks/binning/concoct/{mapper}/run_concoct/{contig_sample}_benchmark.txt"
     log:
@@ -234,9 +235,9 @@ rule run_concoct:
             concoct --threads {threads} -l {params.min_contig_length} \
             --composition_file {input.contigs_10K} \
             --coverage_file {input.coverage_table} \
-            -b {output.bins}
+            -b {params.basename}
             2> {log} 1>&2
-            # touch {output.bins}
+            touch {output.bins}
 
             mv output/binning/concoct/{wildcards.mapper}/run_concoct/{wildcards.contig_sample}/{wildcards.contig_sample}_bins_clustering_gt{params.min_contig_length}.csv output/binning/concoct/{wildcards.mapper}/run_concoct/{wildcards.contig_sample}/{wildcards.contig_sample}_bins_clustering.csv
         """
