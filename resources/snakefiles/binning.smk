@@ -219,7 +219,6 @@ rule run_concoct:
         contigs_10K=rules.cut_up_fasta.output.contigs_10K,
         coverage_table=rules.make_concoct_coverage_table.output.coverage_table
     output:
-        #outdir = directory("output/binning/concoct/{mapper}/run_concoct/{contig_sample,[A-Za-z0-9_]+}/")
         clustering = "output/binning/concoct/{mapper}/run_concoct/{contig_sample}/{contig_sample}_bins_clustering.csv"
     params:
         bins = "output/binning/concoct/{mapper}/run_concoct/{contig_sample}/{contig_sample,[A-Za-z0-9_]+}_bins",
@@ -237,13 +236,11 @@ rule run_concoct:
         "output/logs/binning/concoct/{mapper}/run_concoct/{contig_sample}.log"
     shell:
         """
-            # mkdir {output.outdir}
             concoct --threads {threads} -l {params.min_contig_length} \
             --composition_file {input.contigs_10K} \
             --coverage_file {input.coverage_table} \
             -b {params.bins}
             2> {log} 1>&2
-            #touch {output.outdir}
 
             mv output/binning/concoct/{wildcards.mapper}/run_concoct/{wildcards.contig_sample}/{wildcards.contig_sample}_bins_clustering_gt{params.min_contig_length}.csv output/binning/concoct/{wildcards.mapper}/run_concoct/{wildcards.contig_sample}/{wildcards.contig_sample}_bins_clustering.csv
             touch {output.clustering}
