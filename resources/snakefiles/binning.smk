@@ -47,7 +47,7 @@ rule run_metabat2:
                 mapper=config['mappers'],
                 contig_sample=wildcards.contig_sample)
     output:
-        bins = directory("output/binning/metabat2/{mapper}/run_metabat2/{contig_sample}/")
+        bins = "output/binning/metabat2/{mapper}/run_metabat2/{contig_sample}/"
     params:
         basename = "output/binning/metabat2/{mapper}/run_metabat2/{contig_sample}/{contig_sample}_bin",
         min_contig_length = config['params']['metabat2']['min_contig_length'],
@@ -128,7 +128,7 @@ rule run_maxbin2:
                 mapper=config['mappers'],
                 contig_sample=wildcards.contig_sample)
     output:
-        bins = directory("output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/")
+        bins = "output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/"
     params:
         basename = "output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/{contig_sample}_bin",
         prob = config['params']['maxbin2']['prob_threshold'],  # optional parameters
