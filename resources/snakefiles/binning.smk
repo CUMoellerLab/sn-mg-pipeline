@@ -91,7 +91,7 @@ rule make_maxbin2_coverage_table:
           samtools coverage {input.bams} | \
           tail -n +2 | \
           sort -k1 | \
-          cut -f1,6 > {output.coverage_table}
+          cut -f1,6 > {output.coverage_table} 2> {log} 1>&2
        """
 
 rule make_maxbin2_abund_list:
