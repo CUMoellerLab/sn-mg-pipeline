@@ -206,8 +206,6 @@ rule make_concoct_coverage_table:
         """
           concoct_coverage_table.py {input.bed} \
           {input.bam} > {output.coverage_table} 2> {log}
-          # touch {input.bam}
-          # touch {input.index}
         """
 
 rule run_concoct:
