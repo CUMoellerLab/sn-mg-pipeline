@@ -75,10 +75,10 @@ params:
 threads:
   fastqc: 1
   cutadapt_pe: 4
-  host_filter: 4
+  host_filter: 8
   spades: 8
   metaquast: 8
-  megahit: 8
+  megahit: 16
   kraken2: 4
   metaphlan: 8
   bowtie2_build: 8
