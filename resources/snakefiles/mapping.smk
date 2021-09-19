@@ -133,6 +133,5 @@ rule sort_index_bam:
         """
         samtools sort -o {output.bam} -@ {threads} {input.aln} 2> {log}
         samtools index -b -@ {threads} {output.bam} 2>> {log}
-        touch {output.bam}
         touch {output.index}
         """
