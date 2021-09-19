@@ -113,7 +113,7 @@ rule metaphlan:
     output:
         bt2="output/profile/metaphlan/bowtie2s/{sample}.bowtie2.bz2",
         sam="output/profile/metaphlan/sams/{sample}.sam.bz2",
-        profile="output/profile/metaphlan/profiles/{sample}_profile.txt"
+        profile="output/profile/metaphlan/profiles/{sample}.txt"
     conda:
         "../env/profile.yaml"
     threads:
