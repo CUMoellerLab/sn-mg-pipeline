@@ -14,8 +14,6 @@ rule fastqc_pre_trim:
     params: ""
     benchmark:
         "output/benchmarks/qc/fastqc_pre_trim/{sample}.{unit}.{read}_benchmark.txt"
-    log:
-        "output/logs/qc/fastqc_pre_trim/{sample}.{unit}.{read}.log"
     threads:
         config['threads']['fastqc']
     wrapper:
