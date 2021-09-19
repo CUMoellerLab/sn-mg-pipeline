@@ -120,7 +120,7 @@ rule sort_index_bam:
         aln="output/mapping/{mapper}/mapped_reads/{read_sample}_Mapped_To_{contig_sample}.bam"
     output:
         bam=temp("output/mapping/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.bam"),
-        index=temp("output/mapping/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.bam.bai")
+        index=temp(touch("output/mapping/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.bam.bai"))
     conda:
         "../env/mapping.yaml"
     threads:
@@ -133,5 +133,5 @@ rule sort_index_bam:
         """
         samtools sort -o {output.bam} -@ {threads} {input.aln} 2> {log}
         samtools index -b -@ {threads} {output.bam} 2>> {log}
-        touch {output.index}
+        # touch {output.index}
         """
