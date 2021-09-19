@@ -1,13 +1,13 @@
 
 def get_bam_list(sample, mapper, contig_pairings):
-    fps = expand("output/mapping/{mapper}/sorted_bams/{contig_pairings}_Mapped_To_{sample}.sorted.bam",
+    fps = expand("output/mapping/{mapper}/sorted_bams/{contig_pairings}_Mapped_To_{sample}.bam",
     mapper = mapper,
     sample = sample,
     contig_pairings = contig_pairings[sample])
     return(fps)
 
 def get_index_list(sample, mapper, contig_pairings):
-    fps = expand("output/mapping/{mapper}/sorted_bams/{contig_pairings}_Mapped_To_{sample}.sorted.bam.bai",
+    fps = expand("output/mapping/{mapper}/sorted_bams/{contig_pairings}_Mapped_To_{sample}.bam.bai",
     mapper = mapper,
     sample = sample,
     contig_pairings = contig_pairings[sample])
@@ -77,7 +77,7 @@ rule make_maxbin2_coverage_table:
        Commands to generate a coverage table using `samtools coverage` for input into maxbin2
     """
     input:
-        bams="output/mapping/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.sorted.bam"
+        bams="output/mapping/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.bam"
     output:
         coverage_table="output/binning/maxbin2/{mapper}/coverage_tables/{read_sample}_Mapped_To_{contig_sample}_coverage.txt"
     conda:
