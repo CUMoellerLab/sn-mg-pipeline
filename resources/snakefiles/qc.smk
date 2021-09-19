@@ -166,8 +166,6 @@ rule fastqc_post_host:
         zip="output/qc/fastqc_post_host/{sample}.{read}_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
     benchmark:
         "output/benchmarks/qc/fastqc_post_host/{sample}.{read}_benchmark.txt"
-    log:
-        "output/logs/qc/fastqc_post_host/{sample}.{read}.log"
     params: ""
     threads:
         config['threads']['fastqc']
