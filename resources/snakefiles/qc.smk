@@ -51,8 +51,6 @@ rule fastqc_post_trim:
         zip="output/qc/fastqc_post_trim/{sample}.{unit}.{read}_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
     benchmark:
         "output/benchmarks/qc/fastqc_post_trim/{sample}.{unit}.{read}_benchmark.txt"
-    log:
-        "output/logs/qc/fastqc_post_trim/{sample}.{unit}.{read}.log"
     params: ""
     log:
         "output/logs/qc/fastqc_post_trim/{sample}_{unit}_{read}.log"
