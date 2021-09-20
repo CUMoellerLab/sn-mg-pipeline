@@ -52,8 +52,6 @@ rule fastqc_post_trim:
     benchmark:
         "output/benchmarks/qc/fastqc_post_trim/{sample}.{unit}.{read}_benchmark.txt"
     params: ""
-    log:
-        "output/logs/qc/fastqc_post_trim/{sample}_{unit}_{read}.log"
     benchmark:
         "output/benchmarks/qc/fastqc_post_trim/{sample}_{unit}_{read}_benchmark.txt"
     threads:
