@@ -120,7 +120,7 @@ rule sort_index_bam:
         aln="output/mapping/{mapper}/mapped_reads/{read_sample}_Mapped_To_{contig_sample}.bam"
     output:
         bam=temp("output/mapping/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.bam"),
-        index=temp(touch("output/mapping/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.bam.bai"))
+        index=temp("output/mapping/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.bam.bai")
     conda:
         "../env/mapping.yaml"
     threads:
