@@ -49,9 +49,6 @@ params:
     other: "--add_viruses --unknown_estimation"
   metaquast:
     reference_dir: "resources/db/metaquast/"
-  concoct:
-    chunk_size: 10000
-    overlap_size: 0
   minimap2:
     x: 'sr'
     k: 500000000
@@ -61,10 +58,15 @@ params:
     n: 12
   metabat2:
     extra: '--verbose'
-    minContig: 1500 # Minimum size of a contig for binning (should be >=1500).
+    min_contig_length: 1000 # Minimum size of a contig for binning (should be >=1500).
   maxbin2:
     prob_threshold: 0.8
     extra: '-verbose'
+    min_contig_length: 1000
+  concoct:
+    chunk_size: 10000
+    overlap_size: 0
+    min_contig_length: 1000
   kraken2:
     levels: 'P,C,O,F,G,S'
     db: '/workdir/dbs/kraken2/gtdb/ftp.tue.mpg.de/ebio/projects/struo/GTDB_release89/kraken2'
@@ -73,10 +75,10 @@ params:
 threads:
   fastqc: 1
   cutadapt_pe: 4
-  host_filter: 4
+  host_filter: 8
   spades: 8
   metaquast: 8
-  megahit: 8
+  megahit: 16
   kraken2: 4
   metaphlan: 8
   bowtie2_build: 8
@@ -87,6 +89,7 @@ threads:
   concoct: 8
   run_metabat2: 8
   run_maxbin2: 8
+  run_concoct: 8
 
 mem_mb:
   spades: 256000

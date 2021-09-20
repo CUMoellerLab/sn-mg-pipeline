@@ -119,16 +119,16 @@ rule sort_index_bam:
     input:
         aln="output/mapping/{mapper}/mapped_reads/{read_sample}_Mapped_To_{contig_sample}.bam"
     output:
-        bam=temp("output/mapping/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.sorted.bam"),
-        bai=temp("output/mapping/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.sorted.bam.bai")
+        bam=temp("output/mapping/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.bam"),
+        index=temp(touch("output/mapping/{mapper}/sorted_bams/{read_sample}_Mapped_To_{contig_sample}.bam.bai"))
     conda:
         "../env/mapping.yaml"
     threads:
         config['threads']['sort_bam']
     benchmark:
-        "output/benchmarks/sort_bam/{mapper}/{read_sample}_Mapped_To_{contig_sample}.sorted.txt"
+        "output/benchmarks/mapping/{mapper}/sort_index_bam/{read_sample}_Mapped_To_{contig_sample}.txt"
     log:
-        "output/logs/sort_bam/{mapper}/{read_sample}_Mapped_To_{contig_sample}.sorted.log"
+        "output/logs/mapping/{mapper}/sort_index_bam/sort_index_bam/{read_sample}_Mapped_To_{contig_sample}.log"
     shell:
         """
         samtools sort -o {output.bam} -@ {threads} {input.aln} 2> {log}
