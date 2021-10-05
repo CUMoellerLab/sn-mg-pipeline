@@ -26,7 +26,7 @@ read_fps_to <- "sn-mg-pipeline/output/qc/host_filter/nonhost/"
 message(n_sample, " samples found in binning file ", basename(binning_file), ".")
 message("    of those, ", length(read_indexes), " are in the 'read' group and ", length(contig_indexes), " are in the 'contig' group.")
 
-dir.create(read_fps_to)
+dir.create(read_fps_to, recursive = TRUE)
 message("Transferring ", length(read_fps_from), " R1 and R2 fastq files to ", read_fps_to , " using scp.")
 
 for (i in seq_along(read_fps_from)) {
@@ -40,7 +40,7 @@ if (length(read_fps_from) == length(file_list)) {
 }
 
 contig_fps_to <- "sn-mg-pipeline/output/assemble/megahit/"
-dir.create(contig_fps_to)
+dir.create(contig_fps_to, recursive = TRUE)
 message("Transferring ", length(contig_fps_from), " fasta contig files to ", contig_fps_to , " using scp.")
 
 for (i in seq_along(contig_fps_from)) {
