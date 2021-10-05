@@ -16,15 +16,15 @@ n_sample <- length(sample_list)
 contig_indexes <- which(binning_df$Contig_Groups == "A")
 contig_fps_from <- paste0("/workdir/Sprockett/Projects/CU03_Liddell2020/sn-mg-pipeline/", binning_df[contig_indexes, "Contigs"])
 
-message(n_sample, " samples found in binning file ", basename(binning_file), ".")
-message("    of those, ", length(read_indexes), " are in the 'read' group and ", length(contig_indexes), " are in the 'contig' group.")
-
 read_indexes <- which(binning_df$Read_Groups == "A")
 read_sample_ids <- binning_df[read_indexes, "Sample"]
 read_R1_fps <- paste0( "/workdir/Sprockett/Projects/CU03_Liddell2020/sn-mg-pipeline/output/qc/host_filter/nonhost/", read_sample_ids, ".R1.fastq.gz")
 read_R2_fps <- paste0( "/workdir/Sprockett/Projects/CU03_Liddell2020/sn-mg-pipeline/output/qc/host_filter/nonhost/", read_sample_ids, ".R2.fastq.gz")
 read_fps_from <- c(rbind(read_R1_fps, read_R2_fps))
 read_fps_to <- "sn-mg-pipeline/output/qc/host_filter/nonhost/"
+
+message(n_sample, " samples found in binning file ", basename(binning_file), ".")
+message("    of those, ", length(read_indexes), " are in the 'read' group and ", length(contig_indexes), " are in the 'contig' group.")
 
 dir.create(read_fps_to)
 message("Transferring ", length(read_fps_from), " R1 and R2 fastq files to ", read_fps_to , " using scp.")
