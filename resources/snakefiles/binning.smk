@@ -29,7 +29,7 @@ rule make_metabat2_coverage_table:
         "output/logs/binning/metabat2/{mapper}/make_metabat2_coverage_table/{contig_sample}.log"
     shell:
         """
-            jgi_summarize_bam_contig_depths --outputDepth {output.coverage_table} {input.bams} 2> {log}
+            jgi_summarize_bam_contig_depths --outputDepth {output.coverage_table} {input.bams} 2> {log} 1>&2
         """
 
 rule run_metabat2:
@@ -144,14 +144,14 @@ rule run_maxbin2:
         "output/logs/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}.log"
     shell:
         """
-            touch {output.bins}
+            mkdir -p {output.bins}
 
             run_MaxBin.pl -thread {threads} -prob_threshold {params.prob} \
             -min_contig_length {params.min_contig_length} {params.extra} \
             -contig {input.contigs} \
             -abund_list {input.abund_list} \
             -out {params.basename}
-            2> {log}
+            2> {log} 1>&2
         """
 
 rule cut_up_fasta:
@@ -182,7 +182,7 @@ rule cut_up_fasta:
           -c {params.chunk_size} \
           -o {params.overlap_size} \
           --merge_last \
-          -b {output.bed} > {output.contigs_10K} 2> {log}
+          -b {output.bed} > {output.contigs_10K} 2> {log} 1>&2
         """
 
 rule make_concoct_coverage_table:
@@ -206,7 +206,7 @@ rule make_concoct_coverage_table:
     shell:
         """
           concoct_coverage_table.py {input.bed} \
-          {input.bam} > {output.coverage_table} 2> {log}
+          {input.bam} > {output.coverage_table} 2> {log} 1>&2
         """
 
 rule run_concoct:
@@ -261,7 +261,7 @@ rule merge_cutup_clustering:
     shell:
         """
             merge_cutup_clustering.py {input.bins} > {output.merged}
-            touch {output.merged} 2> {log}
+            touch {output.merged} 2> {log} 1>&2
         """
 
 rule extract_fasta_bins:
@@ -288,5 +288,5 @@ rule extract_fasta_bins:
             {input.original_contigs} \
             {input.clustering_merged} \
             --output_path {output.fasta_bins} \
-            2> {log}
+            2> {log} 1>&2
         """
