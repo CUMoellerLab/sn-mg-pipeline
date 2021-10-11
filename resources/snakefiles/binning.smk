@@ -145,13 +145,11 @@ rule run_maxbin2:
         "output/logs/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}.log"
     shell:
         """
-            mkdir -p {output.bins}
-
             run_MaxBin.pl -thread {threads} -prob_threshold {params.prob} \
             -min_contig_length {params.min_contig_length} {params.extra} \
             -contig {input.contigs} \
             -abund_list {input.abund_list} \
-            -out {params.basename}
+            -out {output.bins}
             2> {log} 1>&2
         """
 
