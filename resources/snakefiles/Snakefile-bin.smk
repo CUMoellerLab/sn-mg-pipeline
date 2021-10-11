@@ -87,7 +87,7 @@ rule map_all:
         expand("output/binning/metabat2/{mapper}/run_metabat2/{contig_sample}/",
                 mapper=config['mappers'],
                 contig_sample=contig_groups['A']),
-        expand("output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/",
+        expand("output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/{contig_sample}_bins",
                 mapper=config['mappers'],
                 contig_sample=contig_groups['A']),
         expand("output/binning/concoct/{mapper}/extract_fasta_bins/{contig_sample}_bins/",
