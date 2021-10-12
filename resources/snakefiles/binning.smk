@@ -206,7 +206,7 @@ rule make_concoct_coverage_table:
     shell:
         """
           concoct_coverage_table.py {input.bed} \
-          {input.bam} > {output.coverage_table} 2> {log} 1>&2
+          {input.bam} > {output.coverage_table} 2> {log}
         """
 
 rule run_concoct:
