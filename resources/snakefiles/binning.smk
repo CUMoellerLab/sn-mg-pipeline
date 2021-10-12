@@ -68,7 +68,7 @@ rule run_metabat2:
             --abdFile {input.coverage_table} \
             --minContig {params.min_contig_length} \
             2> {log} 1>&2
-            touch {output.bins}
+            # touch {output.bins}
         """
 
 
@@ -91,7 +91,7 @@ rule make_maxbin2_coverage_table:
           samtools coverage {input.bams} | \
           tail -n +2 | \
           sort -k1 | \
-          cut -f1,6 > {output.coverage_table} 2> {log} 1>&2
+          cut -f1,6 > {output.coverage_table} 2> {log}
        """
 
 rule make_maxbin2_abund_list:
@@ -128,10 +128,9 @@ rule run_maxbin2:
                 mapper=config['mappers'],
                 contig_sample=wildcards.contig_sample)
     output:
-        # bins = directory("output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/")
-        bins = "output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/{contig_sample}_bins"
+        bins = directory("output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/")
     params:
-        # basename = "output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/{contig_sample}_bin",
+        basename = "output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/{contig_sample}_bin",
         prob = config['params']['maxbin2']['prob_threshold'],  # optional parameters
         min_contig_length = config['params']['maxbin2']['min_contig_length'],
         extra = config['params']['maxbin2']['extra']  # optional parameters
@@ -145,11 +144,13 @@ rule run_maxbin2:
         "output/logs/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}.log"
     shell:
         """
+            mkdir -p {output.bins}
+
             run_MaxBin.pl -thread {threads} -prob_threshold {params.prob} \
             -min_contig_length {params.min_contig_length} {params.extra} \
             -contig {input.contigs} \
             -abund_list {input.abund_list} \
-            -out {output.bins}
+            -out {params.basename}
             2> {log} 1>&2
         """
 
