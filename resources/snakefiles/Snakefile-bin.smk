@@ -93,3 +93,6 @@ rule map_all:
         expand("output/binning/concoct/{mapper}/extract_fasta_bins/{contig_sample}_bins/",
                 mapper=config['mappers'],
                 contig_sample=contig_groups['A'])
+        expand("output/selected_bins/metabat2/{mapper}/scaffolds2bin/{contig_sample}_scaffolds2bin.tsv",
+                mapper=config['mappers'],
+                contig_sample=contig_groups['A'])
