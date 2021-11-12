@@ -66,7 +66,7 @@ rule concoct_Fasta_to_Scaffolds2Bin:
         """
             Fasta_to_Scaffolds2Bin.sh \
             -i {input.bins} \
-            -e fasta > {output.scaffolds2bin}
+            -e fa > {output.scaffolds2bin}
         """
 
 # rule concoct_Fasta_to_Scaffolds2Bin:
