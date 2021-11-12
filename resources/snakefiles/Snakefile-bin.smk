@@ -78,6 +78,7 @@ include: "resources/snakefiles/qc.smk"
 include: "resources/snakefiles/assemble.smk"
 include: "resources/snakefiles/mapping.smk"
 include: "resources/snakefiles/binning.smk"
+include: "resources/snakefiles/selected_bins.smk"
 
 rule map_all:
     input:
