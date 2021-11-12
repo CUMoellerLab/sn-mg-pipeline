@@ -43,5 +43,5 @@ rule maxbin2_Fasta_to_Scaffolds2Bin:
         """
             Fasta_to_Scaffolds2Bin.sh \
             -i {input.bins} \
-            -e fa > {output.scaffolds2bin}
+            -e fasta > {output.scaffolds2bin}
         """
