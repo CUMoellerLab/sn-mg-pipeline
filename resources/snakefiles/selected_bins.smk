@@ -45,3 +45,24 @@ rule maxbin2_Fasta_to_Scaffolds2Bin:
             -i {input.bins} \
             -e fasta > {output.scaffolds2bin}
         """
+
+rule concoct_Fasta_to_Scaffolds2Bin:
+    """
+    Uses perl to create a scaffolds2bin.tsv file from a clustering_merged.csv file.
+    """
+    input:
+        merged = lambda wildcards: expand("output/binning/concoct/{mapper}/merge_cutup_clustering/{contig_sample}_clustering_merged.csv",
+                mapper = config['mappers'],
+                contig_sample = wildcards.contig_sample)
+    output:
+        scaffolds2bin="output/selected_bins/concoct/{mapper}/scaffolds2bin/{contig_sample}_scaffolds2bin.tsv"
+    conda:
+        "../env/selected_bins.yaml"
+    benchmark:
+        "output/benchmarks/selected_bins/concoct/{mapper}/scaffolds2bin/{contig_sample}_benchmark.txt"
+    log:
+        "output/logs/selected_bins/concoct/{mapper}/scaffolds2bin/{contig_sample}.log"
+    shell:
+        """
+            perl -pe "s/,/\tconcoct_bins./g;" {input.merged} > {output.scaffolds2bin}
+        """
