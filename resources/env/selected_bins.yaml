@@ -1,0 +1,7 @@
+channels:
+  - defaults
+  - bioconda
+  - conda-forge
+dependencies:
+  - samtools=1.10
+  - das_tool=>1.1.3
