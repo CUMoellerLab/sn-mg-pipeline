@@ -238,7 +238,7 @@ rule run_concoct:
             2> {log} 1>&2
 
             mv output/binning/concoct/{wildcards.mapper}/run_concoct/{wildcards.contig_sample}/{wildcards.contig_sample}_bins_clustering_gt{params.min_contig_length}.csv output/binning/concoct/{wildcards.mapper}/run_concoct/{wildcards.contig_sample}/{wildcards.contig_sample}_bins_clustering.csv
-            touch {output.clustering}
+            # touch {output.clustering}
         """
 
 rule merge_cutup_clustering:
@@ -260,7 +260,7 @@ rule merge_cutup_clustering:
     shell:
         """
             merge_cutup_clustering.py {input.bins} > {output.merged}
-            touch {output.merged} 2> {log}
+            # touch {output.merged} 2> {log}
         """
 
 rule extract_fasta_bins:
