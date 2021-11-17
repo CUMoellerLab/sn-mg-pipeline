@@ -29,7 +29,7 @@ rule make_metabat2_coverage_table:
         "output/logs/binning/metabat2/{mapper}/make_metabat2_coverage_table/{contig_sample}.log"
     shell:
         """
-            jgi_summarize_bam_contig_depths --outputDepth {output.coverage_table} {input.bams} 2> {log} 1>&2
+            jgi_summarize_bam_contig_depths --outputDepth {output.coverage_table} {input.bams} 2> {log}
         """
 
 rule run_metabat2:
@@ -68,7 +68,6 @@ rule run_metabat2:
             --abdFile {input.coverage_table} \
             --minContig {params.min_contig_length} \
             2> {log} 1>&2
-            # touch {output.bins}
         """
 
 
@@ -182,7 +181,7 @@ rule cut_up_fasta:
           -c {params.chunk_size} \
           -o {params.overlap_size} \
           --merge_last \
-          -b {output.bed} > {output.contigs_10K} 2> {log} 1>&2
+          -b {output.bed} > {output.contigs_10K} 2> {log}
         """
 
 rule make_concoct_coverage_table:
@@ -261,7 +260,7 @@ rule merge_cutup_clustering:
     shell:
         """
             merge_cutup_clustering.py {input.bins} > {output.merged}
-            touch {output.merged} 2> {log} 1>&2
+            touch {output.merged} 2> {log}
         """
 
 rule extract_fasta_bins:
@@ -288,5 +287,5 @@ rule extract_fasta_bins:
             {input.original_contigs} \
             {input.clustering_merged} \
             --output_path {output.fasta_bins} \
-            2> {log} 1>&2
+            2> {log}
         """
