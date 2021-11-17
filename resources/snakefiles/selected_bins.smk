@@ -110,7 +110,7 @@ rule run_DAS_Tool:
     output:
         out="output/selected_bins/{mapper}/run_DAS_Tool/{contig_sample}_DASTool_summary.txt"
     params:
-        basename = "output/selected_bins/{mapper}/run_DAS_Tool/{contig_sample}"
+        basename = "output/selected_bins/{mapper}/run_DAS_Tool/{contig_sample}",
         search_engine = config['params']['das_tool']['search_engine']
     conda:
         "../env/selected_bins.yaml"
