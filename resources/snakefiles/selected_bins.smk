@@ -108,9 +108,10 @@ rule run_DAS_Tool:
                     assembler = config['assemblers'],
                     contig_sample = wildcards.contig_sample)
     output:
-        scaffolds2bin="output/selected_bins/concoct/{mapper}/scaffolds2bin/{contig_sample}_scaffolds2bin.tsv"
+        out="output/selected_bins/{mapper}/run_DAS_Tool/{contig_sample}_DASTool_summary.txt"
     params:
         basename = "output/selected_bins/{mapper}/run_DAS_Tool/{contig_sample}"
+        search_engine = config['params']['das_tool']['search_engine']
     conda:
         "../env/selected_bins.yaml"
     threads:
@@ -129,5 +130,5 @@ rule run_DAS_Tool:
             --write_bins 1 \
             --write_bin_evals 1 \
             --threads {threads} \
-            --search_engine diamond
+            --search_engine {params.search_engine}
         """
