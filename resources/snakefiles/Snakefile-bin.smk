@@ -102,4 +102,7 @@ rule map_all:
                 contig_sample=contig_groups['A']),
         expand("output/selected_bins/concoct/{mapper}/scaffolds2bin/{contig_sample}_scaffolds2bin.tsv",
                 mapper=config['mappers'],
+                contig_sample=contig_groups['A']),
+        expand("output/selected_bins/{mapper}/run_DAS_Tool/{contig_sample}_DASTool_summary.txt",
+                mapper=config['mappers'],
                 contig_sample=contig_groups['A'])
