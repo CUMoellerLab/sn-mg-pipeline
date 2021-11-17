@@ -27,7 +27,7 @@ rule index_contigs_bt2:
     shell:
         """
         {params.bt2b_command} --threads {threads} \
-        {input.contigs} {params.indexbase} 2> {log} 1>&2
+        {input.contigs} {params.indexbase} 2> {log}
         """
 
 rule map_reads_bt2:
@@ -78,7 +78,7 @@ rule index_contigs_minimap2:
         config['threads']['minimap2_index']
     shell:
         """
-        minimap2 -d {output.index} {input.contigs} -t {threads} 2> {log} 1>&2
+        minimap2 -d {output.index} {input.contigs} -t {threads} 2> {log}
 
         """
 
@@ -132,5 +132,5 @@ rule sort_index_bam:
     shell:
         """
         samtools sort -o {output.bam} -@ {threads} {input.aln} 2> {log}
-        samtools index -b -@ {threads} {output.bam} 2> {log}
+        samtools index -b -@ {threads} {output.bam} 2>> {log}
         """

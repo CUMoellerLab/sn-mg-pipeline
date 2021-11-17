@@ -29,16 +29,6 @@ message("    of those, ", length(read_indexes), " are in the 'read' group and ",
 dir.create(read_fps_to, recursive = TRUE)
 message("Transferring ", length(read_fps_from), " R1 and R2 fastq files to ", read_fps_to , " using scp.")
 
-# for (i in seq_along(read_fps_from)) {
-#   i_file <- read_fps_from[i]
-#   i_cmd <- paste0("scp ", username, "@", server, ":", i_file, " ", read_fps_to)
-#   system(i_cmd)
-# }
-# file_list <- list.files(read_fps_to)
-# if (length(read_fps_from) == length(file_list)) {
-#   message("All ", length(read_fps_from), " files downloaded correctly.")
-# }
-
 read_tar_fp <- "/workdir/Sprockett/Projects/CU03_Liddell2020/sn-mg-pipeline/output/qc/host_filter/nonhost/prototype_reads_for_binning.tar.gz"
 scp_cmd <- paste0("scp ", username, "@", server, ":", read_tar_fp, " ", read_fps_to)
 system(scp_cmd)
@@ -75,5 +65,3 @@ system(rsync_cmd)
 
 endres_cmd <- "/programs/bin/labutils/endres.pl"
 system(endres_cmd)
-
-
