@@ -126,7 +126,7 @@ rule run_DAS_Tool:
             --bins {input.metabat2},{input.maxbin2},{input.concoct} \
             --contigs {input.contigs} \
             --outputbasename {params.basename} \
-            --create_plots 1 \
+            --labels metabat2,maxbin2,concoct \
             --write_bins 1 \
             --write_bin_evals 1 \
             --threads {threads} \
