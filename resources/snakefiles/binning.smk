@@ -47,7 +47,7 @@ rule run_metabat2:
                 mapper=config['mappers'],
                 contig_sample=wildcards.contig_sample)
     output:
-        bins = "output/binning/metabat2/{mapper}/run_metabat2/{contig_sample}/"
+        bins = directory("output/binning/metabat2/{mapper}/run_metabat2/{contig_sample}/")
     params:
         basename = "output/binning/metabat2/{mapper}/run_metabat2/{contig_sample}/{contig_sample}_bin",
         min_contig_length = config['params']['metabat2']['min_contig_length'],
@@ -68,7 +68,6 @@ rule run_metabat2:
             --abdFile {input.coverage_table} \
             --minContig {params.min_contig_length} \
             2> {log} 1>&2
-            touch {output.bins}
         """
 
 
@@ -91,7 +90,7 @@ rule make_maxbin2_coverage_table:
           samtools coverage {input.bams} | \
           tail -n +2 | \
           sort -k1 | \
-          cut -f1,6 > {output.coverage_table} 2> {log} 1>&2
+          cut -f1,6 > {output.coverage_table} 2> {log}
        """
 
 rule make_maxbin2_abund_list:
@@ -128,7 +127,7 @@ rule run_maxbin2:
                 mapper=config['mappers'],
                 contig_sample=wildcards.contig_sample)
     output:
-        bins = "output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/"
+        bins = directory("output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/")
     params:
         basename = "output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/{contig_sample}_bin",
         prob = config['params']['maxbin2']['prob_threshold'],  # optional parameters
@@ -144,13 +143,14 @@ rule run_maxbin2:
         "output/logs/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}.log"
     shell:
         """
+            mkdir -p {output.bins}
+
             run_MaxBin.pl -thread {threads} -prob_threshold {params.prob} \
             -min_contig_length {params.min_contig_length} {params.extra} \
             -contig {input.contigs} \
             -abund_list {input.abund_list} \
             -out {params.basename}
-            2> {log}
-            touch {output.bins}
+            2> {log} 1>&2
         """
 
 rule cut_up_fasta:
@@ -238,7 +238,6 @@ rule run_concoct:
             2> {log} 1>&2
 
             mv output/binning/concoct/{wildcards.mapper}/run_concoct/{wildcards.contig_sample}/{wildcards.contig_sample}_bins_clustering_gt{params.min_contig_length}.csv output/binning/concoct/{wildcards.mapper}/run_concoct/{wildcards.contig_sample}/{wildcards.contig_sample}_bins_clustering.csv
-            touch {output.clustering}
         """
 
 rule merge_cutup_clustering:
@@ -259,8 +258,7 @@ rule merge_cutup_clustering:
         "output/logs/binning/concoct/{mapper}/merge_cutup_clustering/{contig_sample}.log"
     shell:
         """
-            merge_cutup_clustering.py {input.bins} > {output.merged}
-            touch {output.merged} 2> {log}
+            merge_cutup_clustering.py {input.bins} > {output.merged} 2> {log}
         """
 
 rule extract_fasta_bins:

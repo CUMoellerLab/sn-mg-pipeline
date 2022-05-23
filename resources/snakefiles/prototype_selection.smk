@@ -231,7 +231,8 @@ rule sourmash_plot:
 rule prototype_selection:
     input:
         dm = rules.sourmash_dm.output.csv,
-        labels = rules.sourmash_dm.output.labels
+        labels = rules.sourmash_dm.output.labels,
+        # depth = "output/qc/multiqc/multiqc_data/mqc_fastqc_sequence_counts_plot_1.txt"
     output:
         file = "output/prototype_selection/prototype_selection/selected_prototypes.yaml"
     params:
@@ -248,6 +249,7 @@ rule prototype_selection:
 
         pf_seqs = []
         for fp in df.columns:
+            # print(depth)
             print(fp)
             with gzip.open(fp, 'rb') as f:
                 for i, l in enumerate(f):
