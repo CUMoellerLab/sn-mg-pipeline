@@ -1,5 +1,6 @@
 channels:
   - bioconda
+  - conda-forge
 dependencies:
   - python>=3.5
   - bowtie2>=2.3.0
@@ -8,4 +9,5 @@ dependencies:
   - pigz
   - entrez-direct
   - tbb=2020.2
-  - minimap2
+  - libzlib=1.2.12
+  - minimap2=2.24
