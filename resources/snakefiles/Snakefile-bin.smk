@@ -80,20 +80,27 @@ include: "resources/snakefiles/mapping.smk"
 include: "resources/snakefiles/binning.smk"
 include: "resources/snakefiles/selected_bins.smk"
 
+
+rule select_bins:
+    input:
+        lambda wildcards: expand("output/selected_bins/{mapper}/DAS_Tool_Fastas/{contig_sample}.done",
+                                 mapper=config['mappers'],
+                                 contig_sample=contig_pairings.keys())
+
+rule bin_all:
+    input:
+        expand("output/binning/metabat2/{mapper}/run_metabat2/{contig_sample}/",
+               mapper=config['mappers'],
+               contig_sample=contig_pairings.keys()),
+        expand("output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/",
+               mapper=config['mappers'],
+               contig_sample=contig_pairings.keys()),
+        expand("output/binning/concoct/{mapper}/extract_fasta_bins/{contig_sample}_bins/",
+               mapper=config['mappers'],
+               contig_sample=contig_pairings.keys())
+
 rule map_all:
     input:
         expand("output/mapping/{mapper}/sorted_bams/{pairing[0]}_Mapped_To_{pairing[1]}.bam",
-                mapper=config['mappers'],
-                pairing=pairings),
-        expand("output/binning/metabat2/{mapper}/run_metabat2/{contig_sample}/",
-                mapper=config['mappers'],
-                contig_sample=contig_pairings.keys()),
-        expand("output/binning/maxbin2/{mapper}/run_maxbin2/{contig_sample}/",
-                mapper=config['mappers'],
-                contig_sample=contig_pairings.keys()),
-        expand("output/binning/concoct/{mapper}/extract_fasta_bins/{contig_sample}_bins/",
-                mapper=config['mappers'],
-                contig_sample=contig_pairings.keys()),
-        expand("output/selected_bins/{mapper}/run_DAS_Tool/{contig_sample}_DASTool_summary.txt",
-                mapper=config['mappers'],
-                contig_sample=contig_pairings.keys())
+               mapper=config['mappers'],
+               pairing=pairings)
