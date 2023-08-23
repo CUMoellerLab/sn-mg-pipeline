@@ -31,7 +31,7 @@ def get_read(sample, unit, read):
 
 def parse_groups(group_series):
     groups = {}
-    for sample, grps in group_series.iteritems():
+    for sample, grps in group_series.items():
         if not grps:
             continue
         grp_list = grps.split(',')
