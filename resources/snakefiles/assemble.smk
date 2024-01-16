@@ -139,7 +139,7 @@ rule metaquast:
     params:
         outdir=directory("output/assemble/{assembler}/metaquast/{sample}"),
         refs=config['params']['metaquast']['reference_dir'],
-        extra=config['params']['metaquast']
+        extra=config['params']['metaquast']['extra']
     conda:
         "../env/assemble.yaml"
     benchmark:
