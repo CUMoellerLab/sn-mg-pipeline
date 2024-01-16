@@ -49,6 +49,7 @@ params:
     other: "--add_viruses --unknown_estimation"
   metaquast:
     reference_dir: "resources/db/metaquast/"
+    extra: ''
   minimap2:
     x: 'sr'
     k: 500000000
