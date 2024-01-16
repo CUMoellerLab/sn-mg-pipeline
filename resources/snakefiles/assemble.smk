@@ -120,7 +120,7 @@ rule multiqc_assemble:
     benchmark:
         "output/benchmarks/assemble/multiqc_assemble/multiqc_assemble_benchmark.txt"
     wrapper:
-        "v1.7.0/bio/multiqc"
+        "v3.1.0/bio/multiqc"
 
 rule metaquast:
     """
@@ -168,4 +168,4 @@ rule multiqc_metaquast:
     benchmark:
         "output/benchmarks/assemble/multiqc_metaquast/multiqc_metaquast_benchmark.txt"
     wrapper:
-        "0.72.0/bio/multiqc"
+        "v3.1.0/bio/multiqc"
