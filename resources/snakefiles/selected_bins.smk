@@ -156,9 +156,9 @@ rule consolidate_DAS_Tool_bins:
 
         fasta_files = glob(join(fasta_dir, '*.fa'))
 
-        for file in fasta_file:
+        for file in fasta_files:
             copyfile(file,
-                     join(output.out,
+                     join(output_dir,
                           sample + '_' + basename(file)))
 
 rule consolidate_DAS_Tool_bins_all:
