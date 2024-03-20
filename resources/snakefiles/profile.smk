@@ -126,6 +126,13 @@ rule metaphlan:
         "output/logs/profile/metaphlan/{sample}.log"
     shell:
         """
+        if [ ! -d output/profile/metaphlan/bowtie2s ]; then
+                mkdir -p output/profile/metaphlan/bowtie2s
+        fi
+
+        if [ ! -d output/profile/metaphlan/sams ]; then
+                mkdir -p output/profile/metaphlan/sams
+        fi
         metaphlan {input.fastq1},{input.fastq2} \
         --input_type fastq \
         --nproc {threads} {params.other} \

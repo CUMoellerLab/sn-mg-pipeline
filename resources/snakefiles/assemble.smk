@@ -120,7 +120,7 @@ rule multiqc_assemble:
     benchmark:
         "output/benchmarks/assemble/multiqc_assemble/multiqc_assemble_benchmark.txt"
     wrapper:
-        "v1.7.0/bio/multiqc"
+        "v3.1.0/bio/multiqc"
 
 rule metaquast:
     """
@@ -139,7 +139,7 @@ rule metaquast:
     params:
         outdir=directory("output/assemble/{assembler}/metaquast/{sample}"),
         refs=config['params']['metaquast']['reference_dir'],
-        extra=config['params']['metaquast']
+        extra=config['params']['metaquast']['extra']
     conda:
         "../env/assemble.yaml"
     benchmark:
@@ -168,4 +168,4 @@ rule multiqc_metaquast:
     benchmark:
         "output/benchmarks/assemble/multiqc_metaquast/multiqc_metaquast_benchmark.txt"
     wrapper:
-        "0.72.0/bio/multiqc"
+        "v3.1.0/bio/multiqc"
