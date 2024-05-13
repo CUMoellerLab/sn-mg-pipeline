@@ -21,7 +21,7 @@ rule metabat2_Fasta_to_Scaffolds2Bin:
         "output/logs/selected_bins/metabat2/{mapper}/scaffolds2bin/{contig_sample}.log"
     shell:
         """
-            Fasta_to_Scaffolds2Bin.sh \
+            Fasta_to_Contig2Bin.sh \
             -i {input.bins} \
             -e fa > {output.scaffolds2bin}
         """
@@ -45,7 +45,7 @@ rule maxbin2_Fasta_to_Scaffolds2Bin:
         "output/logs/selected_bins/maxbin2/{mapper}/scaffolds2bin/{contig_sample}.log"
     shell:
         """
-            Fasta_to_Scaffolds2Bin.sh \
+            Fasta_to_Contig2Bin.sh \
             -i {input.bins} \
             -e fasta > {output.scaffolds2bin}
         """
@@ -68,7 +68,7 @@ rule concoct_Fasta_to_Scaffolds2Bin:
         "output/logs/selected_bins/concoct/{mapper}/scaffolds2bin/{contig_sample}.log"
     shell:
         """
-            Fasta_to_Scaffolds2Bin.sh \
+            Fasta_to_Contig2Bin.sh \
             -i {input.bins} \
             -e fa > {output.scaffolds2bin}
         """
@@ -131,8 +131,8 @@ rule run_DAS_Tool:
             --contigs {input.contigs} \
             --outputbasename {params.basename} \
             --labels metabat2,maxbin2,concoct \
-            --write_bins 1 \
-            --write_bin_evals 1 \
+            --write_bins \
+            --write_bin_evals \
             --threads {threads} \
             --search_engine {params.search_engine}
         """
