@@ -32,7 +32,7 @@ profilers:
 
 params:
   cutadapt:
-    adapter: 'GATCGGAAGAGC'
+    adapter: '-a GATCGGAAGAGC' # -a for R1 adapters and -A for R2 adapters
     other: "--minimum-length 1 --nextseq-trim 20"
   multiqc: ''
   bowtie2:
@@ -49,6 +49,7 @@ params:
     other: "--add_viruses --unclassified_estimation"
   metaquast:
     reference_dir: "resources/db/metaquast/"
+    extra: ''
   minimap2:
     x: 'sr'
     k: 500000000
