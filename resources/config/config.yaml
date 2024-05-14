@@ -32,8 +32,8 @@ profilers:
 
 params:
   cutadapt:
-    adapter: '-a GATCGGAAGAGC' # -a for R1 adapters and -A for R2 adapters
-    other: "--minimum-length 1 --nextseq-trim 20"
+    adapter: '-a GATCGGAAGAGC -a GGGGGGGGGGGGGGGGGGGG -A GATCGGAAGAGC -A GGGGGGGGGGGGGGGGGGGG'
+    other: "-u 10 -U 10 --minimum-length 1 --nextseq-trim 20"
   multiqc: ''
   bowtie2:
     bt2_command: 'bowtie2'
