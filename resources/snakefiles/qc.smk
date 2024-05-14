@@ -32,7 +32,7 @@ rule cutadapt_pe:
         fastq2=temp("output/qc/cutadapt_pe/{sample}.{unit}.R2.fastq.gz"),
         qc="output/logs/qc/cutadapt_pe/{sample}.{unit}.txt"
     params:
-        "-a {} {}".format(config["params"]["cutadapt"]['adapter'],
+        "{} {}".format(config["params"]["cutadapt"]['adapter'],
                           config["params"]["cutadapt"]['other'])
     benchmark:
         "output/benchmarks/qc/cutadapt_pe/{sample}.{unit}_benchmark.txt"
@@ -191,4 +191,4 @@ rule multiqc:
     benchmark:
         "output/benchmarks/qc/multiqc/multiqc_benchmark.txt"
     wrapper:
-        "v1.7.0/bio/multiqc"
+        "v3.1.0/bio/multiqc"
